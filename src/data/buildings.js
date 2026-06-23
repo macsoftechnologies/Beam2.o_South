@@ -1,34 +1,30 @@
 export const BUILDINGS = [
   {
     id: "13",
-    name: "External Areas",
+    name: "JF",
   },
   {
     id: "14",
-    name: "MA",
+    name: "External Areas",
   },
   {
     id: "15",
-    name: "MU90",
+    name: "MR",
   },
   {
     id: "16",
-    name: "MU91",
+    name: "JG",
   },
   {
     id: "17",
-    name: "MB",
+    name: "JH",
   },
   {
     id: "18",
-    name: "MA Basement",
+    name: "JJ",
   },
   {
     id: "19",
-    name: "MA.II",
-  },
-  {
-    id: "20",
-    name: "MA.III",
-  },
+    name: "MP",
+  }
 ];

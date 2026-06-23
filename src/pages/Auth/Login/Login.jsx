@@ -27,7 +27,7 @@ export default function Login() {
     }, 1500);
   };
 
-   const navigate = (url) => {
+  const navigate = (url) => {
     setOverlayActive(true);
     setTimeout(() => {
       window.location.href = url;

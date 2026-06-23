@@ -1,54 +1,49 @@
 export const FLOOR_MAPPING = {
-  13: ["External Areas"],
+  13: [
+    "JF-Ground Floor",
+    "JF-1st Floor",
+    "JF-2nd Floor",
+    "JF-Roof Plan"
+  ],
 
   14: [
-    "Ground Floor",
-    "First Floor",
-    "Second Floor",
-    "Third Floor",
-    "Roof Plan",
+    "External Areas"
   ],
 
   15: [
-    "MU90.0",
-    "MU90.1",
-    "MU90.2",
-    "MU90.R",
+    "MR-Ground Floor",
+    "MR-1st Floor",
+    "MR-2nd Floor",
+    "MR-Roof Plan",
   ],
 
   16: [
-    "MU91.0",
-    "MU91.1",
-    "MU91.2",
-    "MU91.3",
-    "MU91.4",
-    "MU91.R",
+    "JG-Ground Floor",
+    "JG-1st Floor",
+    "JG-2nd Floor",
+    "JG-3rd Floor",
+    "JG-4th Floor",
+    "JG-Roof Plan",
   ],
 
   17: [
-    "MB.0",
-    "MB.1",
-    "MB.2",
-    "MB.R",
+    "JH-Ground Floor",
+    "JH-1st Floor",
+    "JH-Mezzanine Floor",
+    "JH-Roof Plan",
   ],
 
   18: [
-    "MA Basement",
+    "JJ-Ground Floor",
+    "JJ-1st Floor",
+    "JJ-Roof Plan",
   ],
 
   19: [
-    "MA.II 0",
-    "MA.II 1",
-    "MA.II 2",
-    "MA.II 3",
-    "MA.II R",
-  ],
-
-  20: [
-    "MA.III 0",
-    "MA.III 1",
-    "MA.III 2",
-    "MA.III 3",
-    "MA.III R",
+    "MP-Ground Floor",
+    "MP-1st Floor",
+    "MP-2nd Floor",
+    "MP-Roof Plan",
+    "MP-Tank Farm",
   ],
 };
