@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { useLocation, Link } from 'react-router-dom'
 import "./Sidebar.css";
+import { getMenuByRole } from './navigation.service';
+import LogoImg from "../../../assets/images/Logo.jpeg";
 
 /* ── NAV ITEM with collapsible submenu ── */
 function NavItem({ icon, label, badge, paths, children }) {
@@ -15,6 +17,7 @@ function NavItem({ icon, label, badge, paths, children }) {
       <button
         className={`nav-link nav-link-parent ${isChildActive ? 'active' : ''} ${open ? 'nav-link-open' : ''}`}
         onClick={() => setOpen(p => !p)}
+        data-tooltip={label}
       >
         <span className="nav-icon-box">
           <i className={`ti ${icon}`} aria-hidden="true" />
@@ -39,10 +42,10 @@ function SubItem({ href, label, subChildren }) {
     const isActive = href && pathname === href
     return (
       <li>
-        <a href={href || '#'} className={`nav-sub-link ${isActive ? 'sub-active' : ''}`}>
+        <Link to={href || '#'} className={`nav-sub-link ${isActive ? 'sub-active' : ''}`}>
           <span className="sub-dot" />
           {label}
-        </a>
+        </Link>
       </li>
     )
   }
@@ -62,220 +65,228 @@ function SubItem({ href, label, subChildren }) {
 }
 
 /* ════════════════════════════════════════════ */
-function Sidebar({ sidebarOpen }) {
+function Sidebar({ sidebarOpen, toggleSidebar }) {
   const { pathname } = useLocation()
+
+  const [userRole, setUserRole] = useState("")
+
+  useEffect(() => {
+    try {
+      const u = localStorage.getItem("user")
+      if (u) {
+        const parsed = JSON.parse(u)
+        setUserRole(parsed.role || parsed.userType || "")
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }, [])
 
   // Helper: exact match or starts-with for parent routes
   const isActive = (path) => pathname === path || pathname.startsWith(path + '/')
 
+  // Helper: map config state to actual React Router path
+  const mapStateToPath = (state) => {
+    if (!state) return "";
+    const cleanState = state.replace(/^\//, "");
+    const mapping = {
+      "user/dashboard": "/dashboard",
+      "user/executive-dashboard": "/executive-dashboard",
+      // "admin/department": "/departments",
+      "admin/listdepartment": "/departments",
+      // "admin/sub-contractors": "/contractors",
+      "admin/subcontractors-list": "/contractors",
+      // "admin/employee": "/employees",
+      "admin/listemployee": "/employees",
+      "location/buildings": "/location/buildings",
+      "location/floors": "/location/floors",
+      "location/zones": "/location/zones",
+      "location/rooms": "/location/rooms",
+      // "user/electricalworks": "/electrical-works",
+      "user/list-electricalworks": "/electrical-works",
+      // "admin/electricalworks": "/electrical-works",
+      "admin/list-electricalworks": "/electrical-works",
+      // "user/mechanicalworks": "/mechanical-works",
+      "user/list-mechanicalworks": "/mechanical-works",
+      // "admin/mechanicalworks": "/mechanical-works",
+      "admin/list-mechanicalworks": "/mechanical-works",
+      "user/new-request": "/new-request",
+      "user/list-request": "/list-request",
+      "user/plans": "/reports",
+      // "admin/activity": "/settings/activity",
+      "admin/activity-list": "/settings/activity",
+      // "admin/safety-precaution": "/settings/safety/precaution",
+      "admin/safety-precautions-list": "/settings/safety/precaution",
+      "user/log-history": "/log-history",
+      "user/log-reports": "/logs-reports",
+    };
+    return mapping[cleanState] || `/${cleanState}`;
+  };
+
+  // Helper: map a menu item name or icon string to the corresponding Tabler Icon class
+  const getIconClass = (item) => {
+    const name = item.name ? item.name.toLowerCase() : "";
+    const icon = item.icon ? item.icon.toLowerCase() : "";
+    if (name.includes("dashboard")) return "ti-layout-dashboard";
+    if (name.includes("department")) return "ti-sitemap";
+    if (name.includes("contractor")) return "ti-briefcase";
+    if (name.includes("employee")) return "ti-users-group";
+    if (name.includes("location") || name.includes("zone")) return "ti-map-pin";
+    if (name.includes("electrical")) return "ti-bolt";
+    if (name.includes("mechanical")) return "ti-settings";
+    if (name.includes("request")) return "ti-file-description";
+    if (name.includes("report")) return "ti-chart-line";
+    if (name.includes("settings")) return "ti-adjustments-horizontal";
+    if (name.includes("history")) return "ti-clock";
+    if (name.includes("logs")) return "ti-chart-bar";
+
+    const iconMap = {
+      dashboard: "ti-layout-dashboard",
+      event: "ti-calendar",
+      person: "ti-user",
+      settings: "ti-settings",
+      history: "ti-clock",
+      assignment: "ti-clipboard",
+    };
+    return iconMap[icon] || "ti-circle";
+  };
+
+  // Helper: recursively collect all sub-paths for a menu item
+  const collectPaths = (item) => {
+    const paths = [];
+    const recurse = (node) => {
+      if (node.sub) {
+        node.sub.forEach(recurse);
+      } else if (node.state) {
+        paths.push(mapStateToPath(node.state));
+      }
+    };
+    recurse(item);
+    return paths;
+  };
+
+  // Recursive sub-menu renderer
+  const renderSubMenu = (subItem, isNested = false) => {
+    if (subItem.type === "dropDown" || subItem.sub) {
+      return (
+        <SubItem
+          key={subItem.name}
+          label={subItem.name}
+          subChildren={
+            <>
+              {subItem.sub.map((nestedItem) => renderSubMenu(nestedItem, true))}
+            </>
+          }
+        />
+      );
+    }
+    const href = mapStateToPath(subItem.state);
+    const isActiveLink = pathname === href;
+    return (
+      <li key={subItem.name}>
+        <Link
+          to={href}
+          className={`nav-sub-link ${isNested ? "nested" : ""} ${isActiveLink ? "sub-active" : ""}`}
+        >
+          <span className={`sub-dot ${isNested ? "small" : ""}`} />
+          {subItem.name}
+        </Link>
+      </li>
+    );
+  };
+
+  const menuItems = getMenuByRole(userRole);
+
+  const reportsAndSettingsNames = ["reports", "settings", "activity", "safety precaution", "log-history", "logs-reports"];
+  let renderedMainLabel = false;
+  let renderedReportsLabel = false;
+
   return (
-    <aside className={`sidebar ${sidebarOpen ? '' : 'sidebar-closed'}`}>
-      <div className="sidebar-inner">
+    <aside className={`sidebar ${sidebarOpen ? '' : 'sidebar-collapsed'}`}>
 
-        {/* Brand */}
-        <div className="sidebar-brand">
-          <div className="brand-mark">
-            <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M5 0a.5.5 0 0 1 .5.5V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2A2.5 2.5 0 0 1 14 4.5h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14A2.5 2.5 0 0 1 11.5 14v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14A2.5 2.5 0 0 1 2 11.5H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2A2.5 2.5 0 0 1 4.5 2V.5A.5.5 0 0 1 5 0" />
-            </svg>
-          </div>
-          <div className="brand-text-wrap">
-            <span className="brand-name">M3 SOUTH</span>
-            <span className="brand-sub">MANAGEMENT</span>
-          </div>
+      {/* Mobile close (✕) button — top-right corner of sidebar */}
+      <button
+        className="sidebar-close-btn"
+        onClick={toggleSidebar}
+        title="Close menu"
+        aria-label="Close menu"
+      >
+        <i className="ti ti-x" />
+      </button>
+
+      {/* Brand — sticky header, never scrolls */}
+      <div className="sidebar-brand">
+        <div className="brand-mark" style={{ background: "transparent" }}>
+          <img
+            src={LogoImg}
+            alt="M3 Logo"
+            style={{
+              width: "100%",
+              height: "100%",
+              borderRadius: "11px",
+              objectFit: "cover",
+            }}
+          />
         </div>
+        <div className="brand-text-wrap">
+          <span className="brand-name">M3 South</span>
+          <span className="brand-sub">MANAGEMENT</span>
+        </div>
+      </div>
 
+      {/* Scrollable nav area */}
+      <div className="sidebar-inner">
         <nav>
-          <div className="nav-section-label">Main</div>
+          {menuItems.map((item) => {
+            const itemKey = item.name;
+            const elements = [];
 
-          {/* Dashboard */}
-          <a href="/dashboard" className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`}>
-            <span className="nav-icon-box">
-              <i className="ti ti-layout-dashboard" aria-hidden="true" />
-            </span>
-            <span className="nav-label">Dashboard</span>
-          </a>
+            // Section Headers
+            if (!renderedMainLabel) {
+              elements.push(
+                <div key="label-main" className="nav-section-label">Main</div>
+              );
+              renderedMainLabel = true;
+            }
 
-          {/* Department — single link, NO dropdown */}
-          <a
-            href="/departments"
-            className={`nav-link ${isActive('/departments') ? 'active' : ''}`}
-          >
-            <span className="nav-icon-box">
-              <i className="ti ti-sitemap" aria-hidden="true" />
-            </span>
-            <span className="nav-label">Departments</span>
-          </a>
+            if (!renderedReportsLabel && reportsAndSettingsNames.includes(item.name.toLowerCase())) {
+              elements.push(
+                <div key="label-reports" className="nav-section-label">Reports &amp; Settings</div>
+              );
+              renderedReportsLabel = true;
+            }
 
-          <a
-            href="/contractors"
-            className={`nav-link ${isActive('/contractors') ? 'active' : ''}`}
-          >
-            <span className="nav-icon-box">
-              <i className="ti ti-briefcase" aria-hidden="true" />
-            </span>
-            <span className="nav-label">Contractors</span>
-          </a>
+            // Render menu item
+            if (item.type === "dropDown" || item.sub) {
+              elements.push(
+                <NavItem
+                  key={itemKey}
+                  icon={getIconClass(item)}
+                  label={item.name}
+                  paths={collectPaths(item)}
+                >
+                  {item.sub.map((subItem) => renderSubMenu(subItem))}
+                </NavItem>
+              );
+            } else {
+              const href = mapStateToPath(item.state);
+              elements.push(
+                <Link
+                  key={itemKey}
+                  to={href}
+                  className={`nav-link ${isActive(href) ? 'active' : ''}`}
+                  data-tooltip={item.name}
+                >
+                  <span className="nav-icon-box">
+                    <i className={`ti ${getIconClass(item)}`} aria-hidden="true" />
+                  </span>
+                  <span className="nav-label">{item.name}</span>
+                </Link>
+              );
+            }
 
-          <a
-            href="/employees"
-            className={`nav-link ${isActive('/employees') ? 'active' : ''}`}
-          >
-            <span className="nav-icon-box">
-              <i className="ti ti-users-group" aria-hidden="true" />
-            </span>
-            <span className="nav-label">Employees</span>
-          </a>
-          <a
-            href="/zone-status"
-            className={`nav-link ${isActive('/zone-status') ? 'active' : ''}`}
-          >
-            <span className="nav-icon-box">
-              <i className="ti ti-map-pin" aria-hidden="true" />
-            </span>
-            <span className="nav-label">Zone Status</span>
-          </a>
-
-          <a
-            href="/electrical-works"
-            className={`nav-link ${isActive('/electrical-works') ? 'active' : ''}`}
-          >
-            <span className="nav-icon-box">
-              <i className="ti ti-bolt" aria-hidden="true" />
-            </span>
-            <span className="nav-label">Electrical Works</span>
-          </a>
-
-          <a
-            href="/mechanical-works"
-            className={`nav-link ${isActive('/mechanical-works') ? 'active' : ''}`}
-          >
-            <span className="nav-icon-box">
-              <i className="ti ti-settings" aria-hidden="true" />
-            </span>
-            <span className="nav-label">Mechanical Works</span>
-          </a>
-
-          {/* <NavItem icon="ti-briefcase" label="Contractors"
-            paths={['/contractor-new', '/contractor-list']}>
-            <SubItem href="/contractor-new"  label="New Contractor"   />
-            <SubItem href="/contractor-list" label="Contractors List" />
-          </NavItem> */}
-
-          {/* <NavItem icon="ti-users" label="Employees"
-            paths={['/employee-new', '/employee-list']}>
-            <SubItem href="/employee-new"  label="New Employee"   />
-            <SubItem href="/employee-list" label="List Employees" />
-          </NavItem> */}
-
-          {/* <NavItem icon="ti-map-pin" label="Zone Status"
-            paths={['/zone-new', '/zone-list']}>
-            <SubItem href="/zone-new"  label="New Zone"   />
-            <SubItem href="/zone-list" label="List Zones" />
-          </NavItem> */}
-
-          {/* <NavItem icon="ti-bolt" label="Electrical Works"
-            paths={['/electrical-new', '/electrical-list']}>
-            <SubItem href="/electrical-new"  label="New Electrical"  />
-            <SubItem href="/electrical-list" label="List Electrical" />
-          </NavItem>
-
-          <NavItem icon="ti-tool" label="Mechanical Works"
-            paths={['/mechanical-new', '/mechanical-list']}>
-            <SubItem href="/mechanical-new"  label="New Mechanical"  />
-            <SubItem href="/mechanical-list" label="List Mechanical" />
-          </NavItem> */}
-
-          <NavItem icon="ti-file-description" label="Request"
-            paths={['/request-new', '/request-list']}>
-            <SubItem href="/new-request" label="New Request" />
-            <SubItem href="/request-list" label="List Request" />
-          </NavItem>
-
-          <div className="nav-section-label">Reports &amp; Settings</div>
-
-          <a href="/reports" className={`nav-link ${isActive('/reports') ? 'active' : ''}`}>
-            <span className="nav-icon-box">
-              <i className="ti ti-chart-line" aria-hidden="true" />
-            </span>
-            <span className="nav-label">Reports</span>
-          </a>
-
-          <NavItem
-            icon="ti-adjustments-horizontal"
-            label="Settings"
-            paths={['/settings/activity', '/settings-safety-new']}
-          >
-            <li>
-              <a
-                href="/settings/activity"
-                className={`nav-sub-link ${pathname === '/settings/activity' ? 'sub-active' : ''
-                  }`}
-              >
-                <span className="sub-dot" />Activity
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="/settings/safety/precaution"
-                className={`nav-sub-link ${pathname === '/settings/safety/precaution' ? 'sub-active' : ''
-                  }`}
-              >
-                <span className="sub-dot" />Precaution
-              </a>
-            </li>
-          </NavItem>
-
-          {/* <NavItem icon="ti-adjustments-horizontal" label="Settings"
-            paths={['/settings-activity-new', '/settings-activity-list', '/settings-safety-new', '/settings-safety-list']}>
-            <SubItem label="Activity" subChildren={
-              <>
-                <li>
-                  <a href="/settings/activity"
-                    className={`nav-sub-link nested ${pathname === '/settings/activity' ? 'sub-active' : ''}`}>
-                    <span className="sub-dot small" />New Activity
-                  </a>
-                </li>
-                <li>
-                  <a href="/settings-activity-list"
-                    className={`nav-sub-link nested ${pathname === '/settings-activity-list' ? 'sub-active' : ''}`}>
-                    <span className="sub-dot small" />List Activity
-                  </a>
-                </li>
-              </>
-            } />
-            <SubItem label="Safety Precaution" subChildren={
-              <>
-                <li>
-                  <a href="/settings-safety-new"
-                    className={`nav-sub-link nested ${pathname === '/settings-safety-new' ? 'sub-active' : ''}`}>
-                    <span className="sub-dot small" />New Precaution
-                  </a>
-                </li>
-                <li>
-                  <a href="/settings-safety-list"
-                    className={`nav-sub-link nested ${pathname === '/settings-safety-list' ? 'sub-active' : ''}`}>
-                    <span className="sub-dot small" />List Precaution
-                  </a>
-                </li>
-              </>
-            } />
-          </NavItem> */}
-
-          <a href="/log-history" className={`nav-link ${isActive('/log-history') ? 'active' : ''}`}>
-            <span className="nav-icon-box">
-              <i className="ti ti-clock" aria-hidden="true" />
-            </span>
-            <span className="nav-label">Log-History</span>
-          </a>
-
-          <a href="/logs-reports" className={`nav-link ${isActive('/logs-reports') ? 'active' : ''}`}>
-            <span className="nav-icon-box">
-              <i className="ti ti-chart-bar" aria-hidden="true" />
-            </span>
-            <span className="nav-label">Logs-Reports</span>
-          </a>
+            return elements;
+          })}
         </nav>
 
       </div>

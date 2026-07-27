@@ -16,7 +16,10 @@ import Dashboard from "../pages/Dashboard/Dashboard";
 import Departments from "../pages/Departments/Departments";
 import Contractors from "../pages/Contractors/Contractors";
 import Employees from "../pages/Employees/Employees";
-import ZoneStatus from "../pages/ZoneStatus/ZoneStatus";
+import Buildings from "../pages/Buildings/Buildings";
+import Floors from "../pages/Floors/Floors";
+import Zones from "../pages/Zones/Zones";
+import Rooms from "../pages/Rooms/Rooms";
 import MechanicalWorks from "../pages/MechanicalWorks/MechanicalWorks";
 import ElectricalWorks from "../pages/ElectricalWorks/ElectricalWorks";
 import NewRequest from "../pages/Request/NewRequest/NewRequest";
@@ -25,36 +28,171 @@ import Activity from "../pages/Settings/Activity/Activity";
 import SafetyPrecaution from "../pages/Settings/SafetyPrecaution/SafetyPrecaution";
 import LogsReports from "../pages/LogsReports/LogsReports";
 import LogHistory from "../pages/LogHistroy/LogHistroy";
+import ExecutiveDashboard from "../pages/ExecutiveDashboard/ExecutiveDashboard";
 
 
-// import ProtectedRoute from "../components/common/ProtectedRoute";
+import ProtectedRoute from "../components/common/ProtectedRoute";
+import PublicRoute from "../components/common/PublicRoute";
+import ListRequest from "../pages/Request/ListRequest/ListRequest";
+import PolygonEditor from "../pages/PolygonEditor/PolygonEditor";
 
 function AppRoutes() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/m3south_frontend">
       <Routes>
 
-        {/* Public Routes */}
-        <Route path="/" element={<PortalSelection />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/otp" element={<Otp />} />
+        {/* Public Routes - restricted if user has valid token */}
+        <Route path="/" element={<PublicRoute><PortalSelection /></PublicRoute>} />
+        <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path="/otp" element={<PublicRoute><Otp /></PublicRoute>} />
+        <Route path='/polygons' element={<PolygonEditor />} />
 
         {/* Protected Layout */}
 
-        <Route element={<Layout />}>
+        <Route
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/departments" element={<Departments />} />
-          <Route path="/contractors" element={<Contractors />} />
-          <Route path="/employees" element={<Employees />} />
-          <Route path="/zone-status" element={<ZoneStatus />} />
-          <Route path="/mechanical-works" element={<MechanicalWorks />} />
-          <Route path="/electrical-works" element={<ElectricalWorks />} />
-          <Route path="/new-request" element={<NewRequest />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/settings/activity" element={<Activity />} />
-          <Route path="/settings/safety/precaution" element={<SafetyPrecaution />} />
-          <Route path="/logs-reports" element={<LogsReports />} />
-          <Route path="/log-history" element={<LogHistory />} />
+          <Route
+            path="/executive-dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "admin", "SuperAdmin", "superadmin", "Department", "department", "Department1", "department1"]}>
+                <ExecutiveDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/departments"
+            element={
+              <ProtectedRoute allowedRoles={["Admin"]}>
+                <Departments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/contractors"
+            element={
+              <ProtectedRoute allowedRoles={["Admin"]}>
+                <Contractors />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/employees"
+            element={
+              <ProtectedRoute allowedRoles={["Admin"]}>
+                <Employees />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/location/buildings"
+            element={
+              <ProtectedRoute allowedRoles={["Admin"]}>
+                <Buildings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/location/floors"
+            element={
+              <ProtectedRoute allowedRoles={["Admin"]}>
+                <Floors />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/location/zones"
+            element={
+              <ProtectedRoute allowedRoles={["Admin"]}>
+                <Zones />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/location/rooms"
+            element={
+              <ProtectedRoute allowedRoles={["Admin"]}>
+                <Rooms />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/mechanical-works"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Department1"]}>
+                <MechanicalWorks />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/electrical-works"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Department1"]}>
+                <ElectricalWorks />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/new-request"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Subcontractor", "Department", "Department1"]}>
+                <NewRequest />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/list-request"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Subcontractor", "Department", "Department1", "Observer"]}>
+                <ListRequest />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/reports"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Department", "Department1"]}>
+                <Reports />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/activity"
+            element={
+              <ProtectedRoute allowedRoles={["Admin"]}>
+                <Activity />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/safety/precaution"
+            element={
+              <ProtectedRoute allowedRoles={["Admin"]}>
+                <SafetyPrecaution />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/logs-reports"
+            element={
+              <ProtectedRoute allowedRoles={["Admin"]}>
+                <LogsReports />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/log-history"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Department", "Department1"]}>
+                <LogHistory />
+              </ProtectedRoute>
+            }
+          />
         </Route>
 
         {/* <Route

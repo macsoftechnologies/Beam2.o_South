@@ -1,7 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
+import { login } from "../../../services/authService";
+import { showSuccess, showError } from "../../../components/common/Toast/Toast";
+import { navigateTo } from "../../../config/basePath";
+import { isTokenValid } from "../../../components/common/PublicRoute";
 import "./Login.css";
 
 export default function Login() {
+  if (isTokenValid()) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  useEffect(() => {
+    const handleCheck = () => {
+      if (isTokenValid()) {
+        navigateTo("/dashboard", true);
+      }
+    };
+
+    if (isTokenValid()) {
+      navigateTo("/dashboard", true);
+    }
+
+    window.addEventListener("pageshow", handleCheck);
+    window.addEventListener("popstate", handleCheck);
+
+    return () => {
+      window.removeEventListener("pageshow", handleCheck);
+      window.removeEventListener("popstate", handleCheck);
+    };
+  }, []);
+
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -9,29 +38,54 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     if (!username.trim() || !password) {
       setError("Please fill in all fields.");
+      showError("Please fill in all fields.");
       return;
     }
 
     setLoading(true);
 
-    // Simulate login → redirect to OTP page
-    setTimeout(() => {
+    try {
+      const response = await login({ username, password });
+
+      if (response && (response.statusCode === 200 || response.status === true)) {
+        // Save tempUser details in localStorage
+        const tempUser = {
+          user_id: response.id,
+          username: response.username,
+          userType: response.userType,
+          phonenumber: response.phonenumber,
+          auth_token: response.auth_token
+        };
+        localStorage.setItem("tempUser", JSON.stringify(tempUser));
+
+        showSuccess("Login successful. OTP sent.");
+
+        setTimeout(() => {
+          setLoading(false);
+          navigateTo("/otp", true);
+        }, 1500);
+      } else {
+        setLoading(false);
+        const errMsg = response?.message || "Invalid credentials";
+        setError(errMsg);
+        showError(errMsg);
+      }
+    } catch (err) {
       setLoading(false);
-      window.location.href = "/otp";
-    }, 1500);
+      const errMsg = err.response?.data?.message || err.message || "An error occurred during login";
+      setError(errMsg);
+      showError(errMsg);
+    }
   };
 
   const navigate = (url) => {
-    setOverlayActive(true);
-    setTimeout(() => {
-      window.location.href = url;
-    }, 1200);
+    navigateTo(url);
   };
 
   return (
@@ -46,7 +100,7 @@ export default function Login() {
       </div>
 
       {/* Back Link */}
-      <a href="/" className="back-link">
+      <a href="http://locahost:5173/m3south_frontend/" className="back-link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
@@ -67,11 +121,11 @@ export default function Login() {
                 <span className="dot"></span>Division 01
               </div>
               <h2 className="panel-title">
-                M3 <span>North</span>
+                M3 <span>South</span>
                 <br />Operations
               </h2>
               <p className="panel-desc">
-                Your secure gateway to the northern regional operations platform —
+                Your secure gateway to the M3 South regional operations platform —
                 project management, field coordination, and real-time reporting.
               </p>
             </div>
@@ -85,7 +139,7 @@ export default function Login() {
               <br />
               <span>Back</span>
             </h1>
-            <p className="form-subtext">Sign in to your M3 North account to continue</p>
+            <p className="form-subtext">Sign in to your M3 South account to continue</p>
 
             {error && (
               <div className="error-box show">
@@ -101,7 +155,7 @@ export default function Login() {
             <form id="loginForm" onSubmit={handleSubmit} noValidate>
               <div className="field-group">
                 <label className="field-label" htmlFor="username">
-                  Username or Email
+                  Username
                 </label>
                 <div className="field-wrap">
                   <svg className="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -145,7 +199,6 @@ export default function Login() {
                     type="button"
                     className="toggle-pass"
                     onClick={() => setShowPassword(!showPassword)}
-                    onClick={() => navigate("/otp")}
                     aria-label="Show/hide password"
                   >
                     {showPassword ? (
@@ -165,7 +218,7 @@ export default function Login() {
               </div>
 
               <div className="form-meta">
-                <label className="remember-wrap">
+                {/* <label className="remember-wrap">
                   <input
                     type="checkbox"
                     id="remember"
@@ -173,10 +226,10 @@ export default function Login() {
                     onChange={(e) => setRemember(e.target.checked)}
                   />
                   <span className="remember-label">Remember me</span>
-                </label>
+                </label> 
                 <a href="#" className="forgot-link">
                   Forgot password?
-                </a>
+                </a>*/}
               </div>
 
               <button
