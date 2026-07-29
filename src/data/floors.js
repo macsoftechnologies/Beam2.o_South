@@ -46,4 +46,12 @@ export const FLOOR_MAPPING = {
     "MP-Roof Plan",
     "MP-Tank Farm",
   ],
+  20: [
+    "JF2-Ground Floor",
+    "JF2-1st Floor",
+    "JF2-2nd Floor",
+    "JF2-3rd Floor",
+    "JF2-4th Floor",
+    "JF2-Roof Plan",
+  ]
 };

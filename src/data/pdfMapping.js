@@ -25,6 +25,15 @@ import MP1FLOORPDF from "../assets/drawings/m3south/plans/MP/MP-FirstFloor.pdf";
 import MP2NDFLOORPDF from "../assets/drawings/m3south/plans/MP/MP-SecondFloor.pdf";
 import MPROOFPLANPDF from "../assets/drawings/m3south/plans/MP/MP-RoofPlan.pdf";
 import MPTANKFARMPDF from "../assets/drawings/m3south/plans/MP/MP-TankFarm.pdf";
+
+import JF2GROUNDFLOORPDF from "../assets/drawings/m3south/plans/JF2/JF2-Ground Floor.pdf";
+import JF21FLOORPDF from "../assets/drawings/m3south/plans/JF2/JF2-1stFloor.pdf";
+import JF22NDFLOORPDF from "../assets/drawings/m3south/plans/JF2/JF2-2ndFloor.pdf";
+import JF23RDFLOORPDF from "../assets/drawings/m3south/plans/JF2/JF2-3rd Floor.pdf";
+import JF24RDFLOORPDF from "../assets/drawings/m3south/plans/JF2/JF2-4th Floor.pdf";
+import JF2ROOFPLANPDF from "../assets/drawings/m3south/plans/JF2/JF2-Roof Plan.pdf";
+
+
 export const FLOOR_PDFS = {
   // JF (Building 13)
   "13": {
@@ -80,4 +89,13 @@ export const FLOOR_PDFS = {
     "MP-Roof Plan": MPROOFPLANPDF,
     "MP-Tank Farm": MPTANKFARMPDF,
   },
+  "20": {
+    "JF2-Ground Floor": JF2GROUNDFLOORPDF,
+    "JF2-1st Floor": JF21FLOORPDF,
+    "JF2-2nd Floor": JF22NDFLOORPDF,
+    "JF2-3rd Floor": JF23RDFLOORPDF,
+    "JF2-4th Floor": JF24RDFLOORPDF,
+    "JF2-Roof Plan": JF2ROOFPLANPDF,
+  }
+
 };

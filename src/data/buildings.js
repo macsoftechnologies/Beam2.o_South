@@ -26,5 +26,9 @@ export const BUILDINGS = [
   {
     id: "19",
     name: "MP",
+  },
+  {
+    id: "20",
+    name: "JF2",
   }
 ];
