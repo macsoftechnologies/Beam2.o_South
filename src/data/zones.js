@@ -256,7 +256,11 @@ import MPTankFarmZoneSouth from "../assets/drawings/m3south/plans/MP/MP-TankFarm
 
 import JSZONEJSPDF from "../assets/drawings/m3south/plans/JS/JS.pdf"
 
-i
+import JEGROUNDFLOORZONEPDF from "../assets/drawings/m3south/plans/JE/JE-GroundFloor.pdf";
+import JE1STFLOORZONEPDF from "../assets/drawings/m3south/plans/JE/JE-1stFloor.pdf";
+import JE2NDFLOORZONEPDF from "../assets/drawings/m3south/plans/JE/JE-2ndFloor.pdf";
+import JEROOFPLANZONEPDF from "../assets/drawings/m3south/plans/JE/JE-RoofPlan.pdf";
+
 // JE-GroundFloor zone PDFs
 import JEGF2001ZW from "../assets/drawings/m3south/plans/JE/JE-GroundFloor/20-01-ZW.pdf";
 import JEGF2002ZW from "../assets/drawings/m3south/plans/JE/JE-GroundFloor/20-02-ZW.pdf";
