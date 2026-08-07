@@ -33,6 +33,14 @@ import JF23RDFLOORPDF from "../assets/drawings/m3south/plans/JF2/JF2-3rd Floor.p
 import JF24RDFLOORPDF from "../assets/drawings/m3south/plans/JF2/JF2-4th Floor.pdf";
 import JF2ROOFPLANPDF from "../assets/drawings/m3south/plans/JF2/JF2-Roof Plan.pdf";
 
+import JSZONEJSPDF from "../assets/drawings/m3south/plans/JS/JS.pdf";
+
+
+import JEGROUNDFLOORPDF from "../assets/drawings/m3south/plans/JE/JE-GroundFloor.pdf";
+import JE1FLOORPDF from "../assets/drawings/m3south/plans/JE/JE-1stFloor.pdf";
+import JE2NDFLOORPDF from "../assets/drawings/m3south/plans/JE/JE-2ndFloor.pdf";
+import JEROOFPLANPDF from "../assets/drawings/m3south/plans/JE/JE-RoofPlan.pdf";
+
 
 export const FLOOR_PDFS = {
   // JF (Building 13)
@@ -96,6 +104,16 @@ export const FLOOR_PDFS = {
     "JF2-3rd Floor": JF23RDFLOORPDF,
     "JF2-4th Floor": JF24RDFLOORPDF,
     "JF2-Roof Plan": JF2ROOFPLANPDF,
+  },
+  "21":
+  {
+    "JS": JSZONEJSPDF,
+  },
+  "22":
+  {
+    "JE-Ground Floor": JEGROUNDFLOORPDF,
+    "JE-1st Floor": JE1FLOORPDF,
+    "JE-2nd Floor": JE2NDFLOORPDF,
+    "JE-Roof Plan": JEROOFPLANPDF,
   }
-
 };
