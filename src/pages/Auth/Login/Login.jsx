@@ -122,11 +122,11 @@ export default function Login() {
                 <span className="dot"></span>Division 01
               </div>
               <h2 className="panel-title">
-                M3 <span>North</span>
+                M3 <span>South</span>
                 <br />Operations
               </h2>
               <p className="panel-desc">
-                Your secure gateway to the North regional operations platform —
+                Your secure gateway to the South regional operations platform —
                 project management, field coordination, and real-time reporting.
               </p>
             </div>
