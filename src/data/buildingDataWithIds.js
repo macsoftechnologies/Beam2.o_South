@@ -8685,5 +8685,707 @@ export const buildingDataWithIds = [
         ]
       }
     ]
+  },
+  {
+    "buildingId": "20",
+    "planType": "JF2 - Ground Floor",
+    "zoneList": [
+      {
+        "floorName": "ZONE BU",
+        "zoneSubList": [
+          {
+            "value": "S.702",
+            "className": "jf2-ground-zonebu-1",
+            "isSelected": false
+          },
+          {
+            "value": "S.703",
+            "className": "jf2-ground-zonebu-2",
+            "isSelected": false
+          },
+          {
+            "value": "S.701",
+            "className": "jf2-ground-zonebu-3",
+            "isSelected": false
+          },
+          {
+            "value": "S.711",
+            "className": "jf2-ground-zonebu-4",
+            "isSelected": false
+          },
+          {
+            "value": "S.710",
+            "className": "jf2-ground-zonebu-5",
+            "isSelected": false
+          },
+          {
+            "value": "S.709",
+            "className": "jf2-ground-zonebu-6",
+            "isSelected": false
+          },
+          {
+            "value": "S.700",
+            "className": "jf2-ground-zonebu-7",
+            "isSelected": false
+          },
+          {
+            "value": "S.705",
+            "className": "jf2-ground-zonebu-8",
+            "isSelected": false
+          },
+          {
+            "value": "S.SK702",
+            "className": "jf2-ground-zonebu-9",
+            "isSelected": false
+          },
+          {
+            "value": "S.708",
+            "className": "jf2-ground-zonebu-10",
+            "isSelected": false
+          },
+          {
+            "value": "S.707",
+            "className": "jf2-ground-zonebu-11",
+            "isSelected": false
+          },
+          {
+            "value": "S.706",
+            "className": "jf2-ground-zonebu-12",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE CU",
+        "zoneSubList": [
+          {
+            "value": "S.805",
+            "className": "jf2-ground-zonecu-1",
+            "isSelected": false
+          },
+          {
+            "value": "EL802",
+            "className": "jf2-ground-zonecu-2",
+            "isSelected": false
+          },
+          {
+            "value": "S.806",
+            "className": "jf2-ground-zonecu-3",
+            "isSelected": false
+          },
+          {
+            "value": "S.803",
+            "className": "jf2-ground-zonecu-4",
+            "isSelected": false
+          },
+          {
+            "value": "S.802",
+            "className": "jf2-ground-zonecu-5",
+            "isSelected": false
+          },
+          {
+            "value": "S.800",
+            "className": "jf2-ground-zonecu-6",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE STU-BU",
+        "zoneSubList": [
+          {
+            "value": "EL701",
+            "className": "jf2-ground-zonestu-bu-1",
+            "isSelected": false
+          },
+          {
+            "value": "S.704",
+            "className": "jf2-ground-zonestu-bu-2",
+            "isSelected": false
+          },
+          {
+            "value": "S.TR07",
+            "className": "jf2-ground-zonestu-bu-3",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE STU-CU",
+        "zoneSubList": [
+          {
+            "value": "S.TR08",
+            "className": "jf2-ground-zonestu-cu-1",
+            "isSelected": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "buildingId": "20",
+    "planType": "JF2 - 1st Floor",
+    "zoneList": [
+      {
+        "floorName": "ZONE BU",
+        "zoneSubList": [
+          {
+            "value": "1.701",
+            "className": "jf2-first-zonebu-1",
+            "isSelected": false
+          },
+          {
+            "value": "1.702",
+            "className": "jf2-first-zonebu-2",
+            "isSelected": false
+          },
+          {
+            "value": "1.700",
+            "className": "jf2-first-zonebu-3",
+            "isSelected": false
+          },
+          {
+            "value": "1.SK701",
+            "className": "jf2-first-zonebu-4",
+            "isSelected": false
+          },
+          {
+            "value": "1.SK702",
+            "className": "jf2-first-zonebu-5",
+            "isSelected": false
+          },
+          {
+            "value": "1.706",
+            "className": "jf2-first-zonebu-6",
+            "isSelected": false
+          },
+          {
+            "value": "1.707",
+            "className": "jf2-first-zonebu-7",
+            "isSelected": false
+          },
+          {
+            "value": "1.SK704",
+            "className": "jf2-first-zonebu-8",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE CU",
+        "zoneSubList": [
+          {
+            "value": "1.805",
+            "className": "jf2-first-zonecu-1",
+            "isSelected": false
+          },
+          {
+            "value": "1.SK806",
+            "className": "jf2-first-zonecu-2",
+            "isSelected": false
+          },
+          {
+            "value": "1.SK807",
+            "className": "jf2-first-zonecu-3",
+            "isSelected": false
+          },
+          {
+            "value": "1.803",
+            "className": "jf2-first-zonecu-4",
+            "isSelected": false
+          },
+          {
+            "value": "1.800",
+            "className": "jf2-first-zonecu-5",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE STU-BU",
+        "zoneSubList": [
+          {
+            "value": "EL701",
+            "className": "jf2-first-zonestu-bu-1",
+            "isSelected": false
+          },
+          {
+            "value": "1.704",
+            "className": "jf2-first-zonestu-bu-2",
+            "isSelected": false
+          },
+          {
+            "value": "1.TR07",
+            "className": "jf2-first-zonestu-bu-3",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE STU-CU",
+        "zoneSubList": [
+          {
+            "value": "EL802",
+            "className": "jf2-first-zonestu-cu-1",
+            "isSelected": false
+          },
+          {
+            "value": "1.806",
+            "className": "jf2-first-zonestu-cu-2",
+            "isSelected": false
+          },
+          {
+            "value": "1.TR08",
+            "className": "jf2-first-zonestu-cu-3",
+            "isSelected": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "buildingId": "20",
+    "planType": "JF2 - 2nd Floor",
+    "zoneList": [
+      {
+        "floorName": "ZONE BU",
+        "zoneSubList": [
+          {
+            "value": "2.07",
+            "className": "jf2-second-zonebu-1",
+            "isSelected": false
+          },
+          {
+            "value": "2.700",
+            "className": "jf2-second-zonebu-2",
+            "isSelected": false
+          },
+          {
+            "value": "2.707",
+            "className": "jf2-second-zonebu-3",
+            "isSelected": false
+          },
+          {
+            "value": "2.706",
+            "className": "jf2-second-zonebu-4",
+            "isSelected": false
+          },
+          {
+            "value": "2.SK701",
+            "className": "jf2-second-zonebu-5",
+            "isSelected": false
+          },
+          {
+            "value": "2.SK702",
+            "className": "jf2-second-zonebu-6",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE CU",
+        "zoneSubList": [
+          {
+            "value": "2.800",
+            "className": "jf2-second-zonecu-1",
+            "isSelected": false
+          },
+          {
+            "value": "2.SK805",
+            "className": "jf2-second-zonecu-2",
+            "isSelected": false
+          },
+          {
+            "value": "2.SK806",
+            "className": "jf2-second-zonecu-3",
+            "isSelected": false
+          },
+          {
+            "value": "2.SK807",
+            "className": "jf2-second-zonecu-4",
+            "isSelected": false
+          },
+          {
+            "value": "2.802",
+            "className": "jf2-second-zonecu-5",
+            "isSelected": false
+          },
+          {
+            "value": "2.703",
+            "className": "jf2-second-zonecu-6",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE STU-BU",
+        "zoneSubList": [
+          {
+            "value": "2.TR07",
+            "className": "jf2-second-zonestu-bu-1",
+            "isSelected": false
+          },
+          {
+            "value": "2.704",
+            "className": "jf2-second-zonestu-bu-2",
+            "isSelected": false
+          },
+          {
+            "value": "EL701",
+            "className": "jf2-second-zonestu-bu-3",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE STU-CU",
+        "zoneSubList": [
+          {
+            "value": "EL802",
+            "className": "jf2-second-zonestu-cu-1",
+            "isSelected": false
+          },
+          {
+            "value": "2.806",
+            "className": "jf2-second-zonestu-cu-2",
+            "isSelected": false
+          },
+          {
+            "value": "2.TR08",
+            "className": "jf2-second-zonestu-cu-3",
+            "isSelected": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "buildingId": "20",
+    "planType": "JF2 - 3rd Floor",
+    "zoneList": [
+      {
+        "floorName": "ZONE BU",
+        "zoneSubList": [
+          {
+            "value": "3.700",
+            "className": "jf2-third-zonebu-1",
+            "isSelected": false
+          },
+          {
+            "value": "3.SK701",
+            "className": "jf2-third-zonebu-2",
+            "isSelected": false
+          },
+          {
+            "value": "3.SK702",
+            "className": "jf2-third-zonebu-3",
+            "isSelected": false
+          },
+          {
+            "value": "3.707",
+            "className": "jf2-third-zonebu-4",
+            "isSelected": false
+          },
+          {
+            "value": "3.706",
+            "className": "jf2-third-zonebu-5",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE CU",
+        "zoneSubList": [
+          {
+            "value": "3.800",
+            "className": "jf2-third-zonecu-1",
+            "isSelected": false
+          },
+          {
+            "value": "3.SK805",
+            "className": "jf2-third-zonecu-2",
+            "isSelected": false
+          },
+          {
+            "value": "3.SK806",
+            "className": "jf2-third-zonecu-3",
+            "isSelected": false
+          },
+          {
+            "value": "3.SK807",
+            "className": "jf2-third-zonecu-4",
+            "isSelected": false
+          },
+          {
+            "value": "3.802",
+            "className": "jf2-third-zonecu-5",
+            "isSelected": false
+          },
+          {
+            "value": "3.711",
+            "className": "jf2-third-zonecu-6",
+            "isSelected": false
+          },
+          {
+            "value": "3.702",
+            "className": "jf2-third-zonecu-7",
+            "isSelected": false
+          },
+          {
+            "value": "3.703",
+            "className": "jf2-third-zonecu-8",
+            "isSelected": false
+          },
+          {
+            "value": "3.710",
+            "className": "jf2-third-zonecu-9",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE STU-BU",
+        "zoneSubList": [
+          {
+            "value": "3.TR07",
+            "className": "jf2-third-zonestu-bu-1",
+            "isSelected": false
+          },
+          {
+            "value": "3.704",
+            "className": "jf2-third-zonestu-bu-2",
+            "isSelected": false
+          },
+          {
+            "value": "EL701",
+            "className": "jf2-third-zonestu-bu-3",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE STU-CU",
+        "zoneSubList": [
+          {
+            "value": "EL802",
+            "className": "jf2-third-zonestu-cu-1",
+            "isSelected": false
+          },
+          {
+            "value": "3.806",
+            "className": "jf2-third-zonestu-cu-2",
+            "isSelected": false
+          },
+          {
+            "value": "3.TR08",
+            "className": "jf2-third-zonestu-cu-3",
+            "isSelected": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "buildingId": "20",
+    "planType": "JF2 - 4th Floor",
+    "zoneList": [
+      {
+        "floorName": "ZONE BU",
+        "zoneSubList": [
+          {
+            "value": "4.701",
+            "className": "jf2-fourth-zonebu-1",
+            "isSelected": false
+          },
+          {
+            "value": "4.702",
+            "className": "jf2-fourth-zonebu-2",
+            "isSelected": false
+          },
+          {
+            "value": "4.703",
+            "className": "jf2-fourth-zonebu-3",
+            "isSelected": false
+          },
+          {
+            "value": "4.704",
+            "className": "jf2-fourth-zonebu-4",
+            "isSelected": false
+          },
+          {
+            "value": "4.701",
+            "className": "jf2-fourth-zonebu-5",
+            "isSelected": false
+          },
+          {
+            "value": "4.700",
+            "className": "jf2-fourth-zonebu-6",
+            "isSelected": false
+          },
+          {
+            "value": "4.SK702",
+            "className": "jf2-fourth-zonebu-7",
+            "isSelected": false
+          },
+          {
+            "value": "4.710",
+            "className": "jf2-fourth-zonebu-8",
+            "isSelected": false
+          },
+          {
+            "value": "4.709",
+            "className": "jf2-fourth-zonebu-9",
+            "isSelected": false
+          },
+          {
+            "value": "4.707",
+            "className": "jf2-fourth-zonebu-10",
+            "isSelected": false
+          },
+          {
+            "value": "4.706",
+            "className": "jf2-fourth-zonebu-11",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE CU",
+        "zoneSubList": [
+          {
+            "value": "4.801",
+            "className": "jf2-fourth-zonecu-1",
+            "isSelected": false
+          },
+          {
+            "value": "4.806",
+            "className": "jf2-fourth-zonecu-2",
+            "isSelected": false
+          },
+          {
+            "value": "4.SK807",
+            "className": "jf2-fourth-zonecu-3",
+            "isSelected": false
+          },
+          {
+            "value": "4.802",
+            "className": "jf2-fourth-zonecu-4",
+            "isSelected": false
+          },
+          {
+            "value": "4.800",
+            "className": "jf2-fourth-zonecu-5",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE STU-BU",
+        "zoneSubList": [
+          {
+            "value": "4.TR07",
+            "className": "jf2-fourth-zonestu-bu-1",
+            "isSelected": false
+          },
+          {
+            "value": "EL701",
+            "className": "jf2-fourth-zonestu-bu-2",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE STU-CU",
+        "zoneSubList": [
+          {
+            "value": "EL802",
+            "className": "jf2-fourth-zonestu-cu-1",
+            "isSelected": false
+          },
+          {
+            "value": "4.TR08",
+            "className": "jf2-fourth-zonestu-cu-2",
+            "isSelected": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "buildingId": "20",
+    "planType": "JF2 - Roof Plan",
+    "zoneList": [
+      {
+        "floorName": "ZONE BU",
+        "zoneSubList": [
+          {
+            "value": "ZONE BU",
+            "className": "jf2-roof-zonebu-1",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE CU",
+        "zoneSubList": [
+          {
+            "value": "ZONE CU",
+            "className": "jf2-roof-zonecu-1",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE STU-BU",
+        "zoneSubList": [
+          {
+            "value": "5.TR07",
+            "className": "jf2-roof-zonestu-bu-1",
+            "isSelected": false
+          }
+        ]
+      },
+      {
+        "floorName": "ZONE STU-CU",
+        "zoneSubList": [
+          {
+            "value": "5.TR08",
+            "className": "jf2-roof-zonestu-cu-1",
+            "isSelected": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "buildingId": "21",
+    "planType": "JS",
+    "zoneList": [
+      {
+        "floorName": "ZoneJS",
+        "zoneSubList": [
+          {
+            "value": "TR01",
+            "className": "js-zonejs-1",
+            "isSelected": false
+          },
+          {
+            "value": "K.001",
+            "className": "js-zonejs-2",
+            "isSelected": false
+          },
+          {
+            "value": "K.002",
+            "className": "js-zonejs-3",
+            "isSelected": false
+          },
+          {
+            "value": "K.003",
+            "className": "js-zonejs-4",
+            "isSelected": false
+          }
+        ]
+      }
+    ]
   }
 ];
