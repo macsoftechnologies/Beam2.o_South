@@ -27,6 +27,7 @@ import NewRequest from "../pages/Request/NewRequest/NewRequest";
 import Reports from "../pages/Reports/Reports";
 import Activity from "../pages/Settings/Activity/Activity";
 import SafetyPrecaution from "../pages/Settings/SafetyPrecaution/SafetyPrecaution";
+import ZoneRoomSeeder from "../pages/Settings/ZoneRoomSeeder";
 import LogsReports from "../pages/LogsReports/LogsReports";
 import LogHistory from "../pages/LogHistroy/LogHistroy";
 import ExecutiveDashboard from "../pages/ExecutiveDashboard/ExecutiveDashboard";
@@ -176,6 +177,14 @@ function AppRoutes() {
             element={
               <ProtectedRoute allowedRoles={["Admin"]}>
                 <SafetyPrecaution />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/seed-zones-rooms"
+            element={
+              <ProtectedRoute allowedRoles={["Admin"]}>
+                <ZoneRoomSeeder />
               </ProtectedRoute>
             }
           />
