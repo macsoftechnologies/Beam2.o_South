@@ -1,7 +1,10 @@
 import { useMemo, useState, useRef, useEffect } from "react";
+import ReactDOM from "react-dom";
+import { FaSearch } from "react-icons/fa";
 import "../../styles/pages.css";
 import "../../../forms/styles/forms.css";
 import "./NewRequest.css";
+import Modal from "../../../components/common/Modal/Modal";
 
 const AnalogTimePicker = ({ initialTime, onSave, onCancel }) => {
   const [hour, setHour] = useState(12);
@@ -119,53 +122,250 @@ const AnalogTimePicker = ({ initialTime, onSave, onCancel }) => {
   const handX = center + handLength * Math.cos(handRad);
   const handY = center + handLength * Math.sin(handRad);
 
+  return ReactDOM.createPortal(
+    <div
+      className="timekeeper-modal-overlay"
+      onClick={(e) => {
+        e.stopPropagation();
+        onCancel();
+      }}
+    >
+      <div className="timekeeper-modal-container custom-picker" onClick={(e) => e.stopPropagation()}>
+        <div className="timekeeper-header">
+          <div className="timekeeper-time-display">
+            <span
+              className={`timekeeper-time-unit ${mode === "hour" ? "active" : ""}`}
+              onClick={(e) => { e.stopPropagation(); setMode("hour"); }}
+            >
+              {String(hour).padStart(2, "0")}
+            </span>
+            <span className="timekeeper-time-colon">:</span>
+            <span
+              className={`timekeeper-time-unit ${mode === "minute" ? "active" : ""}`}
+              onClick={(e) => { e.stopPropagation(); setMode("minute"); }}
+            >
+              {String(minute).padStart(2, "0")}
+            </span>
+          </div>
+        </div>
+
+        <div className="timekeeper-dial-wrapper">
+          <div className="timekeeper-dial" style={{ width: `${size}px`, height: `${size}px` }}>
+            <svg className="timekeeper-hand-svg" width={size} height={size}>
+              <line
+                x1={center}
+                y1={center}
+                x2={handX}
+                y2={handY}
+                stroke="#0ea5e9"
+                strokeWidth="2"
+              />
+              <circle cx={center} cy={center} r="4" fill="#0ea5e9" />
+              <circle cx={handX} cy={handY} r="14" fill="rgba(14, 165, 233, 0.3)" />
+              <circle cx={handX} cy={handY} r="4" fill="#0ea5e9" />
+            </svg>
+            {mode === "hour" ? renderHourNumbers() : renderMinuteNumbers()}
+          </div>
+        </div>
+
+        <div className="timekeeper-modal-actions">
+          <button type="button" className="timekeeper-modal-btn" onClick={(e) => { e.stopPropagation(); onCancel(); }}>
+            Cancel
+          </button>
+          <button type="button" className="timekeeper-modal-btn" onClick={handleSave}>
+            OK
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+};
+
+const SearchableSingleSelect = ({ options = [], value, onChange, placeholder, disabled, className, valueKey = "id", labelKey = "subContractorName" }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const selectedOption = options.find(o => String(o[valueKey] ?? o.value ?? o.id) === String(value));
+  const displayText = selectedOption ? (selectedOption[labelKey] || selectedOption.label || selectedOption.name) : placeholder;
+
+  const filteredOptions = useMemo(() => {
+    if (!search.trim()) return options;
+    const q = search.toLowerCase();
+    return options.filter(o => {
+      const label = o[labelKey] || o.label || o.name || "";
+      return String(label).toLowerCase().includes(q);
+    });
+  }, [options, search, labelKey]);
+
   return (
-    <div className="timekeeper-modal-container custom-picker" onClick={(e) => e.stopPropagation()}>
-      <div className="timekeeper-header">
-        <div className="timekeeper-time-display">
-          <span
-            className={`timekeeper-time-unit ${mode === "hour" ? "active" : ""}`}
-            onClick={(e) => { e.stopPropagation(); setMode("hour"); }}
-          >
-            {String(hour).padStart(2, "0")}
-          </span>
-          <span className="timekeeper-time-colon">:</span>
-          <span
-            className={`timekeeper-time-unit ${mode === "minute" ? "active" : ""}`}
-            onClick={(e) => { e.stopPropagation(); setMode("minute"); }}
-          >
-            {String(minute).padStart(2, "0")}
-          </span>
-        </div>
-      </div>
-
-      <div className="timekeeper-dial-wrapper">
-        <div className="timekeeper-dial" style={{ width: `${size}px`, height: `${size}px` }}>
-          <svg className="timekeeper-hand-svg" width={size} height={size}>
-            <line
-              x1={center}
-              y1={center}
-              x2={handX}
-              y2={handY}
-              stroke="#0ea5e9"
-              strokeWidth="2"
-            />
-            <circle cx={center} cy={center} r="4" fill="#0ea5e9" />
-            <circle cx={handX} cy={handY} r="14" fill="rgba(14, 165, 233, 0.3)" />
-            <circle cx={handX} cy={handY} r="4" fill="#0ea5e9" />
+    <div ref={containerRef} style={{ position: "relative", width: "100%" }}>
+      <div
+        className={`df-input ${className || ""}`}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          cursor: disabled ? "not-allowed" : "pointer",
+          userSelect: "none",
+          opacity: disabled ? 0.6 : 1,
+          color: selectedOption ? "var(--text-main, #f9fafb)" : "var(--text-muted, #9ca3af)"
+        }}
+      >
+        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          {displayText}
+        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          {value && !disabled && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onChange({ target: { value: "" } });
+              }}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#9ca3af",
+                cursor: "pointer",
+                padding: "2px",
+                fontSize: "12px"
+              }}
+            >
+              ✕
+            </button>
+          )}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>
+            <polyline points="6 9 12 15 18 9" />
           </svg>
-          {mode === "hour" ? renderHourNumbers() : renderMinuteNumbers()}
         </div>
       </div>
 
-      <div className="timekeeper-modal-actions">
-        <button type="button" className="timekeeper-modal-btn" onClick={(e) => { e.stopPropagation(); onCancel(); }}>
-          Cancel
-        </button>
-        <button type="button" className="timekeeper-modal-btn" onClick={handleSave}>
-          OK
-        </button>
-      </div>
+      {isOpen && !disabled && (
+        <div
+          style={{
+            position: "absolute",
+            top: "calc(100% + 4px)",
+            left: 0,
+            width: "100%",
+            maxHeight: "260px",
+            backgroundColor: "var(--bg-card, #111827)",
+            border: "1.5px solid var(--border-color, #374151)",
+            borderRadius: "8px",
+            zIndex: 99999,
+            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden"
+          }}
+        >
+          <div style={{ padding: "8px", borderBottom: "1px solid var(--border-color, #374151)", display: "flex", gap: "6px" }}>
+            <input
+              type="text"
+              placeholder="Search contractor..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              autoFocus
+              style={{
+                flex: 1,
+                padding: "6px 10px",
+                fontSize: "13px",
+                borderRadius: "6px",
+                border: "1px solid var(--border-color, #374151)",
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                color: "var(--text-main, #f9fafb)",
+                outline: "none"
+              }}
+            />
+            <button
+              type="button"
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                padding: "6px 10px",
+                backgroundColor: "var(--primary-color, #3b82f6)",
+                border: "none",
+                borderRadius: "6px",
+                color: "#fff",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+            >
+              <FaSearch size={12} />
+            </button>
+          </div>
+
+          <div style={{ overflowY: "auto", maxHeight: "200px", padding: "4px 0" }}>
+            <div
+              onClick={() => {
+                onChange({ target: { value: "" } });
+                setIsOpen(false);
+                setSearch("");
+              }}
+              style={{
+                padding: "8px 12px",
+                cursor: "pointer",
+                fontSize: "13px",
+                color: "var(--text-muted, #9ca3af)",
+                backgroundColor: !value ? "rgba(255,255,255,0.05)" : "transparent"
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)"}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = !value ? "rgba(255,255,255,0.05)" : "transparent"}
+            >
+              {placeholder}
+            </div>
+
+            {filteredOptions.map((o) => {
+              const val = String(o[valueKey] ?? o.value ?? o.id);
+              const label = o[labelKey] || o.label || o.name;
+              const isSelected = String(value) === val;
+
+              return (
+                <div
+                  key={val}
+                  onClick={() => {
+                    onChange({ target: { value: val } });
+                    setIsOpen(false);
+                    setSearch("");
+                  }}
+                  style={{
+                    padding: "8px 12px",
+                    cursor: "pointer",
+                    fontSize: "13px",
+                    color: isSelected ? "#00e5a0" : "var(--text-main, #f9fafb)",
+                    backgroundColor: isSelected ? "rgba(0, 229, 160, 0.1)" : "transparent",
+                    fontWeight: isSelected ? "600" : "normal"
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = isSelected ? "rgba(0, 229, 160, 0.15)" : "rgba(255, 255, 255, 0.08)"}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = isSelected ? "rgba(0, 229, 160, 0.1)" : "transparent"}
+                >
+                  {label}
+                </div>
+              );
+            })}
+
+            {filteredOptions.length === 0 && (
+              <div style={{ padding: "12px", textAlign: "center", color: "#9ca3af", fontSize: "13px" }}>
+                No contractors found
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -287,6 +487,18 @@ function NewRequest() {
 
   const [building, setBuilding] = useState("");
   const [level, setLevel] = useState("");
+  const currentUser = useMemo(() => getUser(), []);
+  const userRoles = useMemo(() => {
+    const roleVal = currentUser?.role || currentUser?.userType || "";
+    if (typeof roleVal === "string") {
+      return roleVal.split(",").map(r => r.trim().toLowerCase());
+    }
+    if (Array.isArray(roleVal)) {
+      return roleVal.map(r => String(r).trim().toLowerCase());
+    }
+    return [String(roleVal).trim().toLowerCase()];
+  }, [currentUser]);
+  const isSubcontractor = userRoles.includes("subcontractor");
   const [isnewrequestcreated, setIsnewrequestcreated] = useState(false);
   const [selectedRooms, setSelectedRooms] = useState([]);
   const [selectedZone, setSelectedZone] = useState(null);
@@ -294,12 +506,21 @@ function NewRequest() {
   const [isElectricalDropdownOpen, setIsElectricalDropdownOpen] = useState(false);
   const [isMechanicalDropdownOpen, setIsMechanicalDropdownOpen] = useState(false);
   const [isPrecautionsDropdownOpen, setIsPrecautionsDropdownOpen] = useState(false);
+  const [eleSearch, setEleSearch] = useState("");
+  const [mechSearch, setMechSearch] = useState("");
+  const [electricalCategory, setElectricalCategory] = useState("");
+  const [isFetchingEle, setIsFetchingEle] = useState(false);
+  const [isFetchingMech, setIsFetchingMech] = useState(false);
+  const electricalWorksNamesCache = useRef({});
+  const mechanicalWorksNamesCache = useRef({});
 
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [fieldErrors, setFieldErrors] = useState({});
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
   const [showNewEndPicker, setShowNewEndPicker] = useState(false);
+  const [showRamsHoldModal, setShowRamsHoldModal] = useState(false);
+  const [isSubmittingPermit, setIsSubmittingPermit] = useState(false);
   const [tempStartTime, setTempStartTime] = useState("");
   const [tempEndTime, setTempEndTime] = useState("");
   const [tempNewEndTime, setTempNewEndTime] = useState("");
@@ -570,11 +791,21 @@ function NewRequest() {
           getBuildings(1, 1000),
           getFloors(1, 1000),
           getZones(1, 1000),
-          getRooms(1, 1000),
+          getRooms(1, 20000),
           getPrecautions(1, 1000)
         ]);
 
-        setContractors(contractorsRes?.data?.rows ?? contractorsRes?.data ?? contractorsRes ?? []);
+        const rawContractors = contractorsRes?.data?.rows ?? contractorsRes?.data ?? contractorsRes ?? [];
+        const loadedContractors = rawContractors
+          .slice()
+          .sort((a, b) => (a.subContractorName || "").localeCompare(b.subContractorName || "", undefined, { sensitivity: "base" }));
+        setContractors(loadedContractors);
+        if (isSubcontractor && loadedContractors.length > 0) {
+          setFormData(prev => ({
+            ...prev,
+            Sub_Contractor_Id: String(loadedContractors[0].id)
+          }));
+        }
         setActivitiesList(activitiesRes?.data?.rows ?? activitiesRes?.data ?? activitiesRes ?? []);
         setElectricalWorksList(electricalRes?.data ?? []);
         setMechanicalWorksList(mechanicalRes?.data ?? []);
@@ -593,6 +824,57 @@ function NewRequest() {
     loadSelectors();
   }, []);
 
+  // Cache electrical and mechanical works names to persist them during filtering
+  useEffect(() => {
+    electricalWorksList.forEach(x => {
+      if (x.id) {
+        electricalWorksNamesCache.current[String(x.id)] = x.electrical_works;
+      }
+    });
+  }, [electricalWorksList]);
+
+  useEffect(() => {
+    mechanicalWorksList.forEach(x => {
+      if (x.id) {
+        mechanicalWorksNamesCache.current[String(x.id)] = x.mechanical_works || x.name;
+      }
+    });
+  }, [mechanicalWorksList]);
+
+  // Fetch electrical works dynamically on search or category select
+  useEffect(() => {
+    if (formData.work_type !== "Electrical Works") return;
+    const delayDebounce = setTimeout(async () => {
+      setIsFetchingEle(true);
+      try {
+        const res = await getElectricalWorks(1, 1000, eleSearch, electricalCategory);
+        setElectricalWorksList(res?.data ?? []);
+      } catch (err) {
+        console.error("Error fetching electrical works:", err);
+      } finally {
+        setIsFetchingEle(false);
+      }
+    }, 300);
+    return () => clearTimeout(delayDebounce);
+  }, [electricalCategory, eleSearch, formData.work_type]);
+
+  // Fetch mechanical works dynamically on search
+  useEffect(() => {
+    if (formData.work_type !== "Mechanical Works") return;
+    const delayDebounce = setTimeout(async () => {
+      setIsFetchingMech(true);
+      try {
+        const res = await getMechanicalWorks(1, 1000, mechSearch);
+        setMechanicalWorksList(res?.data ?? []);
+      } catch (err) {
+        console.error("Error fetching mechanical works:", err);
+      } finally {
+        setIsFetchingMech(false);
+      }
+    }, 300);
+    return () => clearTimeout(delayDebounce);
+  }, [mechSearch, formData.work_type]);
+
   // Handle click outside for precautions dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -605,6 +887,16 @@ function NewRequest() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  // Default subcontractor id if current user is a contractor
+  useEffect(() => {
+    if (isSubcontractor && currentUser?.typeId) {
+      setFormData(prev => ({
+        ...prev,
+        Sub_Contractor_Id: String(currentUser.typeId)
+      }));
+    }
+  }, [isSubcontractor, currentUser]);
 
   // Bind edit request data once selectors have finished loading
   useEffect(() => {
@@ -646,7 +938,7 @@ function NewRequest() {
           matchedNames = editRoomParts;
         }
 
-        setSelectedRooms(matchedNames);
+        setSelectedRooms(Array.from(new Set(matchedNames)));
 
         // Auto-set selectedZone by matching zone_name from the fetched request
         // against the zone entries for the selected level in ZONE_MAPPING
@@ -1009,7 +1301,7 @@ function NewRequest() {
       if (start) {
         if (shift) {
           if (newEnd && newEnd >= start) {
-            next.new_end_time = "For night shift, new end time must be earlier than start time.";
+            next.new_end_time = "For working after midnight, new end time must be earlier than start time.";
           }
         } else {
           if (end && start >= end) {
@@ -1026,6 +1318,9 @@ function NewRequest() {
       if (field === "work_type") {
         updated.electrical_works = [];
         updated.mechanical_works = [];
+        setEleSearch("");
+        setMechSearch("");
+        setElectricalCategory("");
       }
 
       if (field === "night_shift") {
@@ -1072,11 +1367,7 @@ function NewRequest() {
   }, [roomsList, zonesList]);
 
   const handleRoomsSelected = (rooms, zone) => {
-    const zoneRoomNames = zone.rooms.map(r => typeof r === "object" ? r.name : r);
-    setSelectedRooms(prev => {
-      const filtered = prev.filter(r => !zoneRoomNames.includes(r));
-      return [...filtered, ...rooms];
-    });
+    setSelectedRooms(Array.from(new Set(rooms)));
     setSelectedZone(zone);
   };
 
@@ -1327,7 +1618,7 @@ function NewRequest() {
       if (formData.night_shift) {
         if (formData.new_end_time) {
           if (formData.new_end_time >= formData.Start_Time) {
-            errors.new_end_time = "For night shift, new end time must be earlier than start time.";
+            errors.new_end_time = "For working after midnight, new end time must be earlier than start time.";
           }
         }
       } else {
@@ -1405,35 +1696,45 @@ function NewRequest() {
     }
 
     // Find Room IDs — multi-strategy matching
-    const selectedRoomsLower = selectedRooms.map(n => n.toLowerCase().trim());
-    let matchedRoomIds = [];
-    if (selectedRoomsLower.length > 0) {
-      matchedRoomIds = selectedRooms.map(roomName => {
-        const roomNameLower = roomName.toLowerCase().trim();
-        // 1. Try matching with building + floor
+    let Room_Nos = "";
+    if (selectedRooms.length > 0) {
+      const getRoomNameStr = (r) => String(r.room_name || r.room_nos || r.room_number || r.roomName || r.name || "").toLowerCase().trim();
+      const resolvedTokens = selectedRooms.map(roomItem => {
+        if (!roomItem) return null;
+        if (typeof roomItem === "object") {
+          const directId = roomItem.room_id ?? roomItem.id;
+          if (directId) return String(directId);
+          roomItem = roomItem.room_name || roomItem.name || roomItem.room_nos || "";
+        }
+        const roomStr = String(roomItem).trim();
+        if (/^\d+$/.test(roomStr)) {
+          return roomStr;
+        }
+        const roomNameLower = roomStr.toLowerCase();
         let matched = roomsList.find(r =>
-          (r.room_name || "").toLowerCase().trim() === roomNameLower &&
-          (Floor_Id ? String(r.fl_id) === String(Floor_Id) : true) &&
+          getRoomNameStr(r) === roomNameLower &&
+          (Floor_Id ? String(r.fl_id || r.floor_id) === String(Floor_Id) : true) &&
           (Building_Id ? String(r.building_id) === String(Building_Id) : true)
         );
-        // 2. Try matching with building
         if (!matched) {
           matched = roomsList.find(r =>
-            (r.room_name || "").toLowerCase().trim() === roomNameLower &&
+            getRoomNameStr(r) === roomNameLower &&
             (Building_Id ? String(r.building_id) === String(Building_Id) : true)
           );
         }
-        // 3. Match by name alone
         if (!matched) {
-          matched = roomsList.find(r =>
-            (r.room_name || "").toLowerCase().trim() === roomNameLower
-          );
+          matched = roomsList.find(r => getRoomNameStr(r) === roomNameLower);
         }
-        return matched ? (matched.room_id ?? matched.id) : null;
-      }).filter(id => id !== null && id !== undefined);
+        if (!matched) {
+          const cleanLower = roomNameLower.replace(/[^a-z0-9]/g, "");
+          matched = roomsList.find(r => getRoomNameStr(r).replace(/[^a-z0-9]/g, "") === cleanLower);
+        }
+        return matched ? String(matched.room_id ?? matched.id) : roomStr;
+      }).filter(Boolean);
+
+      Room_Nos = [...new Set(resolvedTokens)].join(",");
     }
 
-    let Room_Nos = [...new Set(matchedRoomIds)].join(",");
     if (!Room_Nos && isEditMode && editRequest?.Room_Nos) {
       Room_Nos = String(editRequest.Room_Nos);
     }
@@ -1473,7 +1774,7 @@ function NewRequest() {
       if (formData.night_shift) {
         if (formData.new_end_time) {
           if (formData.new_end_time >= formData.Start_Time) {
-            timeErrors.new_end_time = "For night shift, new end time must be earlier than start time.";
+            timeErrors.new_end_time = "For working after midnight, new end time must be earlier than start time.";
           }
         }
       } else {
@@ -1540,13 +1841,11 @@ function NewRequest() {
       return;
     }
 
-    // Debug log — remove after confirming Room_Nos works correctly
     console.log("[Room_Nos Debug]", {
       selectedRooms,
       Floor_Id,
       matchedZoneIds,
       roomsList: roomsList.slice(0, 5),
-      matchedRoomIds,
       Room_Nos,
     });
 
@@ -1599,7 +1898,7 @@ function NewRequest() {
       Foreman_Phone_Number: formData.Foreman_Phone_Number || "",
       rams_number: formData.rams_number || "",
       description_of_activity: formData.description_of_activity || "",
-      Site_Id: 5, // M3 South
+      Site_Id: 5, // M3 North
       Company_Name: formData.Company_Name || "M3 South",
       Hot_work: formData.Hot_work === "1" ? 1 : 0,
       working_on_electrical_system: formData.working_on_electrical_system === "1" ? 1 : 0,
@@ -1819,6 +2118,7 @@ function NewRequest() {
       });
     }
 
+    setIsSubmittingPermit(true);
     try {
       if (isEditMode) {
         // Submit update request
@@ -1860,15 +2160,18 @@ function NewRequest() {
       console.error(err);
       const errMsg = err.response?.data?.message || err.message || "Operation failed. Please try again.";
       showError(errMsg);
+    } finally {
+      setIsSubmittingPermit(false);
     }
   };
 
   const toggleRoomSelection = (roomName) => {
-    setSelectedRooms(prev =>
-      prev.includes(roomName)
+    setSelectedRooms(prev => {
+      const updated = prev.includes(roomName)
         ? prev.filter(r => r !== roomName)
-        : [...prev, roomName]
-    );
+        : [...prev, roomName];
+      return Array.from(new Set(updated));
+    });
   };
 
   if (isnewrequestcreated) {
@@ -1918,20 +2221,26 @@ function NewRequest() {
             <div className="df-grid" style={{ marginTop: "16px" }}>
               <div className="df-field">
                 <label className="df-label">Contractor <span className="req-star">*</span></label>
-                <select
-                  className={`df-select${fieldErrors.Sub_Contractor_Id ? " field-input-error" : ""}`}
-                  value={formData.Sub_Contractor_Id}
-                  onChange={(e) => handleFieldChange("Sub_Contractor_Id", e.target.value)}
-                >
-                  <option value="">Select Contractor</option>
-                  {contractors.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.subContractorName}
-                    </option>
-                  ))}
-                </select>
+                {isSubcontractor ? (
+                  <input
+                    type="text"
+                    className="df-input df-readonly"
+                    value={contractors.length > 0 ? (contractors.find(c => String(c.id) === String(formData.Sub_Contractor_Id))?.subContractorName || contractors[0]?.subContractorName) : "Loading..."}
+                    readOnly
+                  />
+                ) : (
+                  <SearchableSingleSelect
+                    options={contractors}
+                    value={formData.Sub_Contractor_Id}
+                    onChange={(e) => handleFieldChange("Sub_Contractor_Id", e.target.value)}
+                    placeholder="Select Contractor"
+                    disabled={isSubcontractor}
+                    className={fieldErrors.Sub_Contractor_Id ? "field-input-error" : ""}
+                  />
+                )}
                 {fieldErrors.Sub_Contractor_Id && <span className="field-error">{fieldErrors.Sub_Contractor_Id}</span>}
               </div>
+
               <div className="df-field">
                 <label className="df-label">Sub Contractor <span className="req-star">*</span></label>
                 <input
@@ -2039,6 +2348,79 @@ function NewRequest() {
               {fieldErrors.description_of_activity && <span className="field-error">{fieldErrors.description_of_activity}</span>}
             </div>
           </div>
+
+          {/* Attachments Section */}
+          <div className="form-card">
+            <h2 className="form-card-title">Attachments</h2>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "24px", alignItems: "start" }}>
+              <div>
+                <button
+                  type="button"
+                  className="logo-btn-sty"
+                  onClick={triggerFileInput}
+                >
+                  Add Files
+                </button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  style={{ display: "none" }}
+                  multiple
+                />
+              </div>
+              <div className="file-list-container">
+                {isEditMode ? (
+                  existingFiles.map((file, idx) => (
+                    <div key={file.id || idx} className="file-item">
+                      <a
+                        href={getFileUrl(file)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: "#3b82f6", textDecoration: "underline", cursor: "pointer", fontWeight: 500 }}
+                      >
+                        {file.name || "Attachment"}
+                      </a>
+                      <button
+                        type="button"
+                        className="file-remove-btn"
+                        onClick={() => handleRemoveFile(idx, file.id)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  uploadedFiles.map((file, idx) => (
+                    <div key={idx} className="file-item">
+                      <a
+                        href={file instanceof File ? URL.createObjectURL(file) : "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: "#3b82f6", textDecoration: "underline", cursor: "pointer", fontWeight: 500 }}
+                      >
+                        {file.name}
+                      </a>
+                      <button
+                        type="button"
+                        className="file-remove-btn"
+                        onClick={() => handleRemoveFile(idx)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))
+                )}
+                {isEditMode && existingFiles.length === 0 && (
+                  <span style={{ color: "#9ca3af", fontStyle: "italic", fontSize: "13px" }}>No files uploaded yet.</span>
+                )}
+                {!isEditMode && uploadedFiles.length === 0 && (
+                  <span style={{ color: "#9ca3af", fontStyle: "italic", fontSize: "13px" }}>No files uploaded yet.</span>
+                )}
+              </div>
+            </div>
+          </div>
+
           {/* Schedule Section */}
           <div className="form-card">
             <h2 className="form-card-title">Schedule & Location</h2>
@@ -2126,7 +2508,7 @@ function NewRequest() {
                     checked={formData.night_shift}
                     onChange={(e) => handleFieldChange("night_shift", e.target.checked)}
                   />
-                  <span className="checkbox-label">Is this a night shift?</span>
+                  <span className="checkbox-label">Is this working after midnight?</span>
                 </label>
               </div>
             </div>
@@ -2134,7 +2516,7 @@ function NewRequest() {
             {formData.night_shift && (
               <div className="df-grid night-shift-subform" style={{ marginTop: "16px" }}>
                 <div className="df-field">
-                  <label className="df-label">New Date (Night Shift) <span className="req-star">*</span></label>
+                  <label className="df-label">New Date (Working After Midnight) <span className="req-star">*</span></label>
                   <input
                     type="date"
                     className={`df-input${fieldErrors.new_date ? " field-input-error" : ""}${formData.night_shift ? " df-readonly" : ""}`}
@@ -2146,7 +2528,7 @@ function NewRequest() {
                   {fieldErrors.new_date && <span className="field-error">{fieldErrors.new_date}</span>}
                 </div>
                 <div className="df-field">
-                  <label className="df-label">New End Time (Night Shift) <span className="req-star">*</span></label>
+                  <label className="df-label">New End Time (Working After Midnight) <span className="req-star">*</span></label>
                   <input
                     type="text"
                     placeholder="00:00"
@@ -2290,78 +2672,6 @@ function NewRequest() {
             </div>
           </div>
 
-          {/* Attachments Section */}
-          <div className="form-card">
-            <h2 className="form-card-title">Attachments</h2>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "24px", alignItems: "start" }}>
-              <div>
-                <button
-                  type="button"
-                  className="logo-btn-sty"
-                  onClick={triggerFileInput}
-                >
-                  Add Files
-                </button>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  style={{ display: "none" }}
-                  multiple
-                />
-              </div>
-              <div className="file-list-container">
-                {isEditMode ? (
-                  existingFiles.map((file, idx) => (
-                    <div key={file.id || idx} className="file-item">
-                      <a
-                        href={getFileUrl(file)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: "#3b82f6", textDecoration: "underline", cursor: "pointer", fontWeight: 500 }}
-                      >
-                        {file.name || "Attachment"}
-                      </a>
-                      <button
-                        type="button"
-                        className="file-remove-btn"
-                        onClick={() => handleRemoveFile(idx, file.id)}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  uploadedFiles.map((file, idx) => (
-                    <div key={idx} className="file-item">
-                      <a
-                        href={file instanceof File ? URL.createObjectURL(file) : "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: "#3b82f6", textDecoration: "underline", cursor: "pointer", fontWeight: 500 }}
-                      >
-                        {file.name}
-                      </a>
-                      <button
-                        type="button"
-                        className="file-remove-btn"
-                        onClick={() => handleRemoveFile(idx)}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))
-                )}
-                {isEditMode && existingFiles.length === 0 && (
-                  <span style={{ color: "#9ca3af", fontStyle: "italic", fontSize: "13px" }}>No files uploaded yet.</span>
-                )}
-                {!isEditMode && uploadedFiles.length === 0 && (
-                  <span style={{ color: "#9ca3af", fontStyle: "italic", fontSize: "13px" }}>No files uploaded yet.</span>
-                )}
-              </div>
-            </div>
-          </div>
-
           {/* Type of Work - ONLY shown if permit_type is Commissioning */}
           {formData.permit_type === "Commissioning" && (
             <div className="form-card">
@@ -2382,60 +2692,100 @@ function NewRequest() {
                 </div>
 
                 {formData.work_type === "Electrical Works" && (
-                  <div className="df-field" ref={electricalDropdownRef} style={{ position: "relative" }}>
-                    <label className="df-label">Electrical Works <span className="req-star">*</span></label>
-                    <div style={{ position: "relative" }}>
-                      <input
-                        type="text"
-                        className={`df-input${fieldErrors.electrical_works ? " field-input-error" : ""}`}
-                        style={{ cursor: "pointer", background: "rgba(255, 255, 255, 0.02)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
-                        placeholder="Click to select electrical works..."
-                        value={
-                          formData.electrical_works?.length > 0
-                            ? formData.electrical_works.map(id => electricalWorksList.find(x => String(x.id) === String(id))?.electrical_works || id).join(", ")
-                            : ""
-                        }
-                        readOnly
-                        onClick={() => setIsElectricalDropdownOpen(prev => !prev)}
-                      />
-                      <i className="ti ti-chevron-down" style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", color: "#9ca3af", pointerEvents: "none", fontSize: "16px" }} />
+                  <>
+                    <div className="df-field">
+                      <label className="df-label">Electrical Category</label>
+                      <select
+                        className="df-select"
+                        value={electricalCategory}
+                        onChange={(e) => {
+                          setElectricalCategory(e.target.value);
+                          setEleSearch(""); // Reset search query on category switch
+                        }}
+                      >
+                        <option value="">All Categories</option>
+                        <option value="Panel Numbers">Panel Numbers</option>
+                        <option value="System Numbers">System Numbers</option>
+                      </select>
                     </div>
-                    {fieldErrors.electrical_works && <span className="field-error">{fieldErrors.electrical_works}</span>}
 
-                    {isElectricalDropdownOpen && groupedElectrical.length > 0 && (
-                      <div className="zone-rooms-dropdown" style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: "8px", padding: "16px", marginTop: "8px", boxShadow: "var(--shadow-md)", position: "absolute", top: "100%", left: 0, width: "100%", zIndex: 100, maxHeight: "300px", overflowY: "auto" }}>
-                        {groupedElectrical.map((g) => (
-                          <div key={g.module} style={{ marginBottom: "20px" }}>
-                            <div style={{ fontWeight: "bold", color: "var(--color-safe, #00e5a0)", marginBottom: "12px", fontSize: "14px", textTransform: "uppercase" }}>
-                              {g.module}
-                            </div>
-                            <div style={{ display: "flex", flexDirection: "column", gap: "12px", paddingLeft: "8px" }}>
-                              {g.items.map((i) => {
-                                const isChecked = (formData.electrical_works || []).includes(String(i.id));
-                                return (
-                                  <label key={i.id} className="custom-checkbox-label" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                    <input
-                                      type="checkbox"
-                                      className="custom-checkbox-input"
-                                      checked={isChecked}
-                                      onChange={() => {
-                                        const current = formData.electrical_works || [];
-                                        const newValues = isChecked
-                                          ? current.filter(val => val !== String(i.id))
-                                          : [...current, String(i.id)];
-                                        handleFieldChange("electrical_works", newValues);
-                                      }}
-                                    />
-                                    <span>{i.name}</span>
-                                  </label>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        ))}
+                    <div className="df-field" ref={electricalDropdownRef} style={{ position: "relative" }}>
+                      <label className="df-label">Electrical Works <span className="req-star">*</span></label>
+                      <div style={{ position: "relative" }}>
+                        <input
+                          type="text"
+                          className={`df-input${fieldErrors.electrical_works ? " field-input-error" : ""}`}
+                          style={{ cursor: "pointer", background: "rgba(255, 255, 255, 0.02)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+                          placeholder="Click to select electrical works..."
+                          value={
+                            formData.electrical_works?.length > 0
+                              ? formData.electrical_works.map(id => electricalWorksNamesCache.current[String(id)] || id).join(", ")
+                              : ""
+                          }
+                          readOnly
+                          onClick={() => setIsElectricalDropdownOpen(prev => !prev)}
+                        />
+                        <i className="ti ti-chevron-down" style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", color: "#9ca3af", pointerEvents: "none", fontSize: "16px" }} />
                       </div>
-                    )}
-                  </div>
+                      {fieldErrors.electrical_works && <span className="field-error">{fieldErrors.electrical_works}</span>}
+
+                      {isElectricalDropdownOpen && (
+                        <div className="zone-rooms-dropdown" style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: "8px", padding: "16px", marginTop: "8px", boxShadow: "var(--shadow-md)", position: "absolute", top: "100%", left: 0, width: "100%", zIndex: 100, maxHeight: "300px", overflowY: "auto" }}>
+                          <div style={{ marginBottom: "12px", position: "sticky", top: 0, zIndex: 10, background: "var(--bg-card)" }}>
+                            <input
+                              type="text"
+                              className="df-input"
+                              placeholder="Search..."
+                              value={eleSearch}
+                              onChange={(e) => setEleSearch(e.target.value)}
+                              onClick={(e) => e.stopPropagation()}
+                              style={{ width: "100%", padding: "8px 12px", fontSize: "13px" }}
+                            />
+                            {isFetchingEle && (
+                              <div style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)" }}>
+                                <span className="spinner-mini" />
+                              </div>
+                            )}
+                          </div>
+                          {groupedElectrical.length > 0 ? (
+                            groupedElectrical.map((g) => (
+                              <div key={g.module} style={{ marginBottom: "20px" }}>
+                                <div style={{ fontWeight: "bold", color: "var(--color-safe, #00e5a0)", marginBottom: "12px", fontSize: "14px", textTransform: "uppercase" }}>
+                                  {g.module}
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column", gap: "12px", paddingLeft: "8px" }}>
+                                  {g.items.map((i) => {
+                                    const isChecked = (formData.electrical_works || []).includes(String(i.id));
+                                    return (
+                                      <label key={i.id} className="custom-checkbox-label" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                        <input
+                                          type="checkbox"
+                                          className="custom-checkbox-input"
+                                          checked={isChecked}
+                                          onChange={() => {
+                                            const current = formData.electrical_works || [];
+                                            const newValues = isChecked
+                                              ? current.filter(val => val !== String(i.id))
+                                              : [...current, String(i.id)];
+                                            handleFieldChange("electrical_works", newValues);
+                                          }}
+                                        />
+                                        <span>{i.name}</span>
+                                      </label>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div style={{ padding: "12px 0", color: "#9ca3af", fontSize: "13px", textAlign: "center" }}>
+                              No electrical works found
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </>
                 )}
 
                 {formData.work_type === "Mechanical Works" && (
@@ -2449,7 +2799,7 @@ function NewRequest() {
                         placeholder="Click to select mechanical works..."
                         value={
                           formData.mechanical_works?.length > 0
-                            ? formData.mechanical_works.map(id => mechanicalWorksOptions.find(x => String(x.id) === String(id))?.name || id).join(", ")
+                            ? formData.mechanical_works.map(id => mechanicalWorksNamesCache.current[String(id)] || id).join(", ")
                             : ""
                         }
                         readOnly
@@ -2459,30 +2809,52 @@ function NewRequest() {
                     </div>
                     {fieldErrors.mechanical_works && <span className="field-error">{fieldErrors.mechanical_works}</span>}
 
-                    {isMechanicalDropdownOpen && mechanicalWorksOptions.length > 0 && (
+                    {isMechanicalDropdownOpen && (
                       <div className="zone-rooms-dropdown" style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: "8px", padding: "16px", marginTop: "8px", boxShadow: "var(--shadow-md)", position: "absolute", top: "100%", left: 0, width: "100%", zIndex: 100, maxHeight: "300px", overflowY: "auto" }}>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                          {mechanicalWorksOptions.map((m) => {
-                            const isChecked = (formData.mechanical_works || []).includes(String(m.id));
-                            return (
-                              <label key={m.id} className="custom-checkbox-label" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                <input
-                                  type="checkbox"
-                                  className="custom-checkbox-input"
-                                  checked={isChecked}
-                                  onChange={() => {
-                                    const current = formData.mechanical_works || [];
-                                    const newValues = isChecked
-                                      ? current.filter(val => val !== String(m.id))
-                                      : [...current, String(m.id)];
-                                    handleFieldChange("mechanical_works", newValues);
-                                  }}
-                                />
-                                <span>{m.name}</span>
-                              </label>
-                            );
-                          })}
+                        <div style={{ marginBottom: "12px", position: "sticky", top: 0, zIndex: 10, background: "var(--bg-card)" }}>
+                          <input
+                            type="text"
+                            className="df-input"
+                            placeholder="Search..."
+                            value={mechSearch}
+                            onChange={(e) => setMechSearch(e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
+                            style={{ width: "100%", padding: "8px 12px", fontSize: "13px" }}
+                          />
+                          {isFetchingMech && (
+                            <div style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)" }}>
+                              <span className="spinner-mini" />
+                            </div>
+                          )}
                         </div>
+                        {mechanicalWorksOptions.length > 0 ? (
+                          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                            {mechanicalWorksOptions.map((m) => {
+                              const isChecked = (formData.mechanical_works || []).includes(String(m.id));
+                              return (
+                                <label key={m.id} className="custom-checkbox-label" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                  <input
+                                    type="checkbox"
+                                    className="custom-checkbox-input"
+                                    checked={isChecked}
+                                    onChange={() => {
+                                      const current = formData.mechanical_works || [];
+                                      const newValues = isChecked
+                                        ? current.filter(val => val !== String(m.id))
+                                        : [...current, String(m.id)];
+                                      handleFieldChange("mechanical_works", newValues);
+                                    }}
+                                  />
+                                  <span>{m.name}</span>
+                                </label>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <div style={{ padding: "12px 0", color: "#9ca3af", fontSize: "13px", textAlign: "center" }}>
+                            No mechanical works found
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -4387,7 +4759,11 @@ function NewRequest() {
                   type="button"
                   className="nr-btn nr-btn--ghost"
                   style={{ background: "#2563eb", color: "#fff", borderColor: "#2563eb", boxShadow: "0 0 18px rgba(37, 99, 235, 0.2)" }}
-                  onClick={(e) => { if (validateHoldFields()) handleSubmit(e, "Hold"); }}
+                  onClick={(e) => {
+                    if (validateHoldFields()) {
+                      setShowRamsHoldModal(true);
+                    }
+                  }}
                 >
                   Change to Hold
                 </button>
@@ -4402,6 +4778,85 @@ function NewRequest() {
             )}
           </div>
         </form>
+
+        <Modal
+          open={showRamsHoldModal}
+          onClose={() => setShowRamsHoldModal(false)}
+          title="RAMS Confirmation"
+          size="sm"
+          centered={true}
+        >
+          <div className="df-form" style={{ padding: "8px 0" }}>
+            <p style={{ color: "var(--text-main, inherit)", fontSize: "15px", marginBottom: "24px", lineHeight: "1.5" }}>
+              Can you confirm the RAMS for this work is approved by ConM/HSE?
+            </p>
+            <div style={{ display: "flex", gap: "12px" }}>
+              <button
+                type="button"
+                className="nr-btn nr-btn--primary"
+                style={{ padding: "8px 24px" }}
+                onClick={(e) => {
+                  setShowRamsHoldModal(false);
+                  handleSubmit(e, "Hold");
+                }}
+              >
+                Yes
+              </button>
+              <button
+                type="button"
+                className="nr-btn nr-btn--ghost"
+                style={{ padding: "8px 24px" }}
+                onClick={(e) => {
+                  setShowRamsHoldModal(false);
+                  handleSubmit(e, "Draft");
+                }}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </Modal>
+
+        {/* Fullscreen Overlay Loader when submitting permit */}
+        {isSubmittingPermit && (
+          <div style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(15, 23, 42, 0.85)",
+            backdropFilter: "blur(8px)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 999999,
+            color: "#ffffff"
+          }}>
+            <div style={{
+              width: "56px",
+              height: "56px",
+              border: "4px solid rgba(0, 229, 160, 0.2)",
+              borderTop: "4px solid #00e5a0",
+              borderRadius: "50%",
+              animation: "spin 0.8s linear infinite",
+              marginBottom: "20px"
+            }} />
+            <style>{`
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            `}</style>
+            <h3 style={{ fontSize: "20px", fontWeight: "600", marginBottom: "8px", color: "#f9fafb" }}>
+              {isEditMode ? "Updating Work Permit Request..." : "Creating Work Permit Request..."}
+            </h3>
+            <p style={{ fontSize: "14px", color: "#9ca3af" }}>
+              Please wait while the permit request is being processed...
+            </p>
+          </div>
+        )}
       </div>
 
     );
@@ -4494,6 +4949,47 @@ function NewRequest() {
               </button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Fullscreen Overlay Loader when submitting permit */}
+      {isSubmittingPermit && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(15, 23, 42, 0.85)",
+          backdropFilter: "blur(8px)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 999999,
+          color: "#ffffff"
+        }}>
+          <div style={{
+            width: "56px",
+            height: "56px",
+            border: "4px solid rgba(0, 229, 160, 0.2)",
+            borderTop: "4px solid #00e5a0",
+            borderRadius: "50%",
+            animation: "spin 0.8s linear infinite",
+            marginBottom: "20px"
+          }} />
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
+          <h3 style={{ fontSize: "20px", fontWeight: "600", marginBottom: "8px", color: "#f9fafb" }}>
+            {isEditMode ? "Updating Work Permit Request..." : "Creating Work Permit Request..."}
+          </h3>
+          <p style={{ fontSize: "14px", color: "#9ca3af" }}>
+            Please wait while the permit request is being processed...
+          </p>
         </div>
       )}
     </div>

@@ -4,6 +4,7 @@ import "./Sidebar.css";
 import { getMenuByRole } from './navigation.service';
 import LogoImg from "../../../assets/images/Logo.jpeg";
 
+
 /* ── NAV ITEM with collapsible submenu ── */
 function NavItem({ icon, label, badge, paths, children }) {
   const { pathname } = useLocation()

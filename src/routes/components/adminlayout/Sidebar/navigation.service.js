@@ -215,6 +215,13 @@ const UsericonMenu = [
             { name: "List Request", state: "user/list-request", icon: "list" },
         ],
     },
+    {
+        name: "Reports",
+        type: "link",
+        tooltip: "Reports",
+        icon: "event",
+        state: "user/plans",
+    },
 ];
 
 const OperatoriconMenu = [
@@ -226,7 +233,6 @@ const OperatoriconMenu = [
         state: "",
         sub: [
             { name: "Operations Dashboard", state: "user/dashboard" },
-            { name: "Executive Dashboard", state: "user/executive-dashboard" },
         ],
     },
     {
@@ -265,7 +271,6 @@ const Operator1iconMenu = [
         state: "",
         sub: [
             { name: "Operations Dashboard", state: "user/dashboard" },
-            { name: "Executive Dashboard", state: "user/executive-dashboard" },
         ],
     },
     {
@@ -329,6 +334,13 @@ const ObservericonMenu = [
         sub: [
             { name: "List Request", state: "user/list-request", icon: "list" },
         ],
+    },
+    {
+        name: "Reports",
+        type: "link",
+        tooltip: "Reports",
+        icon: "event",
+        state: "user/plans",
     },
 ];
 

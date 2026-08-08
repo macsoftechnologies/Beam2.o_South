@@ -228,8 +228,6 @@ const Zones = () => {
     { header: "Actions", accessor: "actions" },
   ];
 
-  const isAuthorized = ["superadmin", "admin"].includes(String(userRole).toLowerCase());
-
   const tableData = zoneList.map((item, index) => ({
     ...item,
     serial: startIndex + index + 1,
@@ -244,15 +242,6 @@ const Zones = () => {
         >
           <FaEdit />
         </button>
-        {isAuthorized && (
-          <button
-            className="dept-action-btn dept-action-btn--delete"
-            title="Delete"
-            onClick={() => handleDelete(item)}
-          >
-            <FaTrash />
-          </button>
-        )}
       </div>
     ),
   }));
@@ -273,13 +262,6 @@ const Zones = () => {
           <span className="dept-count-badge">
             {totalCount || zoneList.length} Total
           </span>
-          <button
-            className="dept-add-btn"
-            onClick={() => { setSelectedZone(null); setOpen(true); }}
-          >
-            <span className="dept-add-btn__icon">＋</span>
-            Add Zone
-          </button>
         </div>
       </div>
 
@@ -290,7 +272,16 @@ const Zones = () => {
           <div className="filters-grid">
             <div className="df-field" style={{ marginBottom: 0 }}>
               <label className="df-label" style={{ textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>ZONE NAME</label>
-              <input type="text" className="df-input" placeholder="Search by zone name" value={filterZoneName} onChange={(e) => setFilterZoneName(e.target.value)} />
+              <input
+                type="text"
+                className="df-input"
+                placeholder="Search by zone name"
+                value={filterZoneName}
+                onChange={(e) => setFilterZoneName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleFilter();
+                }}
+              />
             </div>
             <div className="df-field" style={{ marginBottom: 0 }}>
               <label className="df-label" style={{ textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>STATUS</label>

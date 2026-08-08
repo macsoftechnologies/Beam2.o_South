@@ -5,7 +5,7 @@ import PdfPolygonViewer from "../../components/PdfPolygonViewer";
 import { showError } from "../../components/common/Toast/Toast";
 
 // Using a direct CDN URL avoids Nginx MIME-type issues with .mjs workers
-// when the app is deployed under a sub-path (e.g. /m3south_frontend/).
+// when the app is deployed under a sub-path (e.g. /m3north_frontend/).
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 function ZoneModal({
@@ -223,7 +223,13 @@ function ZoneModal({
               cursor: "pointer",
             }}
           >
-            Rooms Checklist ({selectedRooms.length})
+          {(() => {
+            const selectedRoomsInZoneCount = (zone?.rooms || []).filter((r) => {
+              const name = typeof r === "object" ? r.name : r;
+              return selectedRooms.includes(name);
+            }).length;
+            return `Rooms Checklist (${selectedRoomsInZoneCount})`;
+          })()}
           </button>
         </div>
 
@@ -279,8 +285,11 @@ function ZoneModal({
                 background: "rgba(255, 255, 255, 0.02)",
               }}
             >
-              <h4 style={{ margin: 0, color: "#fff", fontSize: "1.05rem", fontWeight: 700 }}>
-                Rooms Directory
+              <h4 style={{ margin: 0, color: "#fff", fontSize: "1.05rem", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span>Rooms Directory</span>
+                <span style={{ fontSize: "11px", fontWeight: 600, padding: "2px 8px", borderRadius: "12px", background: "rgba(59, 130, 246, 0.15)", color: "#60a5fa", border: "1px solid rgba(59, 130, 246, 0.3)" }}>
+                  {(zone?.rooms || []).length} {(zone?.rooms || []).length === 1 ? "Room" : "Rooms"}
+                </span>
               </h4>
               <p style={{ margin: "4px 0 0 0", color: "#9ca3af", fontSize: "11px" }}>
                 Select rooms to allocate permit work

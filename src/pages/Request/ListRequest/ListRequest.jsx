@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import ReactDOM from "react-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import { LOGO_MAP } from "../../../config/logos";
 import { FaEdit, FaEye, FaCopy, FaTrash, FaPlus, FaFilter, FaHistory, FaCheck, FaTimes, FaEllipsisV, FaSearch } from "react-icons/fa";
@@ -118,54 +119,63 @@ const AnalogTimePicker = ({ initialTime, onSave, onCancel }) => {
   const handX = center + handLength * Math.cos(handRad);
   const handY = center + handLength * Math.sin(handRad);
 
-  return (
-    <div className="timekeeper-modal-container custom-picker" onClick={(e) => e.stopPropagation()}>
-      <div className="timekeeper-header">
-        <div className="timekeeper-time-display">
-          <span
-            className={`timekeeper-time-unit ${mode === "hour" ? "active" : ""}`}
-            onClick={(e) => { e.stopPropagation(); setMode("hour"); }}
-          >
-            {String(hour).padStart(2, "0")}
-          </span>
-          <span className="timekeeper-time-colon">:</span>
-          <span
-            className={`timekeeper-time-unit ${mode === "minute" ? "active" : ""}`}
-            onClick={(e) => { e.stopPropagation(); setMode("minute"); }}
-          >
-            {String(minute).padStart(2, "0")}
-          </span>
+  return ReactDOM.createPortal(
+    <div
+      className="timekeeper-modal-overlay"
+      onClick={(e) => {
+        e.stopPropagation();
+        onCancel();
+      }}
+    >
+      <div className="timekeeper-modal-container custom-picker" onClick={(e) => e.stopPropagation()}>
+        <div className="timekeeper-header">
+          <div className="timekeeper-time-display">
+            <span
+              className={`timekeeper-time-unit ${mode === "hour" ? "active" : ""}`}
+              onClick={(e) => { e.stopPropagation(); setMode("hour"); }}
+            >
+              {String(hour).padStart(2, "0")}
+            </span>
+            <span className="timekeeper-time-colon">:</span>
+            <span
+              className={`timekeeper-time-unit ${mode === "minute" ? "active" : ""}`}
+              onClick={(e) => { e.stopPropagation(); setMode("minute"); }}
+            >
+              {String(minute).padStart(2, "0")}
+            </span>
+          </div>
+        </div>
+
+        <div className="timekeeper-dial-wrapper">
+          <div className="timekeeper-dial" style={{ width: `${size}px`, height: `${size}px` }}>
+            <svg className="timekeeper-hand-svg" width={size} height={size}>
+              <line
+                x1={center}
+                y1={center}
+                x2={handX}
+                y2={handY}
+                stroke="#0ea5e9"
+                strokeWidth="2"
+              />
+              <circle cx={center} cy={center} r="4" fill="#0ea5e9" />
+              <circle cx={handX} cy={handY} r="14" fill="rgba(14, 165, 233, 0.3)" />
+              <circle cx={handX} cy={handY} r="4" fill="#0ea5e9" />
+            </svg>
+            {mode === "hour" ? renderHourNumbers() : renderMinuteNumbers()}
+          </div>
+        </div>
+
+        <div className="timekeeper-modal-actions">
+          <button type="button" className="timekeeper-modal-btn" onClick={(e) => { e.stopPropagation(); onCancel(); }}>
+            Cancel
+          </button>
+          <button type="button" className="timekeeper-modal-btn" onClick={handleSave}>
+            OK
+          </button>
         </div>
       </div>
-
-      <div className="timekeeper-dial-wrapper">
-        <div className="timekeeper-dial" style={{ width: `${size}px`, height: `${size}px` }}>
-          <svg className="timekeeper-hand-svg" width={size} height={size}>
-            <line
-              x1={center}
-              y1={center}
-              x2={handX}
-              y2={handY}
-              stroke="#0ea5e9"
-              strokeWidth="2"
-            />
-            <circle cx={center} cy={center} r="4" fill="#0ea5e9" />
-            <circle cx={handX} cy={handY} r="14" fill="rgba(14, 165, 233, 0.3)" />
-            <circle cx={handX} cy={handY} r="4" fill="#0ea5e9" />
-          </svg>
-          {mode === "hour" ? renderHourNumbers() : renderMinuteNumbers()}
-        </div>
-      </div>
-
-      <div className="timekeeper-modal-actions">
-        <button type="button" className="timekeeper-modal-btn" onClick={(e) => { e.stopPropagation(); onCancel(); }}>
-          Cancel
-        </button>
-        <button type="button" className="timekeeper-modal-btn" onClick={handleSave}>
-          OK
-        </button>
-      </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 import {
@@ -191,6 +201,7 @@ import {
   getRequestById,
   updateRequest
 } from "../../../services/requestService";
+import { API_BASE_URL } from "../../../services/api";
 import { showSuccess, showError, showDeleteConfirm, showDeleteSuccess } from "../../../components/common/Toast/Toast";
 import Table from "../../../components/common/Table/Table";
 import Modal from "../../../components/common/Modal/Modal";
@@ -220,9 +231,14 @@ const trimLongValue = (value) => {
 // Helper to resolve zone name from building, floor/level, and rooms data
 const resolveZoneNameFromRooms = (row) => {
   // 1. If the request already has a valid zone name from the database, use it
-  const dbZoneName = (row.zone && typeof row.zone === "object")
-    ? row.zone.zone
-    : (row.zone || "");
+  let dbZoneName = "";
+  if (typeof row.zone_name === "string" && row.zone_name.trim().length > 0 && row.zone_name !== "—") {
+    dbZoneName = row.zone_name.trim();
+  } else if (typeof row.zone === "string" && row.zone.trim().length > 0 && row.zone !== "—") {
+    dbZoneName = row.zone.trim();
+  } else if (row.zone && typeof row.zone === "object" && typeof row.zone.zone === "string") {
+    dbZoneName = row.zone.zone;
+  }
   if (dbZoneName && dbZoneName !== "—") {
     return dbZoneName;
   }
@@ -269,6 +285,140 @@ const resolveZoneNameFromRooms = (row) => {
   return "—";
 };
 
+// Helper to resolve zone objects array [{ Zone_Id: number, zone: string }] from DB zonesList/roomsList & ZONE_MAPPING for copy request
+const resolveZoneObjectsFromRequest = (row, zonesList = [], roomsList = []) => {
+  if (!row) return [];
+
+  const roomStr = row.room_names || row.Room_Nos || row.Room_Name || "";
+  const roomsToMatch = String(roomStr)
+    .split(",")
+    .map(r => r.trim().toLowerCase())
+    .filter(Boolean);
+
+  const matchedZoneMap = new Map();
+
+  // 1. Try matching room names in DB roomsList to find real database zone_id & zone name
+  if (roomsToMatch.length > 0 && roomsList.length > 0) {
+    roomsToMatch.forEach(rNameLower => {
+      const matchedRoom = roomsList.find(r => (r.room_name || "").toLowerCase().trim() === rNameLower);
+      if (matchedRoom && matchedRoom.zone_id) {
+        const zId = Number(matchedRoom.zone_id);
+        const dbZone = zonesList.find(z => String(z.id ?? z.zoneStatusId) === String(zId));
+        const zName = dbZone ? (dbZone.zone || dbZone.zone_name) : (matchedRoom.zone_name || "");
+        if (zName) {
+          matchedZoneMap.set(zName.toLowerCase().trim(), { Zone_Id: zId, zone: String(zName) });
+        }
+      }
+    });
+  }
+
+  // 2. Resolve canonical zone names from ZONE_MAPPING using room names
+  const levelKey = row.Room_Type || "";
+  let zonesToSearch = [];
+
+  if (levelKey) {
+    const levelLower = String(levelKey).toLowerCase().trim();
+    const foundKey = Object.keys(ZONE_MAPPING).find(k =>
+      k.toLowerCase().trim().includes(levelLower) || levelLower.includes(k.toLowerCase().trim())
+    );
+    if (foundKey) {
+      zonesToSearch = ZONE_MAPPING[foundKey] || [];
+    }
+  }
+
+  if (zonesToSearch.length === 0) {
+    zonesToSearch = Object.values(ZONE_MAPPING).flat();
+  }
+
+  const mappingZoneNames = [];
+  if (roomsToMatch.length > 0) {
+    for (const zoneGroup of zonesToSearch) {
+      if (zoneGroup.rooms) {
+        for (const room of zoneGroup.rooms) {
+          const roomName = (typeof room === "object" ? room.name : room) || "";
+          const roomId = (typeof room === "object" ? room.id : "") || "";
+          if (
+            roomsToMatch.includes(roomName.toLowerCase().trim()) ||
+            (roomId && roomsToMatch.includes(String(roomId).toLowerCase().trim()))
+          ) {
+            if (zoneGroup.name && !mappingZoneNames.includes(zoneGroup.name)) {
+              mappingZoneNames.push(zoneGroup.name);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 3. For each zone name from ZONE_MAPPING, find database zone object in zonesList
+  mappingZoneNames.forEach(mappingName => {
+    const key = mappingName.toLowerCase().trim();
+    if (!matchedZoneMap.has(key)) {
+      const dbZone = zonesList.find(z => (z.zone || z.zone_name || "").toLowerCase().trim() === key);
+      if (dbZone) {
+        const zId = Number(dbZone.id ?? dbZone.zoneStatusId);
+        matchedZoneMap.set(key, { Zone_Id: zId, zone: dbZone.zone || dbZone.zone_name || mappingName });
+      }
+    }
+  });
+
+  // 4. Fallback if modalTarget already has database zone object or Zone_Id / zone_name
+  if (matchedZoneMap.size === 0) {
+    const dbZoneName = (row.zone && typeof row.zone === "object")
+      ? (row.zone.zone || row.zone.zone_name)
+      : (row.zone_name || row.zone || "");
+    const dbZoneId = row.Zone_Id
+      ? Number(row.Zone_Id)
+      : (row.zone?.id ? Number(row.zone.id) : null);
+
+    if (dbZoneName && dbZoneName !== "—") {
+      let finalId = dbZoneId;
+      if (!finalId) {
+        const found = zonesList.find(z => (z.zone || z.zone_name || "").toLowerCase().trim() === String(dbZoneName).toLowerCase().trim());
+        if (found) finalId = Number(found.id ?? found.zoneStatusId);
+      }
+      if (finalId) {
+        matchedZoneMap.set(String(dbZoneName).toLowerCase().trim(), { Zone_Id: finalId, zone: String(dbZoneName) });
+      }
+    } else if (dbZoneId) {
+      const found = zonesList.find(z => Number(z.id ?? z.zoneStatusId) === dbZoneId);
+      const name = found ? (found.zone || found.zone_name) : `Zone ${dbZoneId}`;
+      matchedZoneMap.set(name.toLowerCase().trim(), { Zone_Id: dbZoneId, zone: name });
+    }
+  }
+
+  // 5. Final fallback: match first zone in zonesList for this building / floor
+  if (matchedZoneMap.size === 0 && zonesList.length > 0) {
+    const bId = row.Building_Id ? Number(row.Building_Id) : null;
+    const fId = row.Floor_Id ? Number(row.Floor_Id) : null;
+    const matchedDbZone = zonesList.find(z =>
+      (fId ? Number(z.floor_id) === fId : true) &&
+      (bId ? Number(z.build_id || z.building_id) === bId : true)
+    ) || zonesList[0];
+
+    if (matchedDbZone) {
+      const zId = Number(matchedDbZone.id ?? matchedDbZone.zoneStatusId);
+      const zName = matchedDbZone.zone || matchedDbZone.zone_name || "Zone";
+      matchedZoneMap.set(zName.toLowerCase().trim(), { Zone_Id: zId, zone: String(zName) });
+    }
+  }
+
+  const primaryZoneId = row.Zone_Id
+    ? Number(row.Zone_Id)
+    : (row.zone?.id ? Number(row.zone.id) : 0);
+
+  const zoneObjects = Array.from(matchedZoneMap.values());
+
+  if (zoneObjects.length === 0) {
+    zoneObjects.push({
+      Zone_Id: typeof primaryZoneId === "number" && !isNaN(primaryZoneId) ? primaryZoneId : 0,
+      zone: String(row.zone_name || row.zone || "Zone")
+    });
+  }
+
+  return zoneObjects;
+};
+
 const STATUS_OPTIONS = [
   "Draft",
   "Hold",
@@ -294,16 +444,9 @@ const HRA_LIST = [
   { key: "pressurization", label: "Mechanical Works", icon: "mechanical1.png", image: LOGO_MAP["mechanical1.png"] }
 ];
 
-const MultiSelectDropdown = ({
-  placeholder,
-  options = [],
-  selectedValues = [],
-  onChange = () => { },
-  hasNone = false,
-  isHra = false,
-  disabled = false
-}) => {
+const MultiSelectDropdown = ({ options, selectedValues, onChange, placeholder, disabled, hasNone = false, searchPlaceholder = "Search contractor..." }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -315,40 +458,72 @@ const MultiSelectDropdown = ({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
   const handleToggle = () => {
-    if (!disabled) setIsOpen(!isOpen);
-  };
-
-  const handleCheckboxChange = (value, checked) => {
-    let nextValues = [...selectedValues];
-    if (hasNone && value === "none") {
-      if (checked) {
-        nextValues = ["none"];
-      } else {
-        nextValues = [];
-      }
-    } else {
-      if (checked) {
-        nextValues = nextValues.filter(v => v !== "none");
-        if (!nextValues.includes(value)) {
-          nextValues.push(value);
-        }
-      } else {
-        nextValues = nextValues.filter(v => v !== value);
-      }
+    if (!disabled) {
+      setIsOpen(!isOpen);
     }
-    onChange(nextValues);
   };
 
-  // Resolve trigger display label text
+  const handleCheckboxChange = (val, checked) => {
+    if (val === "none") {
+      onChange(checked ? ["none"] : []);
+      return;
+    }
+
+    let newSelected = selectedValues.filter(v => v !== "none");
+    if (checked) {
+      newSelected.push(val);
+    } else {
+      newSelected = newSelected.filter(v => v !== val);
+    }
+    onChange(newSelected);
+  };
+
+  const filteredOptions = useMemo(() => {
+    if (!searchQuery.trim()) return options;
+    const q = searchQuery.toLowerCase();
+    return options.filter(opt => {
+      if (opt.zones) {
+        return opt.zones.some(z => {
+          const l = typeof z === "object" ? (z.name ?? z.label ?? z) : z;
+          return String(l).toLowerCase().includes(q);
+        });
+      }
+      const label = opt.subContractorName || opt.building_name || opt.floor_name || opt.zone || opt.label || opt.name || opt;
+      return String(label).toLowerCase().includes(q);
+    });
+  }, [options, searchQuery]);
+
   let displayText = placeholder;
   if (selectedValues.length > 0) {
-    if (hasNone && selectedValues.includes("none")) {
+    if (selectedValues.includes("none")) {
       displayText = "None";
+    } else if (selectedValues.length === 1) {
+      const allOpts = [];
+      options.forEach(opt => {
+        if (opt.zones) {
+          opt.zones.forEach(z => {
+            if (typeof z === "object") {
+              allOpts.push({ value: String(z.id ?? z.value ?? z), label: z.name ?? z.label ?? z });
+            } else {
+              allOpts.push({ value: z, label: z });
+            }
+          });
+        } else {
+          allOpts.push(opt);
+        }
+      });
+
+      const opt = allOpts.find(o => {
+        const oVal = String(o?.value ?? o?.key ?? o?.id ?? o?.build_id ?? o);
+        return oVal === String(selectedValues[0]);
+      });
+      if (opt) {
+        displayText = opt.label || opt.building_name || opt.floor_name || opt.subContractorName || opt.zone || opt.value || opt.key || opt;
+      }
     } else {
       const selectedLabels = [];
-
-      // Flatten options to easily search labels
       const allOpts = [];
       options.forEach(opt => {
         if (opt.zones) {
@@ -441,6 +616,43 @@ const MultiSelectDropdown = ({
             padding: "6px 0"
           }}
         >
+          {/* Search bar inside dropdown */}
+          <div style={{ padding: "8px 12px", borderBottom: "1px solid var(--border-color, #374151)", position: "sticky", top: 0, backgroundColor: "var(--bg-card, #111827)", zIndex: 10, display: "flex", gap: "6px" }}>
+            <input
+              type="text"
+              placeholder={searchPlaceholder}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                flex: 1,
+                padding: "6px 10px",
+                fontSize: "13px",
+                borderRadius: "6px",
+                border: "1px solid var(--border-color, #374151)",
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                color: "var(--text-main, #f9fafb)",
+                outline: "none"
+              }}
+            />
+            <button
+              type="button"
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                padding: "6px 10px",
+                backgroundColor: "var(--primary-color, #3b82f6)",
+                border: "none",
+                borderRadius: "6px",
+                color: "#fff",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+            >
+              <FaSearch size={12} />
+            </button>
+          </div>
           {hasNone && (
             <label
               style={{
@@ -468,7 +680,7 @@ const MultiSelectDropdown = ({
             </label>
           )}
 
-          {options.map((opt, idx) => {
+          {filteredOptions.map((opt, idx) => {
             // Support grouped zones/rooms
             if (opt.zones) {
               return (
@@ -645,7 +857,8 @@ const isTodayDate = (dateVal) => {
 
 const ListRequest = () => {
   const navigate = useNavigate();
-  const currentUser = getUser();
+  const currentUser = useMemo(() => getUser(), []);
+  const userContractorId = currentUser?.typeId || currentUser?.subContId || currentUser?.subContractorId;
   const location = useLocation();
 
   useEffect(() => {
@@ -682,7 +895,7 @@ const ListRequest = () => {
   const [requests, setRequests] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit] = useState(10);
+  const [limit, setLimit] = useState(30);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
   const [loadingEditId, setLoadingEditId] = useState(null);
@@ -715,7 +928,10 @@ const ListRequest = () => {
     toDate: "",
     startTime: "",
     endTime: "",
-    nightShift: ""
+    nightShift: "",
+    newDate: "",
+    newEndTime: "",
+    typeOfActivityId: ""
   });
 
   // Modal Control States
@@ -750,14 +966,22 @@ const ListRequest = () => {
   const [precautionsList, setPrecautionsList] = useState([]);
   const [isPrecautionsDropdownOpen, setIsPrecautionsDropdownOpen] = useState(false);
   const precautionsDropdownRef = useRef(null);
+  const [bulkDropdownOpen, setBulkDropdownOpen] = useState(false);
+  const bulkDropdownRef = useRef(null);
   const [bulkNote, setBulkNote] = useState("");
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
+  const [showSearchNewEndPicker, setShowSearchNewEndPicker] = useState(false);
   const [showBulkStartPicker, setShowBulkStartPicker] = useState(false);
   const [showBulkEndPicker, setShowBulkEndPicker] = useState(false);
   const [showBulkNewEndPicker, setShowBulkNewEndPicker] = useState(false);
+  const [showHStartPicker, setShowHStartPicker] = useState(false);
+  const [showHEndPicker, setShowHEndPicker] = useState(false);
+  const [showCopyStartPicker, setShowCopyStartPicker] = useState(false);
+  const [showCopyEndPicker, setShowCopyEndPicker] = useState(false);
+  const [showCopyNewEndPicker, setShowCopyNewEndPicker] = useState(false);
   const [logsData, setLogsData] = useState([]);
-  const [copyDates, setCopyDates] = useState({ from: "", to: "" });
+  const [copyDates, setCopyDates] = useState({ from: "", to: "", startTime: "", endTime: "", nightShift: false, newEndTime: "" });
 
   // Check operator credentials (with multi-role support)
   const userRoles = useMemo(() => {
@@ -774,13 +998,16 @@ const ListRequest = () => {
   const isAdmin = userRoles.includes("admin");
   const isDept = userRoles.includes("department");
   const isDept1 = userRoles.includes("department1");
-  const isSubcontractor = userRoles.includes("subcontractor");
+  const isSubcontractor = userRoles.includes("subcontractor") ||
+    userRoles.includes("contractor") ||
+    userRoles.includes("sub_contractor") ||
+    userRoles.includes("sub-contractor");;
   const isObserver = userRoles.includes("observer");
   const canBulkAction = isAdmin || isDept || isDept1;
   const isMultiDept = isDept && isDept1;
 
   const checkIfHideCheckbox = useCallback((row) => {
-    if (isObserver) return true;
+    if (isObserver || isSubcontractor) return true;
     if (isAdmin || isMultiDept) return false;
     if (isDept) {
       const eitherIsConstruction = String(row.permit_under).toLowerCase() === "construction" ||
@@ -793,7 +1020,7 @@ const ListRequest = () => {
       return bothAreConstruction;
     }
     return false;
-  }, [isAdmin, isDept, isDept1, isMultiDept, isObserver]);
+  }, [isAdmin, isDept, isDept1, isMultiDept, isObserver, isSubcontractor]);
 
   // ─── Fetch Selector Lists ──────────────────────────────────────────────────
   useEffect(() => {
@@ -808,7 +1035,20 @@ const ListRequest = () => {
           getRooms(1, 10000),
           getPrecautions(1, 1000)
         ]);
-        setContractors(subRes?.data?.rows ?? subRes?.data ?? subRes ?? []);
+        const rawContractors = subRes?.data?.rows ?? subRes?.data ?? subRes ?? [];
+        const loadedContractors = rawContractors
+          .slice()
+          .sort((a, b) => (a.subContractorName || "").localeCompare(b.subContractorName || "", undefined, { sensitivity: "base" }));
+        setContractors(loadedContractors);
+        if (isSubcontractor) {
+          const defaultSubId = userContractorId ? String(userContractorId) : (loadedContractors.length > 0 ? String(loadedContractors[0].id) : "");
+          if (defaultSubId) {
+            setSearchFilters(prev => {
+              if (prev.contractors.length === 1 && prev.contractors[0] === defaultSubId) return prev;
+              return { ...prev, contractors: [defaultSubId] };
+            });
+          }
+        }
         setActivitiesList(actRes?.data?.rows ?? actRes?.data ?? actRes ?? []);
         setBuildingsList(buildRes?.data ?? []);
         setFloorsList(floorRes?.data ?? []);
@@ -822,11 +1062,38 @@ const ListRequest = () => {
     fetchSelectors();
   }, []);
 
+  // Default subcontractor filter if current user is a contractor
+  useEffect(() => {
+    if (isSubcontractor && userContractorId) {
+      const subIdStr = String(userContractorId);
+      setSearchFilters(prev => {
+        if (prev.contractors.length === 1 && prev.contractors[0] === subIdStr) return prev;
+        return {
+          ...prev,
+          contractors: [subIdStr]
+        };
+      });
+    }
+  }, [isSubcontractor, userContractorId]);
+
   // Handle click outside for precautions dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (precautionsDropdownRef.current && !precautionsDropdownRef.current.contains(event.target)) {
         setIsPrecautionsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Handle click outside for bulk edit dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (bulkDropdownRef.current && !bulkDropdownRef.current.contains(event.target)) {
+        setBulkDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -951,10 +1218,13 @@ const ListRequest = () => {
         permit_type: searchFilters.permitType || "",
         permit_under: searchFilters.permitUnder || "",
         night_shift: searchFilters.nightShift || "",
+        new_date: searchFilters.newDate || "",
+        new_end_time: searchFilters.newEndTime ? (searchFilters.newEndTime.length === 5 ? `${searchFilters.newEndTime}:00` : searchFilters.newEndTime) : "",
         fromDate: searchFilters.fromDate || "",
         toDate: searchFilters.toDate || "",
         Start_Time: searchFilters.startTime ? `${searchFilters.startTime}:00` : "",
         End_Time: searchFilters.endTime ? `${searchFilters.endTime}:00` : "",
+        Type_Of_Activity_Id: searchFilters.typeOfActivityId || null,
         Site_Id: 5,
         Page: page,
         End: limit
@@ -1024,7 +1294,7 @@ const ListRequest = () => {
     setSearchFilters({
       keyword: "",
       permitNo: "",
-      contractors: [],
+      contractors: isSubcontractor && currentUser?.typeId ? [String(currentUser.typeId)] : [],
       statuses: [],
       buildings: [],
       levels: [],
@@ -1037,7 +1307,10 @@ const ListRequest = () => {
       toDate: "",
       startTime: "",
       endTime: "",
-      nightShift: ""
+      nightShift: "",
+      newDate: "",
+      newEndTime: "",
+      typeOfActivityId: ""
     });
     setCurrentPage(1);
   };
@@ -1154,9 +1427,7 @@ const ListRequest = () => {
     const currentStatus = row?.Request_status || row?.request_status || "";
     const workingDateVal = row?.Working_Date || row?.workingDate || row?.working_date || "";
 
-    if (currentStatus === "Approved" && !isTodayDate(workingDateVal)) {
-      return showError("Status change is restricted for Approved permits when working date is not today.");
-    }
+    const isWorkingDateToday = isTodayDate(workingDateVal);
 
     setModalTarget(row);
     setModalStatus(status);
@@ -1166,7 +1437,7 @@ const ListRequest = () => {
     setCancelReason("");
     setCloseNote("");
     setClosingImageFiles([]);
-    setOpenActionType("Open");
+    setOpenActionType(isWorkingDateToday ? "Open" : "Cancel");
     setApproveActionType("Approve");
     setLowRiskHotwork(0);
     setHighRiskHotwork(0);
@@ -1177,6 +1448,8 @@ const ListRequest = () => {
     setHFireDetectors(0);
     setHStartTime("");
     setHEndTime("");
+    setShowHStartPicker(false);
+    setShowHEndPicker(false);
     setActiveModal("status");
   };
 
@@ -1184,10 +1457,6 @@ const ListRequest = () => {
   const handleStatusTransition = async (row, status) => {
     const currentStatus = row?.Request_status || row?.request_status || "";
     const workingDateVal = row?.Working_Date || row?.workingDate || row?.working_date || "";
-
-    if (currentStatus === "Approved" && !isTodayDate(workingDateVal)) {
-      return showError("Status change is restricted for Approved permits when working date is not today.");
-    }
 
     const permitType = row.permit_type || "";
     const permitUnder = row.permit_under || "";
@@ -1346,7 +1615,11 @@ const ListRequest = () => {
       payload.cancel_reason = cancelReason.trim();
     } else if (nextStatus === "Opened") {
       if (modalStatus === "Opened") {
-        if (!initials.trim()) return showError("Supervisor/CONM initials signature required.");
+        const workingDateVal = modalTarget?.Working_Date || modalTarget?.workingDate || modalTarget?.working_date || "";
+        if (!isTodayDate(workingDateVal)) {
+          return showError("Permits can only be opened on their active Working Date. You can only cancel this permit.");
+        }
+        if (!initials.trim()) return showError("Supervisor Full Name / Phone Number is required.");
         payload.ConM_initials1 = initials.trim();
         if (modalTarget.Hot_work === 1) {
           if (Number(lowRiskHotwork) !== 1 && Number(highRiskHotwork) !== 1) {
@@ -1559,7 +1832,7 @@ const ListRequest = () => {
       if (bulkTime.nightShift) {
         if (bulkTime.newEndTime) {
           if (bulkTime.newEndTime >= bulkTime.startTime) {
-            showError("For night shift, new end time must be earlier than start time.");
+            showError("For working after midnight, new end time must be earlier than start time.");
             return;
           }
         }
@@ -1666,13 +1939,32 @@ const ListRequest = () => {
   // Copy permit request to range
   const handleCopyTrigger = (row) => {
     setModalTarget(row);
-    setCopyDates({ from: "", to: "" });
+    const isNight = row.night_shift === 1 || row.night_shift === true || row.night_shift === "1";
+    const formatTimeHHMM = (t) => {
+      if (!t) return "";
+      const str = String(t).trim();
+      return str.length >= 5 ? str.substring(0, 5) : str;
+    };
+    setCopyDates({
+      from: "",
+      to: "",
+      startTime: formatTimeHHMM(row.Start_Time || row.start_time),
+      endTime: isNight ? "23:59" : formatTimeHHMM(row.End_Time || row.end_time),
+      nightShift: isNight,
+      newEndTime: formatTimeHHMM(row.New_End_Time || row.new_end_time)
+    });
+    setShowCopyStartPicker(false);
+    setShowCopyEndPicker(false);
+    setShowCopyNewEndPicker(false);
     setActiveModal("copy");
   };
 
   const handleCopySubmit = async (e) => {
     e.preventDefault();
     if (!copyDates.from || !copyDates.to) return showError("Please select date range.");
+    if (!copyDates.startTime) return showError("Please enter Start Time.");
+    if (!copyDates.endTime) return showError("Please enter End Time.");
+    if (copyDates.nightShift && !copyDates.newEndTime) return showError("Working after midnight requires a New End Time.");
 
     const oneDay = 24 * 60 * 60 * 1000;
     const fromVal = new Date(copyDates.from);
@@ -1680,11 +1972,8 @@ const ListRequest = () => {
 
     if (toVal < fromVal) return showError("End date cannot be earlier than start date.");
 
-    if (copyDates.from === copyDates.to && modalTarget.Start_Time && modalTarget.End_Time) {
-      const isNightShift = modalTarget.night_shift === 1 || modalTarget.night_shift === true;
-      if (!isNightShift && modalTarget.End_Time < modalTarget.Start_Time) {
-        return showError("The copied request has an invalid time range (Start Time is later than End Time).");
-      }
+    if (!copyDates.nightShift && copyDates.endTime < copyDates.startTime) {
+      return showError("End Time cannot be earlier than Start Time for a day shift.");
     }
 
     const today = new Date();
@@ -1694,17 +1983,8 @@ const ListRequest = () => {
     }
     const diffDays = Math.round(Math.abs((toVal - fromVal) / oneDay)) + 1;
 
-    // Build zone array matching backend ZoneItemDto: { Zone_Id: number, zone: string }
-    const zoneId = modalTarget.Zone_Id
-      ? Number(modalTarget.Zone_Id)
-      : (modalTarget.zone?.id ? Number(modalTarget.zone.id) : null);
-    const zoneName = modalTarget.zone_name
-      || (modalTarget.zone && typeof modalTarget.zone === "object" ? modalTarget.zone.zone : null)
-      || modalTarget.zone
-      || "";
-    const zoneObjects = zoneId
-      ? [{ Zone_Id: zoneId, zone: String(zoneName) }]
-      : [];
+    // Build zone array by matching room names against DB roomsList/zonesList & ZONE_MAPPING
+    const zoneObjects = resolveZoneObjectsFromRequest(modalTarget, zonesList, roomsList);
 
     const payload = {
       userId: currentUser?.id || 1,
@@ -1712,16 +1992,19 @@ const ListRequest = () => {
       Room_Nos: modalTarget.Room_Nos,
       Room_Type: modalTarget.Room_Type,
       Site_Id: modalTarget.Site_Id ? Number(modalTarget.Site_Id) : 5,
-      Start_Time: modalTarget.Start_Time,
+      Start_Time: copyDates.startTime ? (copyDates.startTime.length === 5 ? `${copyDates.startTime}:00` : copyDates.startTime) : "",
       Sub_Contractor_Id: modalTarget.Sub_Contractor_Id ? Number(modalTarget.Sub_Contractor_Id) : null,
       Type_Of_Activity_Id: modalTarget.Type_Of_Activity_Id ? String(modalTarget.Type_Of_Activity_Id) : "",
-      Assign_Start_Time: modalTarget.Start_Time,
-      Assign_End_Time: modalTarget.End_Time,
+      Assign_Start_Time: copyDates.startTime ? (copyDates.startTime.length === 5 ? `${copyDates.startTime}:00` : copyDates.startTime) : "",
+      Assign_End_Time: copyDates.endTime ? (copyDates.endTime.length === 5 ? `${copyDates.endTime}:00` : copyDates.endTime) : "",
       Assign_Start_Date: copyDates.from,
       Assign_End_Date: copyDates.to,
       Building_Id: modalTarget.Building_Id ? Number(modalTarget.Building_Id) : null,
       Company_Name: modalTarget.Company_Name,
-      End_Time: modalTarget.End_Time,
+      End_Time: copyDates.endTime ? (copyDates.endTime.length === 5 ? `${copyDates.endTime}:00` : copyDates.endTime) : "",
+      New_End_Time: copyDates.nightShift ? (copyDates.newEndTime ? (copyDates.newEndTime.length === 5 ? `${copyDates.newEndTime}:00` : copyDates.newEndTime) : undefined) : undefined,
+      night_shift: copyDates.nightShift ? 1 : 0,
+      Number_Of_Workers: modalTarget.Number_Of_Workers || undefined,
       Floor_Id: modalTarget.Floor_Id ? Number(modalTarget.Floor_Id) : null,
       Foreman: modalTarget.Foreman,
       Foreman_Phone_Number: modalTarget.Foreman_Phone_Number,
@@ -1748,7 +2031,7 @@ const ListRequest = () => {
   // ─── Table Configuration ──────────────────────────────────────────────────
   const columns = [
     {
-      header: !isObserver && (
+      header: !isObserver && !isSubcontractor && (
         <input
           type="checkbox"
           checked={selectableRequestsCount > 0 && selectedIds.length === selectableRequestsCount}
@@ -1756,6 +2039,7 @@ const ListRequest = () => {
         />
       ),
       accessor: "checkboxCell",
+      className: "sticky-col-checkbox",
       style: { width: "40px", textAlign: "center" }
     },
     { header: "Permit Number", accessor: "PermitNo" },
@@ -1771,11 +2055,16 @@ const ListRequest = () => {
     { header: "Rooms", accessor: "rooms" },
     { header: "Working Date", accessor: "Working_Date" },
     { header: "Time", accessor: "timeCell" },
-    { header: "Night Shift", accessor: "nightShiftCell" },
+    { header: "Working After Midnight", accessor: "nightShiftCell" },
     { header: "New End Time", accessor: "newEndTimeCell" },
     { header: "Status", accessor: "statusCell", className: "sticky-col-status" },
     { header: "Operations", accessor: "operationsCell", className: "sticky-col-operations", style: { width: "180px", minWidth: "180px", maxWidth: "180px" } }
-  ];
+  ].filter(col => {
+    if (col.accessor === "checkboxCell" && (isObserver || isSubcontractor)) {
+      return false;
+    }
+    return true;
+  });
 
   const tableData = useMemo(() => {
     return requests.map((row) => {
@@ -1839,7 +2128,10 @@ const ListRequest = () => {
           currentUser?.role !== "Observer";
 
         if (!isStatusAllowed) return false;
-        if (isAdmin || isSubcontractor || isMultiDept) return true;
+        if (isSubcontractor) {
+          return row.Request_status === "Draft";
+        }
+        if (isAdmin || isMultiDept) return true;
 
         if (isDept) {
           const eitherIsConstruction = String(row.permit_under).toLowerCase() === "construction" ||
@@ -1855,17 +2147,8 @@ const ListRequest = () => {
       })();
 
       const isDeletable = (() => {
-        if (isAdmin || isMultiDept) return true;
-
-        if (isDept) {
-          const eitherIsConstruction = String(row.permit_under).toLowerCase() === "construction" ||
-            String(row.permit_type).toLowerCase() === "construction";
-          return eitherIsConstruction;
-        }
-
-        if (isDept1) {
-          return isDept1Commissioning;
-        }
+        if (isDept || isDept1 || isMultiDept) return false;
+        if (isAdmin) return true;
 
         return false;
       })();
@@ -1901,23 +2184,10 @@ const ListRequest = () => {
           return;
         }
 
-        // Restrict status change dialog when request status is Approved and working date is other than current date
-        if (row.Request_status === "Approved" || row.request_status === "Approved") {
-          const workingDateVal = row.Working_Date || row.workingDate || row.working_date || "";
-          if (!isTodayDate(workingDateVal)) {
-            return showError("Status change is restricted for Approved permits when working date is not today.");
-          }
-        }
-
         // Subcontractor opening or closing permit
         if (isSubcontractor) {
           if (row.Request_status === "Approved") {
-            const today = new Date().toISOString().split("T")[0];
-            if (row.Working_Date === today) {
-              handleStatusTransition(row, "Opened");
-            } else {
-              showError("Subcontractor can only open a permit on the active Working Date.");
-            }
+            handleStatusTransition(row, "Opened");
           } else if (row.Request_status === "Opened") {
             handleStatusTransition(row, "Closed");
           }
@@ -1974,7 +2244,7 @@ const ListRequest = () => {
           )}
 
           <a
-            href={`http://187.127.171.51/m3south/requests/permit-design/${row.PermitNo}`}
+            href={`${API_BASE_URL.replace(/\/$/, "")}/requests/permit-design/${row.PermitNo}`}
             target="_blank"
             rel="noreferrer"
             className="op-action-btn op-action-btn--view"
@@ -2015,6 +2285,7 @@ const ListRequest = () => {
 
       return {
         ...row,
+        _rowClassName: selectedIds.includes(row.id) ? "row-selected" : "",
         checkboxCell: !checkIfHideCheckbox(row) ? (
           <input
             type="checkbox"
@@ -2071,52 +2342,39 @@ const ListRequest = () => {
       {/* Dynamic Search Filters Card */}
       {filtersOpen && (
         <div className="form-card filters-card-wrapper premium-form-container">
-          <form onSubmit={handleSearchSubmit} className="df-form">
-            <div className="df-grid df-grid--4-cols">
+          <form
+            onSubmit={handleSearchSubmit}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleSearchSubmit(e);
+              }
+            }}
+            className="df-form"
+          >
+            <div className="df-grid">
+              {/* Row 1: Working Date range (From) | Working Date range (To) */}
               <div className="df-field">
-                <label className="df-label">Permit Number</label>
+                <label className="df-label">Working Date range (From)</label>
                 <input
-                  type="text"
+                  type="date"
                   className="df-input"
-                  placeholder="e.g. 82389714..."
-                  value={searchFilters.permitNo}
-                  onChange={(e) => setSearchFilters(prev => ({ ...prev, permitNo: e.target.value }))}
+                  value={searchFilters.fromDate}
+                  onChange={(e) => setSearchFilters(prev => ({ ...prev, fromDate: e.target.value }))}
                 />
               </div>
 
               <div className="df-field">
-                <label className="df-label">Keyword (Activity)</label>
+                <label className="df-label">Working Date range (To)</label>
                 <input
-                  type="text"
+                  type="date"
                   className="df-input"
-                  placeholder="e.g. Piping, welding..."
-                  value={searchFilters.keyword}
-                  onChange={(e) => setSearchFilters(prev => ({ ...prev, keyword: e.target.value }))}
+                  value={searchFilters.toDate}
+                  onChange={(e) => setSearchFilters(prev => ({ ...prev, toDate: e.target.value }))}
                 />
               </div>
 
-              <div className="df-field">
-                <label className="df-label">Contractor</label>
-                <MultiSelectDropdown
-                  placeholder="Select Contractors"
-                  options={contractors}
-                  selectedValues={searchFilters.contractors}
-                  onChange={(vals) => setSearchFilters(prev => ({ ...prev, contractors: vals }))}
-                />
-              </div>
-
-              <div className="df-field">
-                <label className="df-label">Permit Status</label>
-                <MultiSelectDropdown
-                  placeholder="Select Statuses"
-                  options={STATUS_OPTIONS}
-                  selectedValues={searchFilters.statuses}
-                  onChange={(vals) => setSearchFilters(prev => ({ ...prev, statuses: vals }))}
-                />
-              </div>
-            </div>
-
-            <div className="df-grid df-grid--4-cols" style={{ marginTop: "16px" }}>
+              {/* Row 2: Building | Level / Floor */}
               <div className="df-field">
                 <label className="df-label">Building</label>
                 <MultiSelectDropdown
@@ -2137,6 +2395,7 @@ const ListRequest = () => {
                 />
               </div>
 
+              {/* Row 3: Zones | Rooms */}
               <div className="df-field">
                 <label className="df-label">Zones</label>
                 <MultiSelectDropdown
@@ -2156,22 +2415,260 @@ const ListRequest = () => {
                   onChange={(vals) => setSearchFilters(prev => ({ ...prev, areas: vals }))}
                 />
               </div>
-            </div>
 
-            <div className="df-grid df-grid--4-cols" style={{ marginTop: "16px" }}>
+              {/* Row 4: Contractor | Permit Status */}
               <div className="df-field">
-                <label className="df-label">Permit Type</label>
+                <label className="df-label">Contractor</label>
+                {isSubcontractor ? (
+                  <input
+                    type="text"
+                    className="df-input df-readonly"
+                    value={contractors.length > 0 ? (contractors.find(c => String(c.id) === String(currentUser?.typeId))?.subContractorName || contractors[0]?.subContractorName) : "Loading..."}
+                    readOnly
+                  />
+                ) : (
+                  <MultiSelectDropdown
+                    placeholder="Select Contractors"
+                    options={contractors}
+                    selectedValues={searchFilters.contractors}
+                    onChange={(vals) => setSearchFilters(prev => ({ ...prev, contractors: vals }))}
+                  />
+                )}
+              </div>
+
+              <div className="df-field">
+                <label className="df-label">Permit Status</label>
+                <MultiSelectDropdown
+                  placeholder="Select Statuses"
+                  options={STATUS_OPTIONS}
+                  selectedValues={searchFilters.statuses}
+                  onChange={(vals) => setSearchFilters(prev => ({ ...prev, statuses: vals }))}
+                />
+              </div>
+
+              {/* Row 5: Type of activity | Keyword (Activity) */}
+              <div className="df-field">
+                <label className="df-label">Type of activity</label>
                 <select
                   className="df-select"
-                  value={searchFilters.permitType}
-                  onChange={(e) => setSearchFilters(prev => ({ ...prev, permitType: e.target.value }))}
+                  value={searchFilters.typeOfActivityId}
+                  onChange={(e) => setSearchFilters(prev => ({ ...prev, typeOfActivityId: e.target.value }))}
                 >
-                  <option value="">All Types</option>
-                  <option value="Construction">Construction</option>
-                  <option value="Commissioning">Commissioning</option>
+                  <option value="">All Activities</option>
+                  {activitiesList.map(act => (
+                    <option key={act.id} value={act.id}>{act.activityName}</option>
+                  ))}
                 </select>
               </div>
 
+              <div className="df-field">
+                <label className="df-label">Keyword (Activity)</label>
+                <input
+                  type="text"
+                  className="df-input"
+                  placeholder="e.g. Piping, welding..."
+                  value={searchFilters.keyword}
+                  onChange={(e) => setSearchFilters(prev => ({ ...prev, keyword: e.target.value }))}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleSearchSubmit(e);
+                    }
+                  }}
+                />
+              </div>
+
+              {/* Row 6: Start Time | End Time | Night Shift */}
+              <div className="df-field--full time-nightshift-grid">
+                <div className="df-field">
+                  <label className="df-label">Start Time</label>
+                  <div style={{ position: "relative", width: "100%" }}>
+                    <input
+                      type="text"
+                      placeholder="00:00"
+                      readOnly
+                      className="df-input"
+                      value={searchFilters.startTime}
+                      onClick={() => setShowStartPicker(true)}
+                      style={{ cursor: 'pointer', paddingRight: searchFilters.startTime ? "30px" : "12px" }}
+                    />
+                    {searchFilters.startTime && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSearchFilters(prev => ({ ...prev, startTime: "" }));
+                        }}
+                        style={{
+                          position: "absolute",
+                          right: "10px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          background: "none",
+                          border: "none",
+                          color: "var(--text-muted, #9ca3af)",
+                          cursor: "pointer",
+                          fontSize: "14px",
+                          padding: "4px"
+                        }}
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                  {showStartPicker && (
+                    <div className="timekeeper-modal-overlay" onClick={() => setShowStartPicker(false)}>
+                      <AnalogTimePicker
+                        initialTime={searchFilters.startTime || "12:00"}
+                        onSave={(newTime) => {
+                          setSearchFilters(prev => ({ ...prev, startTime: newTime }));
+                          setShowStartPicker(false);
+                        }}
+                        onCancel={() => setShowStartPicker(false)}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="df-field">
+                  <label className="df-label">End Time</label>
+                  <div style={{ position: "relative", width: "100%" }}>
+                    <input
+                      type="text"
+                      placeholder="00:00"
+                      readOnly
+                      className="df-input"
+                      value={searchFilters.endTime}
+                      onClick={() => setShowEndPicker(true)}
+                      style={{ cursor: 'pointer', paddingRight: searchFilters.endTime ? "30px" : "12px" }}
+                    />
+                    {searchFilters.endTime && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSearchFilters(prev => ({ ...prev, endTime: "" }));
+                        }}
+                        style={{
+                          position: "absolute",
+                          right: "10px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          background: "none",
+                          border: "none",
+                          color: "var(--text-muted, #9ca3af)",
+                          cursor: "pointer",
+                          fontSize: "14px",
+                          padding: "4px"
+                        }}
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                  {showEndPicker && (
+                    <div className="timekeeper-modal-overlay" onClick={() => setShowEndPicker(false)}>
+                      <AnalogTimePicker
+                        initialTime={searchFilters.endTime || "12:00"}
+                        onSave={(newTime) => {
+                          setSearchFilters(prev => ({ ...prev, endTime: newTime }));
+                          setShowEndPicker(false);
+                        }}
+                        onCancel={() => setShowEndPicker(false)}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="df-field" style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", height: "100%" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", height: "46px", paddingLeft: "12px", border: "1.5px solid var(--border-color, #374151)", borderRadius: "12px", backgroundColor: "var(--bg-card, #111827)" }}>
+                    <input
+                      type="checkbox"
+                      id="listRequestNightShiftCheckbox"
+                      checked={Boolean(searchFilters.nightShift === "1" || searchFilters.nightShift === 1 || searchFilters.nightShift === true)}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setSearchFilters(prev => ({
+                          ...prev,
+                          nightShift: checked ? "1" : "",
+                          newDate: checked ? prev.newDate : "",
+                          newEndTime: checked ? prev.newEndTime : ""
+                        }));
+                      }}
+                      style={{ width: "16px", height: "16px", cursor: "pointer", accentColor: "var(--accent, #00e5a0)" }}
+                    />
+                    <label htmlFor="listRequestNightShiftCheckbox" className="df-label" style={{ margin: 0, cursor: "pointer", textTransform: "none", fontSize: "14px", fontWeight: "normal", color: "var(--text-main, #f9fafb)" }}>
+                      Working after midnight? Yes
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Conditional Working After Midnight Fields */}
+              {(searchFilters.nightShift === "1" || searchFilters.nightShift === 1 || searchFilters.nightShift === true) && (
+                <>
+                  <div className="df-field">
+                    <label className="df-label">New Date</label>
+                    <input
+                      type="date"
+                      className="df-input"
+                      value={searchFilters.newDate || ""}
+                      onChange={(e) => setSearchFilters(prev => ({ ...prev, newDate: e.target.value }))}
+                    />
+                  </div>
+                  <div className="df-field">
+                    <label className="df-label">New End Time</label>
+                    <div style={{ position: "relative", width: "100%" }}>
+                      <input
+                        type="text"
+                        placeholder="00:00"
+                        readOnly
+                        className="df-input"
+                        value={searchFilters.newEndTime || ""}
+                        onClick={() => setShowSearchNewEndPicker(true)}
+                        style={{ cursor: 'pointer', paddingRight: searchFilters.newEndTime ? "30px" : "12px" }}
+                      />
+                      {searchFilters.newEndTime && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSearchFilters(prev => ({ ...prev, newEndTime: "" }));
+                          }}
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            background: "none",
+                            border: "none",
+                            color: "var(--text-muted, #9ca3af)",
+                            cursor: "pointer",
+                            fontSize: "14px",
+                            padding: "4px"
+                          }}
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                    {showSearchNewEndPicker && (
+                      <div className="timekeeper-modal-overlay" onClick={() => setShowSearchNewEndPicker(false)}>
+                        <AnalogTimePicker
+                          initialTime={searchFilters.newEndTime || "12:00"}
+                          onSave={(newTime) => {
+                            setSearchFilters(prev => ({ ...prev, newEndTime: newTime }));
+                            setShowSearchNewEndPicker(false);
+                          }}
+                          onCancel={() => setShowSearchNewEndPicker(false)}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* Row 7: Permit Under | Permit Type */}
               <div className="df-field">
                 <label className="df-label">Permit Under</label>
                 <select
@@ -2186,138 +2683,34 @@ const ListRequest = () => {
               </div>
 
               <div className="df-field">
-                <label className="df-label">Working Date range (From)</label>
-                <input
-                  type="date"
-                  className="df-input"
-                  value={searchFilters.fromDate}
-                  onChange={(e) => setSearchFilters(prev => ({ ...prev, fromDate: e.target.value }))}
-                />
-              </div>
-
-              <div className="df-field">
-                <label className="df-label">Working Date range (To)</label>
-                <input
-                  type="date"
-                  className="df-input"
-                  value={searchFilters.toDate}
-                  onChange={(e) => setSearchFilters(prev => ({ ...prev, toDate: e.target.value }))}
-                />
-              </div>
-            </div>
-
-            <div className="df-grid df-grid--4-cols" style={{ marginTop: "16px" }}>
-              <div className="df-field">
-                <label className="df-label">Start Time</label>
-                <div style={{ position: "relative", width: "100%" }}>
-                  <input
-                    type="text"
-                    placeholder="00:00"
-                    readOnly
-                    className="df-input"
-                    value={searchFilters.startTime}
-                    onClick={() => setShowStartPicker(true)}
-                    style={{ cursor: 'pointer', paddingRight: searchFilters.startTime ? "30px" : "12px" }}
-                  />
-                  {searchFilters.startTime && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSearchFilters(prev => ({ ...prev, startTime: "" }));
-                      }}
-                      style={{
-                        position: "absolute",
-                        right: "10px",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        background: "none",
-                        border: "none",
-                        color: "var(--text-muted, #9ca3af)",
-                        cursor: "pointer",
-                        fontSize: "14px",
-                        padding: "4px"
-                      }}
-                    >
-                      ✕
-                    </button>
-                  )}
-                </div>
-                {showStartPicker && (
-                  <div className="timekeeper-modal-overlay" onClick={() => setShowStartPicker(false)}>
-                    <AnalogTimePicker
-                      initialTime={searchFilters.startTime || "12:00"}
-                      onSave={(newTime) => {
-                        setSearchFilters(prev => ({ ...prev, startTime: newTime }));
-                        setShowStartPicker(false);
-                      }}
-                      onCancel={() => setShowStartPicker(false)}
-                    />
-                  </div>
-                )}
-              </div>
-
-              <div className="df-field">
-                <label className="df-label">End Time</label>
-                <div style={{ position: "relative", width: "100%" }}>
-                  <input
-                    type="text"
-                    placeholder="00:00"
-                    readOnly
-                    className="df-input"
-                    value={searchFilters.endTime}
-                    onClick={() => setShowEndPicker(true)}
-                    style={{ cursor: 'pointer', paddingRight: searchFilters.endTime ? "30px" : "12px" }}
-                  />
-                  {searchFilters.endTime && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSearchFilters(prev => ({ ...prev, endTime: "" }));
-                      }}
-                      style={{
-                        position: "absolute",
-                        right: "10px",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        background: "none",
-                        border: "none",
-                        color: "var(--text-muted, #9ca3af)",
-                        cursor: "pointer",
-                        fontSize: "14px",
-                        padding: "4px"
-                      }}
-                    >
-                      ✕
-                    </button>
-                  )}
-                </div>
-                {showEndPicker && (
-                  <div className="timekeeper-modal-overlay" onClick={() => setShowEndPicker(false)}>
-                    <AnalogTimePicker
-                      initialTime={searchFilters.endTime || "12:00"}
-                      onSave={(newTime) => {
-                        setSearchFilters(prev => ({ ...prev, endTime: newTime }));
-                        setShowEndPicker(false);
-                      }}
-                      onCancel={() => setShowEndPicker(false)}
-                    />
-                  </div>
-                )}
-              </div>
-
-              <div className="df-field">
-                <label className="df-label">Night Shift</label>
+                <label className="df-label">Permit Type</label>
                 <select
                   className="df-select"
-                  value={searchFilters.nightShift}
-                  onChange={(e) => setSearchFilters(prev => ({ ...prev, nightShift: e.target.value }))}
+                  value={searchFilters.permitType}
+                  onChange={(e) => setSearchFilters(prev => ({ ...prev, permitType: e.target.value }))}
                 >
-                  <option value="">All Shifts</option>
-                  <option value="1">Yes</option>
-                  <option value="0">No</option>
+                  <option value="">All Types</option>
+                  <option value="Construction">Construction</option>
+                  <option value="Commissioning">Commissioning</option>
                 </select>
+              </div>
+
+              {/* Row 8: Permit Number | HRA Checklists */}
+              <div className="df-field">
+                <label className="df-label">Permit Number</label>
+                <input
+                  type="text"
+                  className="df-input"
+                  placeholder="e.g. 82389714..."
+                  value={searchFilters.permitNo}
+                  onChange={(e) => setSearchFilters(prev => ({ ...prev, permitNo: e.target.value }))}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleSearchSubmit(e);
+                    }
+                  }}
+                />
               </div>
 
               <div className="df-field">
@@ -2389,15 +2782,48 @@ const ListRequest = () => {
                 </button>
 
                 {/* Operations Dropdown */}
-                <div className="bulk-edit-dropdown-container">
-                  <button className="bat-btn bat-btn--edit">
+                <div className="bulk-edit-dropdown-container" ref={bulkDropdownRef}>
+                  <button
+                    type="button"
+                    className="bat-btn bat-btn--edit"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setBulkDropdownOpen(prev => !prev);
+                    }}
+                  >
                     Bulk Edit Controls
                   </button>
-                  <div className="bulk-edit-dropdown-menu">
-                    <button onClick={handleBulkTimeEdit}>Shift &amp; Working Time</button>
-                    <button onClick={handleBulkSafetyEdit}>Safety Precautions</button>
-                    <button onClick={handleBulkNotesEdit}>Add Note</button>
-                  </div>
+                  {bulkDropdownOpen && (
+                    <div className="bulk-edit-dropdown-menu" style={{ display: "block" }}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleBulkTimeEdit();
+                          setBulkDropdownOpen(false);
+                        }}
+                      >
+                        Shift &amp; Working Time
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleBulkSafetyEdit();
+                          setBulkDropdownOpen(false);
+                        }}
+                      >
+                        Safety Precautions
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleBulkNotesEdit();
+                          setBulkDropdownOpen(false);
+                        }}
+                      >
+                        Add Note
+                      </button>
+                    </div>
+                  )}
                 </div>
               </>
             )}
@@ -2436,7 +2862,7 @@ const ListRequest = () => {
         {!isLoading && requests.length > 0 && (
           <div style={{
             display: "flex",
-            justifyContent: "center",
+            justifyContent: "space-between",
             alignItems: "center",
             marginTop: "16px",
             paddingTop: "16px",
@@ -2445,7 +2871,45 @@ const ListRequest = () => {
             fontSize: "14px",
             fontWeight: 500
           }}>
-            Showing {requests.length} of <strong style={{ color: "var(--text-main, #f9fafb)", marginLeft: "4px", marginRight: "4px" }}>{totalCount}</strong> permits
+            <div>
+              Showing {requests.length} of <strong style={{ color: "var(--text-main, #f9fafb)", marginLeft: "4px", marginRight: "4px" }}>{totalCount}</strong> permits
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <span style={{ fontSize: "13px", color: "var(--text-muted, #9ca3af)", fontWeight: 500 }}>Permits per page:</span>
+              <div style={{
+                display: "inline-flex",
+                background: "rgba(255, 255, 255, 0.05)",
+                border: "1px solid var(--border-color, rgba(255, 255, 255, 0.12))",
+                borderRadius: "8px",
+                padding: "3px",
+                gap: "4px"
+              }}>
+                {[30, 50].map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => {
+                      setLimit(size);
+                      setCurrentPage(1);
+                    }}
+                    style={{
+                      border: "none",
+                      background: limit === size ? "var(--primary-color, #3b82f6)" : "transparent",
+                      color: limit === size ? "#ffffff" : "var(--text-muted, #9ca3af)",
+                      padding: "4px 14px",
+                      borderRadius: "6px",
+                      fontSize: "13px",
+                      fontWeight: limit === size ? "600" : "500",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      boxShadow: limit === size ? "0 2px 8px rgba(59, 130, 246, 0.3)" : "none"
+                    }}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -2465,10 +2929,44 @@ const ListRequest = () => {
           <form onSubmit={handleStatusSubmit} className="df-form">
             <div style={{ maxHeight: "50vh", overflowY: "auto", paddingRight: "8px", marginBottom: "16px" }}>
               <div style={{ marginBottom: "16px" }}>
-                <p style={{ color: "#d1d5db", fontSize: "14px" }}>
-                  Changing status of Permit No: <strong style={{ color: "#fff" }}>{modalTarget.PermitNo}</strong>
+                <p style={{ color: "var(--text-muted, inherit)", fontSize: "14px" }}>
+                  Changing status of Permit No: <strong style={{ color: "var(--text-h, inherit)" }}>{modalTarget.PermitNo}</strong>
                 </p>
               </div>
+
+              {/* Opening Confirmation Declaration */}
+              {modalStatus === "Opened" && openActionType === "Open" && (
+                <div style={{
+                  background: "rgba(59, 130, 246, 0.12)",
+                  borderLeft: "4px solid #3b82f6",
+                  padding: "12px 16px",
+                  borderRadius: "6px",
+                  marginBottom: "16px",
+                  color: "var(--text-h, inherit)",
+                  fontSize: "13px",
+                  fontWeight: "500",
+                  lineHeight: "1.5"
+                }}>
+                  I confirm that the permit is met with all conditions according to RAMS/SPA requirements and take responsibility for safe work execution.
+                </div>
+              )}
+
+              {/* Closing Confirmation Declaration */}
+              {modalStatus === "Closed" && (
+                <div style={{
+                  background: "rgba(16, 185, 129, 0.12)",
+                  borderLeft: "4px solid #10b981",
+                  padding: "12px 16px",
+                  borderRadius: "6px",
+                  marginBottom: "16px",
+                  color: "var(--text-h, inherit)",
+                  fontSize: "13px",
+                  fontWeight: "500",
+                  lineHeight: "1.5"
+                }}>
+                  I confirm that the work activities under this permit are completed and the area has been made safe, clean and ensure that all post work conditions are fulfilled.
+                </div>
+              )}
 
               {/* Action choice if status is Pre-Approved or Approved */}
               {(modalStatus === "Pre-Approved" || modalStatus === "Approved") && (
@@ -2494,11 +2992,26 @@ const ListRequest = () => {
                   <select
                     className="df-select"
                     value={openActionType}
-                    onChange={(e) => setOpenActionType(e.target.value)}
+                    onChange={(e) => {
+                      const selectedAction = e.target.value;
+                      const workingDateVal = modalTarget?.Working_Date || modalTarget?.workingDate || modalTarget?.working_date || "";
+                      if (selectedAction === "Open" && !isTodayDate(workingDateVal)) {
+                        showError("Permits can only be opened on their active Working Date.");
+                        return;
+                      }
+                      setOpenActionType(selectedAction);
+                    }}
                   >
-                    <option value="Open">Open Permit</option>
+                    <option value="Open" disabled={!isTodayDate(modalTarget?.Working_Date || modalTarget?.workingDate || modalTarget?.working_date || "")}>
+                      Open Permit {!isTodayDate(modalTarget?.Working_Date || modalTarget?.workingDate || modalTarget?.working_date || "") ? "(Working date is not today)" : ""}
+                    </option>
                     <option value="Cancel">Cancel Permit</option>
                   </select>
+                  {!isTodayDate(modalTarget?.Working_Date || modalTarget?.workingDate || modalTarget?.working_date || "") && (
+                    <p style={{ color: "#f59e0b", fontSize: "12px", marginTop: "6px" }}>
+                      Note: Permit working date does not match today. Opening this permit is restricted, but you can cancel the permit.
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -2523,22 +3036,16 @@ const ListRequest = () => {
               {(((modalStatus === "Pre-Approved" || modalStatus === "Approved") && approveActionType === "Approve") || (modalStatus === "Opened" && openActionType === "Open")) && (
                 <div className="df-field" style={{ marginBottom: "16px" }}>
                   <label className="df-label">
-                    Initials Signature <span className="df-required">*</span>
+                    {modalStatus === "Opened" ? "Supervisor Full Name / Phone Number" : "Initials Signature"} <span className="df-required">*</span>
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="Enter your initials..."
+                    placeholder={modalStatus === "Opened" ? "Enter supervisor full name / phone number..." : "Enter your initials..."}
                     className="df-input"
                     value={initials}
                     onChange={(e) => setInitials(e.target.value)}
                   />
-                  <span style={{ color: "#9ca3af", fontSize: "12px", marginTop: "4px", display: "block" }}>
-                    Supervisor: <strong style={{ color: "#00e5a0" }}>{modalTarget?.Foreman || "N/A"}</strong>
-                    {modalTarget?.Foreman_Phone_Number && (
-                      <> | Phone: <strong style={{ color: "#00e5a0" }}>{modalTarget.Foreman_Phone_Number}</strong></>
-                    )}
-                  </span>
                 </div>
               )}
 
@@ -2769,23 +3276,103 @@ const ListRequest = () => {
                   <div className="df-grid" style={{ gap: "16px" }}>
                     <div className="df-field" style={{ marginBottom: "12px" }}>
                       <label className="df-label">1hr time : <span className="df-required">*</span></label>
-                      <input
-                        type="time"
-                        required
-                        className="df-input"
-                        value={hStartTime}
-                        onChange={(e) => setHStartTime(e.target.value)}
-                      />
+                      <div style={{ position: "relative", width: "100%" }}>
+                        <input
+                          type="text"
+                          placeholder="00:00"
+                          readOnly
+                          required
+                          className="df-input"
+                          value={hStartTime}
+                          onClick={() => setShowHStartPicker(true)}
+                          style={{ cursor: "pointer", paddingRight: hStartTime ? "30px" : "12px" }}
+                        />
+                        {hStartTime && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setHStartTime("");
+                            }}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              background: "none",
+                              border: "none",
+                              color: "var(--text-muted, #9ca3af)",
+                              cursor: "pointer",
+                              fontSize: "14px",
+                              padding: "4px"
+                            }}
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                      {showHStartPicker && (
+                        <div className="timekeeper-modal-overlay" onClick={() => setShowHStartPicker(false)}>
+                          <AnalogTimePicker
+                            initialTime={hStartTime || "12:00"}
+                            onSave={(newTime) => {
+                              setHStartTime(newTime);
+                              setShowHStartPicker(false);
+                            }}
+                            onCancel={() => setShowHStartPicker(false)}
+                          />
+                        </div>
+                      )}
                     </div>
                     <div className="df-field" style={{ marginBottom: "12px" }}>
                       <label className="df-label">3hrs time : <span className="df-required">*</span></label>
-                      <input
-                        type="time"
-                        required
-                        className="df-input"
-                        value={hEndTime}
-                        onChange={(e) => setHEndTime(e.target.value)}
-                      />
+                      <div style={{ position: "relative", width: "100%" }}>
+                        <input
+                          type="text"
+                          placeholder="00:00"
+                          readOnly
+                          required
+                          className="df-input"
+                          value={hEndTime}
+                          onClick={() => setShowHEndPicker(true)}
+                          style={{ cursor: "pointer", paddingRight: hEndTime ? "30px" : "12px" }}
+                        />
+                        {hEndTime && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setHEndTime("");
+                            }}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              background: "none",
+                              border: "none",
+                              color: "var(--text-muted, #9ca3af)",
+                              cursor: "pointer",
+                              fontSize: "14px",
+                              padding: "4px"
+                            }}
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                      {showHEndPicker && (
+                        <div className="timekeeper-modal-overlay" onClick={() => setShowHEndPicker(false)}>
+                          <AnalogTimePicker
+                            initialTime={hEndTime || "12:00"}
+                            onSave={(newTime) => {
+                              setHEndTime(newTime);
+                              setShowHEndPicker(false);
+                            }}
+                            onCancel={() => setShowHEndPicker(false)}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -2902,16 +3489,14 @@ const ListRequest = () => {
                 style={{ cursor: 'pointer' }}
               />
               {showBulkStartPicker && (
-                <div className="timekeeper-modal-overlay" onClick={() => setShowBulkStartPicker(false)}>
-                  <AnalogTimePicker
-                    initialTime={bulkTime.startTime || "12:00"}
-                    onSave={(newTime) => {
-                      setBulkTime(p => ({ ...p, startTime: newTime }));
-                      setShowBulkStartPicker(false);
-                    }}
-                    onCancel={() => setShowBulkStartPicker(false)}
-                  />
-                </div>
+                <AnalogTimePicker
+                  initialTime={bulkTime.startTime || "12:00"}
+                  onSave={(newTime) => {
+                    setBulkTime(p => ({ ...p, startTime: newTime }));
+                    setShowBulkStartPicker(false);
+                  }}
+                  onCancel={() => setShowBulkStartPicker(false)}
+                />
               )}
             </div>
             <div className="df-field">
@@ -2929,16 +3514,14 @@ const ListRequest = () => {
                 style={{ cursor: bulkTime.nightShift ? 'default' : 'pointer' }}
               />
               {!bulkTime.nightShift && showBulkEndPicker && (
-                <div className="timekeeper-modal-overlay" onClick={() => setShowBulkEndPicker(false)}>
-                  <AnalogTimePicker
-                    initialTime={bulkTime.endTime || "12:00"}
-                    onSave={(newTime) => {
-                      setBulkTime(p => ({ ...p, endTime: newTime }));
-                      setShowBulkEndPicker(false);
-                    }}
-                    onCancel={() => setShowBulkEndPicker(false)}
-                  />
-                </div>
+                <AnalogTimePicker
+                  initialTime={bulkTime.endTime || "12:00"}
+                  onSave={(newTime) => {
+                    setBulkTime(p => ({ ...p, endTime: newTime }));
+                    setShowBulkEndPicker(false);
+                  }}
+                  onCancel={() => setShowBulkEndPicker(false)}
+                />
               )}
             </div>
           </div>
@@ -2958,7 +3541,7 @@ const ListRequest = () => {
                     }));
                   }}
                 />
-                <span className="checkbox-label">Is this a night shift?</span>
+                <span className="checkbox-label">Is this working after midnight?</span>
               </label>
             </div>
           </div>
@@ -2966,7 +3549,7 @@ const ListRequest = () => {
           {bulkTime.nightShift && (
             <div className="df-grid night-shift-subform" style={{ marginTop: "16px" }}>
               <div className="df-field">
-                <label className="df-label">New End Time (Night Shift)</label>
+                <label className="df-label">New End Time (Working After Midnight)</label>
                 <input
                   type="text"
                   placeholder="00:00"
@@ -2977,16 +3560,14 @@ const ListRequest = () => {
                   style={{ cursor: 'pointer' }}
                 />
                 {showBulkNewEndPicker && (
-                  <div className="timekeeper-modal-overlay" onClick={() => setShowBulkNewEndPicker(false)}>
-                    <AnalogTimePicker
-                      initialTime={bulkTime.newEndTime || "12:00"}
-                      onSave={(newTime) => {
-                        setBulkTime(p => ({ ...p, newEndTime: newTime }));
-                        setShowBulkNewEndPicker(false);
-                      }}
-                      onCancel={() => setShowBulkNewEndPicker(false)}
-                    />
-                  </div>
+                  <AnalogTimePicker
+                    initialTime={bulkTime.newEndTime || "12:00"}
+                    onSave={(newTime) => {
+                      setBulkTime(p => ({ ...p, newEndTime: newTime }));
+                      setShowBulkNewEndPicker(false);
+                    }}
+                    onCancel={() => setShowBulkNewEndPicker(false)}
+                  />
                 )}
               </div>
             </div>
@@ -3108,37 +3689,228 @@ const ListRequest = () => {
         onClose={() => setActiveModal(null)}
         title="Copy Request to Consecutive Dates"
         size="md"
+        scrollable={true}
       >
         {modalTarget && (
           <form onSubmit={handleCopySubmit} className="df-form">
-            <div style={{ marginBottom: "16px" }}>
-              <p style={{ color: "#d1d5db" }}>
-                Copying request Permit No: <strong style={{ color: "#fff" }}>{modalTarget.PermitNo}</strong>
-              </p>
-            </div>
-            <div className="df-grid">
-              <div className="df-field">
-                <label className="df-label">Copy Range (From)</label>
-                <input
-                  type="date"
-                  required
-                  className="df-input"
-                  min={new Date().toISOString().split("T")[0]}
-                  value={copyDates.from}
-                  onChange={(e) => setCopyDates(p => ({ ...p, from: e.target.value }))}
-                />
+            <div style={{ maxHeight: "60vh", overflowY: "auto", paddingRight: "8px", marginBottom: "16px" }}>
+              <div style={{ marginBottom: "16px" }}>
+                <p style={{ color: "var(--text-muted, inherit)" }}>
+                  Copying request Permit No: <strong style={{ color: "var(--text-main, inherit)" }}>{modalTarget.PermitNo}</strong>
+                </p>
               </div>
-              <div className="df-field">
-                <label className="df-label">Copy Range (To)</label>
-                <input
-                  type="date"
-                  required
-                  className="df-input"
-                  min={new Date().toISOString().split("T")[0]}
-                  value={copyDates.to}
-                  onChange={(e) => setCopyDates(p => ({ ...p, to: e.target.value }))}
-                />
+
+              {/* Date Range */}
+              <div className="df-grid">
+                <div className="df-field">
+                  <label className="df-label">Working Date (From)</label>
+                  <input
+                    type="date"
+                    required
+                    className="df-input"
+                    min={new Date().toISOString().split("T")[0]}
+                    value={copyDates.from}
+                    onChange={(e) => setCopyDates(p => ({ ...p, from: e.target.value }))}
+                  />
+                </div>
+                <div className="df-field">
+                  <label className="df-label">Working Date (To)</label>
+                  <input
+                    type="date"
+                    required
+                    className="df-input"
+                    min={copyDates.from || new Date().toISOString().split("T")[0]}
+                    value={copyDates.to}
+                    onChange={(e) => setCopyDates(p => ({ ...p, to: e.target.value }))}
+                  />
+                </div>
               </div>
+
+              {/* Times matching NewRequest.jsx design */}
+              <div className="df-grid" style={{ marginTop: "16px" }}>
+                <div className="df-field">
+                  <label className="df-label">Start Time <span className="req-star">*</span></label>
+                  <div style={{ position: "relative", width: "100%" }}>
+                    <input
+                      type="text"
+                      placeholder="00:00"
+                      readOnly
+                      className="df-input"
+                      value={copyDates.startTime || ""}
+                      onClick={() => setShowCopyStartPicker(true)}
+                      style={{ cursor: 'pointer', paddingRight: copyDates.startTime ? "30px" : "12px" }}
+                    />
+                    {copyDates.startTime && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCopyDates(p => ({ ...p, startTime: "" }));
+                        }}
+                        style={{
+                          position: "absolute",
+                          right: "10px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          background: "none",
+                          border: "none",
+                          color: "var(--text-muted, #9ca3af)",
+                          cursor: "pointer",
+                          fontSize: "14px",
+                          padding: "4px"
+                        }}
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                  {showCopyStartPicker && (
+                    <div className="timekeeper-modal-overlay" onClick={() => setShowCopyStartPicker(false)}>
+                      <AnalogTimePicker
+                        initialTime={copyDates.startTime || "12:00"}
+                        onSave={(newTime) => {
+                          setCopyDates(p => ({ ...p, startTime: newTime }));
+                          setShowCopyStartPicker(false);
+                        }}
+                        onCancel={() => setShowCopyStartPicker(false)}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="df-field">
+                  <label className="df-label">End Time <span className="req-star">*</span></label>
+                  <div style={{ position: "relative", width: "100%" }}>
+                    <input
+                      type="text"
+                      placeholder="00:00"
+                      readOnly
+                      className={`df-input${copyDates.nightShift ? " df-readonly" : ""}`}
+                      value={copyDates.endTime || ""}
+                      disabled={copyDates.nightShift}
+                      onClick={() => {
+                        if (!copyDates.nightShift) {
+                          setShowCopyEndPicker(true);
+                        }
+                      }}
+                      style={{ cursor: copyDates.nightShift ? 'not-allowed' : 'pointer', paddingRight: copyDates.endTime && !copyDates.nightShift ? "30px" : "12px" }}
+                    />
+                    {copyDates.endTime && !copyDates.nightShift && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCopyDates(p => ({ ...p, endTime: "" }));
+                        }}
+                        style={{
+                          position: "absolute",
+                          right: "10px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          background: "none",
+                          border: "none",
+                          color: "var(--text-muted, #9ca3af)",
+                          cursor: "pointer",
+                          fontSize: "14px",
+                          padding: "4px"
+                        }}
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                  {showCopyEndPicker && (
+                    <div className="timekeeper-modal-overlay" onClick={() => setShowCopyEndPicker(false)}>
+                      <AnalogTimePicker
+                        initialTime={copyDates.endTime || "12:00"}
+                        onSave={(newTime) => {
+                          setCopyDates(p => ({ ...p, endTime: newTime }));
+                          setShowCopyEndPicker(false);
+                        }}
+                        onCancel={() => setShowCopyEndPicker(false)}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Working After Midnight */}
+              <div style={{ marginTop: "16px" }}>
+                <label className="checkbox-container" style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "var(--text-main, #d1d5db)", cursor: "pointer", fontSize: "14px" }}>
+                  <input
+                    type="checkbox"
+                    checked={copyDates.nightShift}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      const origEndTime = modalTarget ? (modalTarget.End_Time || modalTarget.end_time || "").slice(0, 5) : "";
+                      setCopyDates(p => ({
+                        ...p,
+                        nightShift: checked,
+                        endTime: checked ? "23:59" : (origEndTime || p.endTime),
+                        newEndTime: checked ? p.newEndTime : ""
+                      }));
+                    }}
+                    style={{ accentColor: "var(--accent, #00e5a0)" }}
+                  />
+                  <span>Is this working after midnight?</span>
+                </label>
+              </div>
+
+              {/* New End Time (Working After Midnight) */}
+              {copyDates.nightShift && (
+                <div className="df-grid" style={{ marginTop: "16px" }}>
+                  <div className="df-field">
+                    <label className="df-label">New End Time (Working After Midnight) <span className="req-star">*</span></label>
+                    <div style={{ position: "relative", width: "100%" }}>
+                      <input
+                        type="text"
+                        placeholder="00:00"
+                        readOnly
+                        className="df-input"
+                        value={copyDates.newEndTime || ""}
+                        onClick={() => setShowCopyNewEndPicker(true)}
+                        style={{ cursor: 'pointer', paddingRight: copyDates.newEndTime ? "30px" : "12px" }}
+                      />
+                      {copyDates.newEndTime && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCopyDates(p => ({ ...p, newEndTime: "" }));
+                          }}
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            background: "none",
+                            border: "none",
+                            color: "var(--text-muted, #9ca3af)",
+                            cursor: "pointer",
+                            fontSize: "14px",
+                            padding: "4px"
+                          }}
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                    {showCopyNewEndPicker && (
+                      <div className="timekeeper-modal-overlay" onClick={() => setShowCopyNewEndPicker(false)}>
+                        <AnalogTimePicker
+                          initialTime={copyDates.newEndTime || "12:00"}
+                          onSave={(newTime) => {
+                            setCopyDates(p => ({ ...p, newEndTime: newTime }));
+                            setShowCopyNewEndPicker(false);
+                          }}
+                          onCancel={() => setShowCopyNewEndPicker(false)}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <div className="df-field" />
+                </div>
+              )}
             </div>
 
             <div className="df-footer" style={{ marginTop: "24px" }}>

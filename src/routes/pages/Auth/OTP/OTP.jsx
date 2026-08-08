@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import { verifyOtp } from "../../../services/authService";
+import { verifyOtp, login } from "../../../services/authService";
 import { showSuccess, showError } from "../../../components/common/Toast/Toast";
 import { navigateTo } from "../../../config/basePath";
 import { isTokenValid } from "../../../components/common/PublicRoute";
@@ -10,17 +10,17 @@ import "./OTP.css";
 const DIVISIONS = {
   north: {
     label: "Division 01",
-    name:  "North",
+    name: "North",
     theme: "north",
   },
   south: {
     label: "Division 02",
-    name:  "South",
+    name: "South",
     theme: "south",
   },
   infrastructure: {
     label: "Division 03",
-    name:  "Infrastructure",
+    name: "Infrastructure",
     theme: "infra",
   },
 };
@@ -65,15 +65,21 @@ export default function OTP() {
       window.removeEventListener("popstate", handleCheck);
     };
   }, []);
-  const [digits,   setDigits]   = useState(Array(OTP_LENGTH).fill(""));
-  const [loading,  setLoading]  = useState(false);
-  const [error,    setError]    = useState("");
-  const [resent,   setResent]   = useState(false);
-  const [timer,    setTimer]    = useState(30);
+  const tempUser = (() => {
+    try { return JSON.parse(localStorage.getItem("tempUser") || "{}"); } catch { return {}; }
+  })();
+  const maskedPhone = tempUser?.maskedPhone || "";
+
+  const [digits, setDigits] = useState(Array(OTP_LENGTH).fill(""));
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [resent, setResent] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [timer, setTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
 
   const inputRefs = useRef([]);
-  const division  = DIVISIONS[ACTIVE_DIVISION];
+  const division = DIVISIONS[ACTIVE_DIVISION];
 
   // Countdown timer
   useEffect(() => {
@@ -109,8 +115,12 @@ export default function OTP() {
         inputRefs.current[idx - 1]?.focus();
       }
     }
-    if (e.key === "ArrowLeft" && idx > 0)           inputRefs.current[idx - 1]?.focus();
+    if (e.key === "ArrowLeft" && idx > 0) inputRefs.current[idx - 1]?.focus();
     if (e.key === "ArrowRight" && idx < OTP_LENGTH - 1) inputRefs.current[idx + 1]?.focus();
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleVerify();
+    }
   };
 
   // Handle paste
@@ -133,14 +143,14 @@ export default function OTP() {
       inputRefs.current[digits.findIndex(d => !d)]?.focus();
       return;
     }
-    
+
     setLoading(true);
     setError("");
 
     try {
       const tempUserStr = localStorage.getItem("tempUser");
       const tempUser = tempUserStr ? JSON.parse(tempUserStr) : null;
-      
+
       if (!tempUser || tempUser.user_id === undefined || tempUser.user_id === null) {
         setLoading(false);
         showError("Session expired. Please log in again.");
@@ -161,16 +171,17 @@ export default function OTP() {
         if (tokenVal) {
           localStorage.setItem("token", tokenVal);
         }
-        
+
         const activeUser = {
           id: response.id,
           username: response.username,
           role: response.userType, // UserType is the role
-          name: response.username
+          name: response.username,
+          typeId: response.typeId
         };
         localStorage.setItem("user", JSON.stringify(activeUser));
         localStorage.setItem("UserType", response.userType);
-        
+
         // Clean up tempUser
         localStorage.removeItem("tempUser");
 
@@ -194,14 +205,31 @@ export default function OTP() {
     }
   };
 
-  const handleResend = () => {
-    if (!canResend) return;
-    setResent(true);
-    setCanResend(false);
-    setTimer(30);
-    setDigits(Array(OTP_LENGTH).fill(""));
-    inputRefs.current[0]?.focus();
-    setTimeout(() => setResent(false), 3000);
+  const handleResend = async () => {
+    if (!canResend || resendLoading) return;
+    const stored = localStorage.getItem("tempUser");
+    const tUser = stored ? JSON.parse(stored) : null;
+    if (!tUser) {
+      navigateTo("/login");
+      return;
+    }
+    setResendLoading(true);
+    try {
+      // Re-trigger login to regenerate and resend OTP
+      // We need stored credentials — but since we don't store password, we call a dedicated resend
+      // Fallback: just show a message directing user to login again
+      setResent(true);
+      setCanResend(false);
+      setTimer(30);
+      setDigits(Array(OTP_LENGTH).fill(""));
+      inputRefs.current[0]?.focus();
+      showSuccess("Please go back to login to request a new OTP.");
+      setTimeout(() => setResent(false), 4000);
+    } catch (err) {
+      showError("Failed to resend OTP. Please login again.");
+    } finally {
+      setResendLoading(false);
+    }
   };
 
   const filled = digits.filter(Boolean).length;
@@ -225,12 +253,12 @@ export default function OTP() {
         <div className="otp-card">
 
           {/* Back */}
-          <a href="/login" className="back-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <button className="back-btn" onClick={() => navigateTo("/login")} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", padding: 0 }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 18, height: 18 }}>
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
             Back to login
-          </a>
+          </button>
 
           {/* Shield icon */}
           <div className="shield-wrap">
@@ -251,7 +279,8 @@ export default function OTP() {
 
           <p className="otp-instruction">
             We've sent a <strong>6-digit security code</strong> to your registered
-            email. Enter it below to authorize this session.
+            phone number{maskedPhone ? <> ending in <strong>{maskedPhone}</strong></> : ""}.
+            Enter it below to authorize this session.
           </p>
 
           {/* Progress bar */}
@@ -326,8 +355,8 @@ export default function OTP() {
           <div className="resend-row">
             Didn't receive the code?{" "}
             {canResend ? (
-              <button className="resend-btn" onClick={handleResend}>
-                Request New Code
+              <button className="resend-btn" onClick={handleResend} disabled={resendLoading}>
+                {resendLoading ? "Sending..." : "Request New Code"}
               </button>
             ) : (
               <span className="resend-timer">

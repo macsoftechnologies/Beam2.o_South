@@ -4,18 +4,12 @@ import babel from '@rolldown/plugin-babel'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/m3south_frontend/',
+  base: '/m3south/',
   plugins: [
-    react({
-      babel: {
-        // Disable the 500KB compaction threshold so large data files
-        // like zones.js don't trigger Babel's deoptimisation warning.
-        compact: false,
-      },
-    }),
+    react(),
     babel({
       presets: [reactCompilerPreset()],
-      compact: false,
-    }),
+      exclude: [/node_modules/, /src\/data\//]
+    })
   ],
 })

@@ -3,11 +3,8 @@ import { showSuccess } from "../../components/common/Toast/Toast";
 import "./ExecutiveDashboard.css";
 import groundFloorPlan from "../../assets/images/ground_floor_plan.png";
 
-import { FLOOR_PDFS } from "../../data/pdfMapping";
-import { BUILDINGS } from "../../data/buildings";
-import { renderPdf } from "../../utils/pdfRenderer";
-
-// BUILDING_PDFS mapping was migrated to dynamic FLOOR_PDFS and BUILDINGS lookup.
+import { FLOOR_PDFS } from "../../../data/pdfMapping";
+import { BUILDINGS } from "../../../data/buildings";
 
 // Mock Data for Overview
 const OVERVIEW_METRICS = [
@@ -130,17 +127,7 @@ function ExecutiveDashboard() {
 
   useEffect(() => {
     if (activeTab !== "Overview" && activeTab !== "Ground Floor") {
-      const bObj = BUILDINGS.find(b => b.name === selectedBuilding);
-      const levelClean = activeTab.replace(/\s+/g, "").toLowerCase().trim();
-      let pdfFile = null;
-      if (bObj && FLOOR_PDFS[bObj.id]) {
-        const keys = Object.keys(FLOOR_PDFS[bObj.id]);
-        const foundKey = keys.find(k => {
-          const kClean = k.replace(/\s+/g, "").toLowerCase().trim();
-          return kClean.includes(levelClean) || levelClean.includes(kClean);
-        });
-        if (foundKey) pdfFile = FLOOR_PDFS[bObj.id][foundKey];
-      }
+      const pdfFile = BUILDING_PDFS[selectedBuilding];
       if (pdfFile) {
         setLoadingPdf(true);
         renderPdf(pdfFile, 1000).then((canvas) => {
@@ -256,13 +243,11 @@ function ExecutiveDashboard() {
             onChange={(e) => setSelectedBuilding(e.target.value)}
           >
             <option value="" disabled>— Select a Building —</option>
-            <option value="JF">JF</option>
-            <option value="External Areas">External Areas</option>
-            <option value="MR">MR</option>
-            <option value="JG">JG</option>
-            <option value="JH">JH</option>
-            <option value="JJ">JJ</option>
-            <option value="MP">MP</option>
+            {BUILDINGS.map((b) => (
+              <option key={b.id || b.name} value={b.name}>
+                {b.name}
+              </option>
+            ))}
           </select>
         </div>
 

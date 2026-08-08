@@ -5,10 +5,11 @@ import "./ExecutiveDashboard.css";
 import groundFloorPlan from "../../assets/images/ground_floor_plan.png";
 
 import { ZONE_MAPPING } from "../../data/zones";
-import { FLOOR_PDFS } from "../../data/pdfMapping";
-import { BUILDINGS } from "../../data/buildings";
 import DashboardPolygonViewer from "../../components/DashboardPolygonViewer";
 import { getDashboardOverview, getDashboardBuildingMetrics } from "../../services/requestService";
+
+import { FLOOR_PDFS } from "../../data/pdfMapping";
+import { BUILDINGS } from "../../data/buildings";
 
 // HRA Image Logos for Tooltip Hover Card
 import workingAtHeightImg from "../../assets/images/logos/WorkingAtHight.png";
@@ -43,7 +44,7 @@ const getActiveHraLogosForRoom = (roomData) => {
   return HRA_LOGOS_MAP.filter((item) => item.check(roomData, hraText));
 };
 
-// BUILDING_PDFS mapping was migrated to dynamic FLOOR_PDFS and BUILDINGS lookup.
+
 
 
 
@@ -56,9 +57,9 @@ const formatCompanyLogoUrl = (logoVal) => {
   }
   const cleanPath = str.startsWith("/") ? str.slice(1) : str;
   if (cleanPath.startsWith("subcontractors/")) {
-    return `http://187.127.171.51/m3south/${cleanPath}`;
+    return `https://api.beam.safesiteworks.com/m3south/${cleanPath}`;
   }
-  return `http://187.127.171.51/m3south/subcontractors/${cleanPath}`;
+  return `https://api.beam.safesiteworks.com/south/subcontractors/${cleanPath}`;
 };
 
 const CompanyLogo = ({ logo, name, code, color, size = 22, style = {}, className = "mini-company-badge" }) => {
@@ -259,10 +260,20 @@ function ExecutiveDashboard() {
 
   const levels = useMemo(() => {
     if (!selectedBuilding || selectedBuilding === "") return [];
+
+    const staticB = BUILDINGS.find(
+      (item) => item.name.toLowerCase().trim() === selectedBuilding.toLowerCase().trim()
+    );
+    const staticBuildingId = staticB ? staticB.id : "";
+
+    if (staticBuildingId && FLOOR_PDFS[staticBuildingId]) {
+      return Object.keys(FLOOR_PDFS[staticBuildingId]);
+    }
+
     const bClean = selectedBuilding.replace(/\s+/g, "").toLowerCase().trim();
-    return Object.keys(ZONE_MAPPING).filter(key => {
+    return Object.keys(ZONE_MAPPING).filter((key) => {
       const keyClean = key.replace(/\s+/g, "").toLowerCase().trim();
-      return keyClean.includes(bClean) || bClean.includes(keyClean);
+      return keyClean === bClean || keyClean.startsWith(bClean);
     });
   }, [selectedBuilding]);
 
@@ -280,23 +291,42 @@ function ExecutiveDashboard() {
   }, [activeTab, levels]);
 
   const selectedLevelZones = useMemo(() => {
-    return ZONE_MAPPING[selectedLevel] || [];
+    if (!selectedLevel) return [];
+    if (ZONE_MAPPING[selectedLevel]) return ZONE_MAPPING[selectedLevel];
+
+    const levelLower = selectedLevel.toLowerCase().trim();
+    const foundKey = Object.keys(ZONE_MAPPING).find((key) => {
+      const keyLower = key.toLowerCase().trim();
+      return keyLower.includes(levelLower) || levelLower.includes(keyLower);
+    });
+    if (foundKey) return ZONE_MAPPING[foundKey];
+
+    return [];
   }, [selectedLevel]);
 
   const selectedPdf = useMemo(() => {
-    const bObj = BUILDINGS.find(b => b.name === selectedBuilding);
-    if (bObj && FLOOR_PDFS[bObj.id] && FLOOR_PDFS[bObj.id][selectedLevel]) {
-      return FLOOR_PDFS[bObj.id][selectedLevel];
-    }
-    if (bObj && FLOOR_PDFS[bObj.id]) {
-      const keys = Object.keys(FLOOR_PDFS[bObj.id]);
-      const levelClean = selectedLevel.replace(/\s+/g, "").toLowerCase().trim();
-      const foundKey = keys.find(k => {
-        const kClean = k.replace(/\s+/g, "").toLowerCase().trim();
-        return kClean.includes(levelClean) || levelClean.includes(kClean);
+    if (!selectedBuilding || !selectedLevel) return null;
+
+    const staticB = BUILDINGS.find(
+      (item) => item.name.toLowerCase().trim() === selectedBuilding.toLowerCase().trim()
+    );
+    const staticBuildingId = staticB ? staticB.id : "";
+
+    if (staticBuildingId && FLOOR_PDFS[staticBuildingId]) {
+      const pdfsForBuilding = FLOOR_PDFS[staticBuildingId];
+
+      if (pdfsForBuilding[selectedLevel]) return pdfsForBuilding[selectedLevel];
+
+      const levelLower = selectedLevel.toLowerCase().trim();
+      const foundKey = Object.keys(pdfsForBuilding).find((key) => {
+        const keyLower = key.toLowerCase().trim();
+        return keyLower.includes(levelLower) || levelLower.includes(keyLower);
       });
-      if (foundKey) return FLOOR_PDFS[bObj.id][foundKey];
+      if (foundKey) return pdfsForBuilding[foundKey];
+
+      return Object.values(pdfsForBuilding)[0] || null;
     }
+
     return selectedLevelZones[0]?.pdf || null;
   }, [selectedBuilding, selectedLevel, selectedLevelZones]);
 
@@ -304,8 +334,8 @@ function ExecutiveDashboard() {
     return selectedLevelZones.flatMap(zone => {
       if (!zone.rooms) return [];
 
-      // Get the floor's PDF for this building
-      const floorPdf = selectedPdf;
+      // Get the floor's PDF for this level
+      const floorPdf = selectedPdf || selectedLevelZones[0]?.pdf;
 
       // If the zone uses the same PDF as the floor plan itself,
       // the coordinates of the rooms are already correct relative to the floor. Skip projection.
@@ -350,7 +380,7 @@ function ExecutiveDashboard() {
         };
       });
     });
-  }, [selectedLevelZones, selectedPdf]);
+  }, [selectedLevelZones, selectedBuilding]);
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -714,13 +744,11 @@ function ExecutiveDashboard() {
               onChange={(e) => setSelectedBuilding(e.target.value)}
             >
               <option value="" disabled>— Select a Building —</option>
-              <option value="JF">JF</option>
-              <option value="External Areas">External Areas</option>
-              <option value="MR">MR</option>
-              <option value="JG">JG</option>
-              <option value="JH">JH</option>
-              <option value="JJ">JJ</option>
-              <option value="MP">MP</option>
+              {BUILDINGS.map((b) => (
+                <option key={b.id || b.name} value={b.name}>
+                  {b.name}
+                </option>
+              ))}
             </select>
           </div>
 

@@ -3,7 +3,7 @@ import axios from "axios";
 // ─── Standalone axios instance for logging only ────────────────────────────────
 // We deliberately do NOT import from "./api" here to avoid a circular dependency
 // (api.js → userLogService.js → api.js). Using a raw axios instance instead.
-const LOG_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://187.127.171.51/m3south/";
+const LOG_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const logAxios = axios.create({
   baseURL: LOG_BASE_URL,
