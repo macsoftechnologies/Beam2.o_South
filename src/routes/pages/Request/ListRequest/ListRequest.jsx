@@ -2231,6 +2231,12 @@ const getInitialPage = () => {
           !isSubcontractor;
 
         if (!isStatusAllowed) return false;
+        if (isSubcontractor) {
+          return row.Request_status === "Draft";
+        }
+        if (row.Request_status === "Opened") {
+          if (!isAdmin && !isDept && !isDept1 && !isMultiDept) return false;
+        }
         if (isAdmin || isMultiDept) return true;
 
         if (isDept) {
