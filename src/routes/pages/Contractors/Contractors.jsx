@@ -189,7 +189,7 @@ const Contractors = () => {
     try {
       const formDataObj = new FormData();
       formDataObj.append("subContractorName", formData.subContractorName);
-      formDataObj.append("departId", formData.departId);
+      // Department and status fields removed
       if (formData.logoFile) {
         formDataObj.append("logo", formData.logoFile);
       } else if (formData.logoCleared) {
@@ -220,14 +220,11 @@ const Contractors = () => {
         alert("No data available to export.");
         return;
       }
-      const headers = ["S.No", "Contractor Name", "Department"];
+      const headers = ["S.No", "Contractor Name"];
       const csvRows = rows.map((item, index) => {
-        const matchedDept = departments.find(d => String(d.id) === String(item.departId));
-        const deptName = matchedDept ? matchedDept.departmentName : "—";
         return [
           index + 1,
-          `"${(item.subContractorName || "").replace(/"/g, '""')}"`,
-          `"${(deptName || "").replace(/"/g, '""')}"`
+          `"${(item.subContractorName || "").replace(/"/g, '""')}"`
         ].join(",");
       });
       const csvContent = "\uFEFF" + [headers.join(","), ...csvRows].join("\n");
@@ -252,18 +249,13 @@ const Contractors = () => {
         alert("No data available to export.");
         return;
       }
-      const headers = ["S.No", "Contractor Name", "Department"];
+      const headers = ["S.No", "Contractor Name"];
       const wsData = [
         headers,
-        ...rows.map((item, index) => {
-          const matchedDept = departments.find(d => String(d.id) === String(item.departId));
-          const deptName = matchedDept ? matchedDept.departmentName : "—";
-          return [
-            index + 1,
-            item.subContractorName || "",
-            deptName || ""
-          ];
-        })
+        ...rows.map((item, index) => [
+          index + 1,
+          item.subContractorName || ""
+        ])
       ];
       const ws = XLSX.utils.aoa_to_sheet(wsData);
       const wb = XLSX.utils.book_new();
@@ -403,12 +395,6 @@ const Contractors = () => {
             <div className="dept-view-item">
               <span className="dept-view-label">Contractor Name</span>
               <span className="dept-view-value">{selectedContractor.subContractorName}</span>
-            </div>
-            <div className="dept-view-item">
-              <span className="dept-view-label">Department</span>
-              <span className="dept-view-value dept-view-value--code">
-                {departments.find(d => String(d.id) === String(selectedContractor.departId))?.departmentName || "—"}
-              </span>
             </div>
             <div className="dept-view-item">
               <span className="dept-view-label">Logo</span>
