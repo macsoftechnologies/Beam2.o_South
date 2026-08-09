@@ -115,19 +115,18 @@ export default function Login() {
           <div className="panel-left">
             <div className="panel-glow"></div>
             <div className="panel-glow-2"></div>
-            <div className="panel-compass">N</div>
+            <div className="panel-compass">S</div>
 
             <div className="panel-top">
               <div className="panel-badge">
-                <span className="dot"></span>Division 01
+                <span className="dot"></span>Division 02
               </div>
               <h2 className="panel-title">
-                M3 <span>North</span>
+                M3 <span>South</span>
                 <br />Operations
               </h2>
               <p className="panel-desc">
-                Your secure gateway to the North regional operations platform —
-                project management, field coordination, and real-time reporting.
+                Your secure gateway to the M3 South operations platform — permit management, field coordination and real-time reporting.
               </p>
             </div>
           </div>
