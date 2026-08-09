@@ -1120,8 +1120,18 @@ const ListRequest = () => {
     }
 
     if (searchFilters.levels && searchFilters.levels.length > 0) {
+      const isLevelMatch = (filterLevel, targetName) => {
+        if (!filterLevel || !targetName) return false;
+        const fl = String(filterLevel).trim().toLowerCase();
+        const tn = String(targetName).trim().toLowerCase();
+        if (fl === tn || fl.endsWith(tn) || tn.endsWith(fl)) return true;
+        const baseFl = fl.replace(/^(?:[a-z0-9]+\s*[-:]?\s*)/i, '').trim();
+        const baseTn = tn.replace(/^(?:[a-z0-9]+\s*[-:]?\s*)/i, '').trim();
+        return baseFl.length > 0 && baseFl === baseTn;
+      };
+
       const matchedFloorIds = floorsList
-        .filter(f => searchFilters.levels.includes(f.floor_name))
+        .filter(f => searchFilters.levels.some(l => isLevelMatch(l, f.floor_name)))
         .map(f => Number(f.fl_id));
 
       const zoneIdsFromRooms = roomsList
@@ -1131,7 +1141,7 @@ const ListRequest = () => {
 
       zonesToFilter = zonesToFilter.filter(z => {
         const matchDirectFloorId = z.floor_id !== undefined && z.floor_id !== null && matchedFloorIds.includes(Number(z.floor_id));
-        const matchDirectLevelName = z.level !== undefined && z.level !== null && searchFilters.levels.includes(z.level);
+        const matchDirectLevelName = z.level !== undefined && z.level !== null && searchFilters.levels.some(l => isLevelMatch(l, z.level));
         const matchViaRooms = zoneIdsFromRooms.includes(Number(z.id));
         return matchDirectFloorId || matchDirectLevelName || matchViaRooms;
       });
@@ -1158,8 +1168,18 @@ const ListRequest = () => {
     }
 
     if (searchFilters.levels.length > 0) {
+      const isLevelMatch = (filterLevel, targetName) => {
+        if (!filterLevel || !targetName) return false;
+        const fl = String(filterLevel).trim().toLowerCase();
+        const tn = String(targetName).trim().toLowerCase();
+        if (fl === tn || fl.endsWith(tn) || tn.endsWith(fl)) return true;
+        const baseFl = fl.replace(/^(?:[a-z0-9]+\s*[-:]?\s*)/i, '').trim();
+        const baseTn = tn.replace(/^(?:[a-z0-9]+\s*[-:]?\s*)/i, '').trim();
+        return baseFl.length > 0 && baseFl === baseTn;
+      };
+
       const matchedFloorIds = floorsList
-        .filter(f => searchFilters.levels.includes(f.floor_name))
+        .filter(f => searchFilters.levels.some(l => isLevelMatch(l, f.floor_name)))
         .map(f => f.fl_id);
       roomsToGroup = roomsToGroup.filter(r => matchedFloorIds.includes(r.fl_id));
     }
