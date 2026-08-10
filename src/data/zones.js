@@ -79,7 +79,7 @@ import ExternalAreasJEPDF from '../assets/drawings/m3south/plans/externalAreas/e
 import ExternalAreasJFPDF from '../assets/drawings/m3south/plans/externalAreas/externalAreas_blocks/JF.pdf';
 import ExternalAreasJGPDF from '../assets/drawings/m3south/plans/externalAreas/externalAreas_blocks/JG.pdf';
 import ExternalAreasMRPDF from '../assets/drawings/m3south/plans/externalAreas/externalAreas_blocks/MR.pdf';
-import ExternalAreasJHJXJSPDF from '../assets/drawings/m3south/plans/externalAreas/externalAreas_blocks/JH-JX-JS.pdf';
+import ExternalAreasJHJXJSPDF from '../assets/drawings/m3south/plans/externalAreas/externalAreas_blocks/JH-JX-JS-N2.pdf';
 import ExternalAreasJJPDF from '../assets/drawings/m3south/plans/externalAreas/externalAreas_blocks/JJ.pdf';
 import ExternalAreasMPPDF from '../assets/drawings/m3south/plans/externalAreas/externalAreas_blocks/MP.pdf';
 import ExternalAreasJKJMPDF from '../assets/drawings/m3south/plans/externalAreas/externalAreas_blocks/JK-JM.pdf';
@@ -13429,7 +13429,7 @@ export const ZONE_MAPPING = {
     },
   ],
 
-  // pending
+  // done
 
   "External Areas": [
     {
@@ -13513,540 +13513,309 @@ export const ZONE_MAPPING = {
       ],
       rooms: [
         {
-          "id": "7d0eb017-3f9b-44f0-8384-a12db47e1ba2",
-          "name": "JE-Zone 1",
-          "pdfWidth": 1366,
-          "pdfHeight": 1146,
-          "points": [
-            {
-              "id": "24791193-cdc1-42fa-b32f-2234f10d5563",
-              "x": 119,
-              "y": 142
-            },
-            {
-              "id": "5e1e21ea-e0cb-4b90-92d5-4f96d3abb4bc",
-              "x": 238,
-              "y": 142
-            },
-            {
-              "id": "888f9e53-c30e-4433-aaa1-5983683d7c86",
-              "x": 239,
-              "y": 377
-            },
-            {
-              "id": "7c9e3464-b336-49dd-aa75-d257e98adea5",
-              "x": 119,
-              "y": 377
-            },
-            {
-              "id": "cf8ecc18-ae7b-4417-a21d-4b9e19a091b8",
-              "x": 120,
-              "y": 143
-            }
-          ]
-        },
-        {
-          "id": "efd703a2-da2d-470c-b4af-a5f8649c8ba2",
-          "name": "JE-Zone 2",
-          "pdfWidth": 1366,
-          "pdfHeight": 1146,
-          "points": [
-            {
-              "id": "7bc2212a-5f38-4c1d-94ca-3b582e317463",
-              "x": 239,
-              "y": 142
-            },
-            {
-              "id": "2f510ac2-ce06-425c-bfa7-4225a51c5876",
-              "x": 471,
-              "y": 142
-            },
-            {
-              "id": "76fbad9f-4c88-457f-bb86-c041a623ed3e",
-              "x": 472,
-              "y": 322
-            },
-            {
-              "id": "56b6b615-cf7c-4f48-8d13-f4f2cd9532d9",
-              "x": 240,
-              "y": 322
-            },
-            {
-              "id": "0d1f2e80-089e-4661-a1c4-e92bf200a5e6",
-              "x": 239,
-              "y": 142
-            }
-          ]
-        },
-        {
-          "id": "5c2fef8a-9550-44e7-99c6-1f01f51daed1",
-          "name": "JE-Zone 3",
-          "pdfWidth": 1366,
-          "pdfHeight": 1146,
-          "points": [
-            {
-              "id": "a3d29a92-5189-4151-8e3f-6adb4542bd30",
-              "x": 472,
-              "y": 142
-            },
-            {
-              "id": "fbd973cd-9116-42e2-9dfe-03e3a052032c",
-              "x": 705,
-              "y": 143
-            },
-            {
-              "id": "91aa714c-c041-4ee0-b72e-fca8995ef99c",
-              "x": 703,
-              "y": 375
-            },
-            {
-              "id": "10644506-de4a-400e-ad80-9303068a68bd",
-              "x": 472,
-              "y": 377
-            },
-            {
-              "id": "e436ff1c-f054-4873-a06e-2c97047a3f46",
-              "x": 472,
-              "y": 141
-            }
-          ]
-        },
-        {
-          "id": "cab5e2ab-e6a0-459f-a4d5-7c0cbcfcc0e2",
-          "name": "JE-Zone 4",
-          "pdfWidth": 1366,
-          "pdfHeight": 1146,
-          "points": [
-            {
-              "id": "f84ff5d6-3a23-4a46-bdee-6117ad02e5e4",
-              "x": 705,
-              "y": 143
-            },
-            {
-              "id": "7934b95d-b1dc-4ff7-840d-abcd93d436e2",
-              "x": 1136,
-              "y": 140
-            },
-            {
-              "id": "ad52c494-b202-463a-9c56-4b0a5dad83ff",
-              "x": 1134,
-              "y": 323
-            },
-            {
-              "id": "34d2689f-514c-4320-8bbd-c506faeb0cef",
-              "x": 706,
-              "y": 323
-            },
-            {
-              "id": "5b04c675-0af1-4915-8c04-ad3ee51f54e2",
-              "x": 705,
-              "y": 144
-            }
-          ]
-        },
-        {
-          "id": "66e0f032-69e8-49dc-8299-d367b82a57a9",
-          "name": "JE-Zone 5",
-          "pdfWidth": 1366,
-          "pdfHeight": 1146,
-          "points": [
-            {
-              "id": "696197c1-7617-4674-8e5e-62d62973f16c",
-              "x": 1138,
-              "y": 140
-            },
-            {
-              "id": "8c2f7dcd-36cc-4f6b-8c8c-e0911e878822",
-              "x": 1256,
-              "y": 141
-            },
-            {
-              "id": "e31f1eb9-e1ae-4796-b4b6-3dea5841a330",
-              "x": 1255,
-              "y": 377
-            },
-            {
-              "id": "81e4b120-e0ab-4028-83c7-d42a10a3d815",
-              "x": 1134,
-              "y": 375
-            },
-            {
-              "id": "38986588-4390-419d-9ff0-f0f95e53aa12",
-              "x": 1136,
-              "y": 141
-            }
-          ]
-        },
-        {
-          "id": "465d435e-d045-4737-82c4-8613b2ab006f",
-          "name": "Area JE/1",
-          "pdfWidth": 1366,
-          "pdfHeight": 1146,
-          "points": [
-            {
-              "id": "8cf11c77-66ca-43c1-b36a-2de696dcacb8",
-              "x": 119,
-              "y": 380
-            },
-            {
-              "id": "1a7de549-2e52-4215-b829-cce5ab826895",
-              "x": 239,
-              "y": 381
-            },
-            {
-              "id": "ea1d48e2-36da-454f-96b0-31ccd31d8761",
-              "x": 240,
-              "y": 420
-            },
-            {
-              "id": "f5342f1b-9b5c-45c7-9aa0-41ca4fb10ed4",
-              "x": 119,
-              "y": 420
-            },
-            {
-              "id": "da016170-055d-4526-b59f-f890ec68e908",
-              "x": 121,
-              "y": 380
-            }
-          ]
-        },
-        {
-          "id": "0fc0a05f-da9d-4aad-8c2c-56a7edc1fdcf",
+          "id": "6903bcae-ef92-42f0-843e-dc2987a3be7f",
           "name": "Area JE/2",
           "pdfWidth": 1366,
-          "pdfHeight": 1146,
+          "pdfHeight": 347,
           "points": [
             {
-              "id": "b58f8c36-1777-4fbf-aa96-e61972a5f18b",
-              "x": 49,
-              "y": 99
+              "id": "e91377cf-924d-4eea-b027-20fac9db5415",
+              "x": 26,
+              "y": 6
             },
             {
-              "id": "91e477de-3db2-483e-879e-c405113ac953",
-              "x": 117,
-              "y": 100
+              "id": "8d7f0fe7-aa60-4e9b-be7a-5dab8036c4ef",
+              "x": 14,
+              "y": 81
             },
             {
-              "id": "379a89c2-9e81-47bf-9553-d6577d3767f5",
-              "x": 117,
-              "y": 420
+              "id": "b5af0b1d-ab0b-48c1-8c1e-bcde9c80010d",
+              "x": 15,
+              "y": 139
             },
             {
-              "id": "a1b3bb78-1be5-40d9-a134-4cd10305393e",
-              "x": 40,
-              "y": 421
+              "id": "6bf0668c-58e9-4aa9-83bc-47ae8c36744a",
+              "x": 15,
+              "y": 341
             },
             {
-              "id": "3d7f8677-b1de-4f90-9dee-923813e3e35c",
-              "x": 39,
-              "y": 170
+              "id": "3aac9b17-1971-48ce-ad11-68b4fa3c9ff0",
+              "x": 98,
+              "y": 341
             },
             {
-              "id": "74e0d48d-f4b5-4fee-b591-40832e15a68f",
-              "x": 44,
-              "y": 134
+              "id": "d04fc10d-f4de-4fde-a569-41b1cdbc7848",
+              "x": 97,
+              "y": 7
             },
             {
-              "id": "e0535328-ee50-44be-9125-6714013de946",
-              "x": 49,
-              "y": 98
+              "id": "ca61de8b-213e-42a9-9415-9737a50c4b5f",
+              "x": 26,
+              "y": 6
             }
           ]
         },
         {
-          "id": "e5bb948a-16f4-4a6f-9286-b9c7e89cad31",
+          "id": "3edefa24-c5f5-480c-97d6-25d6cadc211c",
+          "name": "Area JE/1",
+          "pdfWidth": 1366,
+          "pdfHeight": 347,
+          "points": [
+            {
+              "id": "d5374c76-be45-47c2-b564-ecf3e1757d6f",
+              "x": 99,
+              "y": 296
+            },
+            {
+              "id": "2bd9576a-f914-4e17-a5be-99f2b9d55968",
+              "x": 222,
+              "y": 296
+            },
+            {
+              "id": "5a523443-fd90-4d80-befe-96c6c4bb575d",
+              "x": 222,
+              "y": 339
+            },
+            {
+              "id": "53c59b15-cf58-4960-bd54-bac3719c6b45",
+              "x": 97,
+              "y": 338
+            },
+            {
+              "id": "193da235-0c4c-4d09-8e4b-4206c8236ede",
+              "x": 99,
+              "y": 295
+            }
+          ]
+        },
+        {
+          "id": "2226e934-0156-4fce-bc0b-169770ff925f",
           "name": "Area JE/3",
           "pdfWidth": 1366,
-          "pdfHeight": 1146,
+          "pdfHeight": 347,
           "points": [
             {
-              "id": "3818121a-43ae-49c9-8777-b23b52b7753c",
-              "x": 122,
-              "y": 101
+              "id": "5313e67e-c8e0-49b5-af77-80f16f1c0db3",
+              "x": 98,
+              "y": 8
             },
             {
-              "id": "9192032d-6f85-4f7f-a336-98f0b55ee754",
-              "x": 413,
-              "y": 99
+              "id": "71f18922-9a5d-4e37-b064-c834e77890c1",
+              "x": 400,
+              "y": 6
             },
             {
-              "id": "55be97cd-563c-4075-9ab7-097978098547",
-              "x": 413,
-              "y": 140
+              "id": "de8eaa1b-bed6-479b-babf-e19d4394c986",
+              "x": 400,
+              "y": 52
             },
             {
-              "id": "2084741e-dbd8-473d-bede-23e41c716230",
-              "x": 120,
-              "y": 141
+              "id": "7ed27bb8-4654-41ab-96b5-e2d613d78cc2",
+              "x": 98,
+              "y": 51
             },
             {
-              "id": "86a5e7de-8776-4a70-b18e-1a8527d5b67f",
-              "x": 120,
-              "y": 101
+              "id": "9a51333b-6d75-40e4-886d-0d648aefe26d",
+              "x": 99,
+              "y": 9
             }
           ]
         },
         {
-          "id": "ec80205f-4e10-4b87-a51a-0d5e74f6a315",
+          "id": "bf8cacde-4775-4f35-9a15-0b59987eade4",
           "name": "Area JE/4",
           "pdfWidth": 1366,
-          "pdfHeight": 1146,
+          "pdfHeight": 347,
           "points": [
             {
-              "id": "aad39540-ebd1-4c72-ae23-8eaa6a5eec13",
-              "x": 414,
-              "y": 99
+              "id": "bc547ca5-5c9f-4dff-948d-08e15ee7d3fe",
+              "x": 402,
+              "y": 51
             },
             {
-              "id": "c9195cb1-a41b-4106-9346-ea5e676e0eb9",
+              "id": "216104e3-8421-45e8-a45e-221012421be4",
+              "x": 402,
+              "y": 8
+            },
+            {
+              "id": "bddc520b-dc2f-4960-9083-8f6f1168ee21",
+              "x": 702,
+              "y": 8
+            },
+            {
+              "id": "7e9a16c4-c3de-4121-a7e3-8c78c7b869be",
               "x": 703,
-              "y": 102
+              "y": 50
             },
             {
-              "id": "2a1582e9-76b1-47ff-8582-f9efdcbde25e",
-              "x": 704,
-              "y": 142
-            },
-            {
-              "id": "bc39f5dc-a53a-472b-9d82-bd0d1fc3b0fe",
-              "x": 413,
-              "y": 139
-            },
-            {
-              "id": "2bc821ff-5557-49c4-8f5a-238a3d05f198",
-              "x": 413,
-              "y": 99
+              "id": "f8c8f0cd-b523-43e9-9267-ac51a867abe3",
+              "x": 402,
+              "y": 49
             }
           ]
         },
         {
-          "id": "fdc4ba6c-4bc4-43fd-b03a-53abe091d75f",
+          "id": "be8c00c0-7473-43ff-af16-9881ee2ed874",
           "name": "Area JE/5",
           "pdfWidth": 1366,
-          "pdfHeight": 1146,
+          "pdfHeight": 347,
           "points": [
             {
-              "id": "47775783-8059-443a-9751-d304d577f737",
+              "id": "8dee0716-54ee-478f-8c22-5ff7229d1b9f",
               "x": 704,
-              "y": 101
+              "y": 10
             },
             {
-              "id": "bf20126b-86b6-49ec-96e8-7bbab14d901a",
-              "x": 999,
-              "y": 101
+              "id": "40bb6f21-5618-481f-b622-5c692494562f",
+              "x": 703,
+              "y": 50
             },
             {
-              "id": "ab264fbb-2694-43c5-ac7f-f1aa781d2d83",
-              "x": 999,
-              "y": 139
+              "id": "00b70768-65f1-4bbb-a19f-fdc28bf11ffa",
+              "x": 1005,
+              "y": 49
             },
             {
-              "id": "1a5c592f-0f49-41df-a3b4-5f197f805633",
-              "x": 706,
-              "y": 140
+              "id": "6c4124e6-dabf-4aec-b855-0ba0eeb86dbc",
+              "x": 1005,
+              "y": 8
             },
             {
-              "id": "00ba69bb-8e4c-44a3-bfba-cb845ae67d1a",
+              "id": "7f395e96-5dc0-431c-834e-c4505a47d1f1",
               "x": 704,
-              "y": 102
+              "y": 8
             }
           ]
         },
         {
-          "id": "b6523489-b8e8-4bef-8a3e-a83a35796de1",
+          "id": "9a5cb59c-74f8-4585-9725-c2e40ededd43",
           "name": "Area JE/6",
           "pdfWidth": 1366,
-          "pdfHeight": 1146,
+          "pdfHeight": 347,
           "points": [
             {
-              "id": "f12da7cf-4e76-429d-a2e1-7017acd770bf",
-              "x": 998,
-              "y": 102
+              "id": "28fa9678-6a0c-49c9-90e0-7f4a4070db3f",
+              "x": 1007,
+              "y": 11
             },
             {
-              "id": "30fa222f-a0c8-4a83-bd33-98ff3d2ada64",
-              "x": 1337,
-              "y": 99
+              "id": "09529da8-da8c-4ab5-a00c-4a537ae13f96",
+              "x": 1355,
+              "y": 7
             },
             {
-              "id": "1a64d1e4-5ebc-4395-8fa3-ed163eca19d3",
-              "x": 1335,
-              "y": 142
+              "id": "b939810b-2f66-46f5-b043-03db52bd7a3e",
+              "x": 1356,
+              "y": 49
             },
             {
-              "id": "f31152ff-72be-45fd-99ff-33d8084c7545",
-              "x": 1000,
-              "y": 138
+              "id": "e87decfa-a685-487c-ba2f-9eee8aee9bbe",
+              "x": 1006,
+              "y": 47
             },
             {
-              "id": "815c55e5-421b-4ab8-aee4-8ab18d491035",
-              "x": 997,
-              "y": 102
+              "id": "15a568d9-121e-4403-bbad-b38f854fdd58",
+              "x": 1006,
+              "y": 11
             }
           ]
         },
         {
-          "id": "ab3ab5ab-c0b2-4038-81d4-bd79c672d748",
+          "id": "104dcae1-5989-40ac-8666-87a9a1e6302c",
           "name": "Area JE/7",
           "pdfWidth": 1366,
-          "pdfHeight": 1146,
+          "pdfHeight": 347,
           "points": [
             {
-              "id": "4d23a4aa-0232-4f04-bc53-decb9ccb15c1",
-              "x": 1257,
-              "y": 143
+              "id": "c868bd76-e667-4e77-97f6-3c07938c809b",
+              "x": 1271,
+              "y": 51
             },
             {
-              "id": "7afe1fcc-fefe-4678-bf4e-f5557c5a3d9b",
-              "x": 1337,
-              "y": 141
+              "id": "a9cde3a0-951b-4085-abfc-34d033526ba1",
+              "x": 1355,
+              "y": 49
             },
             {
-              "id": "67f0a08d-350c-423d-a774-2539d4f0f0eb",
-              "x": 1335,
-              "y": 423
+              "id": "57b092ec-6e26-4f55-9630-1dedac598138",
+              "x": 1356,
+              "y": 341
             },
             {
-              "id": "56ba103b-29ca-464b-a7ea-0943e4aae72b",
-              "x": 1258,
-              "y": 421
+              "id": "acb23bd7-73b7-40e2-ae28-9fd6329d695a",
+              "x": 1272,
+              "y": 339
             },
             {
-              "id": "14d64393-6a69-4746-abce-631ccb9a5379",
-              "x": 1256,
-              "y": 143
+              "id": "5f53df19-07a0-4299-ac94-3b89508774ba",
+              "x": 1271,
+              "y": 51
             }
           ]
         },
         {
-          "id": "7c9e0f05-41b5-4230-90cb-a85108ac46c3",
+          "id": "dd0ceced-05bc-407a-9d8f-406d583a8bf6",
           "name": "Area JE/8",
           "pdfWidth": 1366,
-          "pdfHeight": 1146,
+          "pdfHeight": 347,
           "points": [
             {
-              "id": "b50581e1-da19-4aaa-bc94-7756d5a1dd78",
-              "x": 1135,
-              "y": 377
+              "id": "96b66289-2958-4883-b58f-9b56b361f47d",
+              "x": 1148,
+              "y": 294
             },
             {
-              "id": "45d6e06f-9ed0-4dab-b313-617d3006d7a9",
-              "x": 1253,
-              "y": 378
+              "id": "6f6ea14d-c0e4-44dc-8f31-53e5ed31de39",
+              "x": 1270,
+              "y": 293
             },
             {
-              "id": "3c7a0f2f-ff2c-40e4-985d-a92e8128147d",
-              "x": 1253,
-              "y": 418
+              "id": "41ad424c-0f87-47ca-b397-fe1cf3913cb6",
+              "x": 1271,
+              "y": 340
             },
             {
-              "id": "ad06da51-7f7c-4cc7-bbd5-cc2fbc54600e",
-              "x": 1135,
-              "y": 420
+              "id": "ffb12334-6cb2-4bc9-bc76-4b843558664d",
+              "x": 1148,
+              "y": 340
             },
             {
-              "id": "7f66fd90-9a3c-45df-85d2-774b5abb69cb",
-              "x": 1135,
-              "y": 378
+              "id": "ff3a87d5-b390-438b-a1f0-36fba40a7959",
+              "x": 1147,
+              "y": 292
             }
           ]
         },
         {
-          "id": "6a137910-58e8-4e36-a646-8db9fb45a8a5",
+          "id": "c3c50896-4325-442f-88b5-bb3104c6dd06",
           "name": "Area JE/9",
           "pdfWidth": 1366,
-          "pdfHeight": 1146,
+          "pdfHeight": 347,
           "points": [
             {
-              "id": "fb67a86b-9d89-439d-b919-3dc09900b145",
-              "x": 471,
-              "y": 378
+              "id": "c2c870f7-0d17-45c6-991e-d59c17477bc5",
+              "x": 462,
+              "y": 296
             },
             {
-              "id": "0a6b1c6c-d794-42ae-9138-fc9d35e4d2d6",
-              "x": 704,
-              "y": 377
+              "id": "99b965dc-f4bf-46c6-83a2-e588ee5749c6",
+              "x": 702,
+              "y": 295
             },
             {
-              "id": "5a7a6901-8f01-4132-9488-45da7fd03063",
-              "x": 705,
-              "y": 421
+              "id": "20e9a005-cd6a-43cc-b21a-d7e6b79ff03a",
+              "x": 701,
+              "y": 340
             },
             {
-              "id": "e875d68a-cf52-4f6e-b127-c0bfa30c05fe",
-              "x": 471,
-              "y": 420
+              "id": "3f618016-ec4f-4a14-8023-de6ff69321ff",
+              "x": 461,
+              "y": 337
             },
             {
-              "id": "e799ef0e-ef40-4bc2-9141-dcfa86b690cf",
-              "x": 470,
-              "y": 378
-            }
-          ]
-        },
-        {
-          "id": "b1285105-7854-4e51-8baf-36b77a890df3",
-          "name": "Area JE/10",
-          "pdfWidth": 1366,
-          "pdfHeight": 1146,
-          "points": [
-            {
-              "id": "b6ed2ec7-e141-4148-b5da-781799223ea3",
-              "x": 1273,
-              "y": 421
-            },
-            {
-              "id": "753b9ffe-0379-421a-a10d-52413e2951a9",
-              "x": 1336,
-              "y": 422
-            },
-            {
-              "id": "8289814b-c3aa-422d-9fdb-807b333ead8e",
-              "x": 1337,
-              "y": 690
-            },
-            {
-              "id": "8422ef2d-2282-4b7f-887d-68f7c88afdff",
-              "x": 1276,
-              "y": 690
-            },
-            {
-              "id": "d628bebc-6527-4e03-8ab4-01faf99096e8",
-              "x": 1273,
-              "y": 420
-            }
-          ]
-        },
-        {
-          "id": "32f3c249-066f-4b6b-bde5-07084b793ee9",
-          "name": "Area JE/11",
-          "pdfWidth": 1366,
-          "pdfHeight": 1146,
-          "points": [
-            {
-              "id": "b353a3d4-dd41-4728-9fd1-f40ae8f2dae8",
-              "x": 1276,
-              "y": 694
-            },
-            {
-              "id": "3556f3fd-d344-4341-bfcf-9672c7b20bdd",
-              "x": 1340,
-              "y": 692
-            },
-            {
-              "id": "9bf54de9-9eb5-4032-a000-cc352078cfd0",
-              "x": 1343,
-              "y": 1125
-            },
-            {
-              "id": "a54739a1-fd18-496c-8316-191ae46e8c9d",
-              "x": 1279,
-              "y": 1126
-            },
-            {
-              "id": "09770a49-5f75-4117-817f-fd97bf749ea0",
-              "x": 1274,
-              "y": 694
+              "id": "92440466-1c84-4366-a47e-aec2f950d029",
+              "x": 461,
+              "y": 296
             }
           ]
         }
@@ -14088,253 +13857,367 @@ export const ZONE_MAPPING = {
       ],
       rooms: [
         {
-          "id": "bdf37629-e266-4cbf-9c89-220cf345ce47",
+          "id": "a94ea31d-4bbf-497a-a881-00be8e044d52",
           "name": "Area JF/2",
           "pdfWidth": 1351,
-          "pdfHeight": 3261,
+          "pdfHeight": 3432,
           "points": [
             {
-              "id": "69b07ecb-99a5-46f0-a86b-f2ef6e36b3c2",
-              "x": 1080,
-              "y": 462
+              "id": "cb6cda6d-9c1c-473e-a75d-17fe89fd0292",
+              "x": 1062,
+              "y": 49
             },
             {
-              "id": "bbafd6e5-0a02-4cab-b78f-f80a6864a184",
-              "x": 1272,
-              "y": 463
+              "id": "1b336e25-f1bc-40fd-b6ce-d8920d239b7d",
+              "x": 1302,
+              "y": 49
             },
             {
-              "id": "11aeb70a-e4ad-485d-9ea5-92c144667ce3",
-              "x": 1272,
-              "y": 1353
+              "id": "e2de5fd7-04f0-4e6a-bcbd-e6a978355f7d",
+              "x": 1303,
+              "y": 1136
             },
             {
-              "id": "d4a9a129-8972-41d3-8447-dd6eaa2a3131",
-              "x": 1077,
-              "y": 1355
+              "id": "25acb1bd-ed50-4169-a6cd-47fa2533a245",
+              "x": 1063,
+              "y": 1135
             },
             {
-              "id": "cf35f071-e40c-4bfc-9805-38f14ff2df2e",
-              "x": 1078,
-              "y": 461
+              "id": "9f29f9be-2c54-42b2-82c5-fb0d1156936d",
+              "x": 1062,
+              "y": 49
             }
           ]
         },
         {
-          "id": "660c0884-1fb8-4c63-8e34-ad20fb1d318d",
-          "name": "Area JF/3",
-          "pdfWidth": 1351,
-          "pdfHeight": 3261,
-          "points": [
-            {
-              "id": "9e81b7ad-ded8-4bdc-bf6c-83eecdcd7a2b",
-              "x": 1077,
-              "y": 1359
-            },
-            {
-              "id": "8f347d00-ab5d-49b9-b089-729961641959",
-              "x": 1273,
-              "y": 1358
-            },
-            {
-              "id": "2dc95c1d-931a-403a-b95e-92833a102938",
-              "x": 1275,
-              "y": 2260
-            },
-            {
-              "id": "6c434b15-5f75-4d59-a6bd-1d03e350a504",
-              "x": 1078,
-              "y": 2260
-            },
-            {
-              "id": "179b1814-e661-43bb-89da-a0ccd51cdf9f",
-              "x": 1078,
-              "y": 1359
-            }
-          ]
-        },
-        {
-          "id": "a0222f5e-f74b-451b-aec2-baeab0d65b05",
+          "id": "487ca90f-b678-4fc7-b50f-b30826958d0a",
           "name": "Area JF/4",
           "pdfWidth": 1351,
-          "pdfHeight": 3261,
+          "pdfHeight": 3432,
           "points": [
             {
-              "id": "ad15de7c-32ff-4f15-82db-3e9f0d9d0809",
-              "x": 1078,
-              "y": 2262
+              "id": "6912ce41-f518-4f34-a850-0d733a09fa4e",
+              "x": 1071,
+              "y": 2240
             },
             {
-              "id": "58979224-d496-4c61-bde6-40ed50dda44d",
-              "x": 1276,
-              "y": 2263
+              "id": "463a3176-adf5-49e2-95c9-5b960523e2e2",
+              "x": 1308,
+              "y": 2237
             },
             {
-              "id": "802f20ab-ab98-40f9-b522-c1d79e6e3682",
-              "x": 1277,
-              "y": 3189
+              "id": "2d5a2132-3a18-4dd1-88b5-7880bebdc0ba",
+              "x": 1308,
+              "y": 2927
             },
             {
-              "id": "a561817e-a523-4b4e-8645-8dc2fc84652e",
-              "x": 1266,
-              "y": 3207
+              "id": "a13f943b-2572-49f7-bbfc-b799ac658949",
+              "x": 1069,
+              "y": 2924
             },
             {
-              "id": "3aded880-b99b-4902-b219-c39aafa8022a",
-              "x": 1247,
-              "y": 3217
-            },
-            {
-              "id": "7eb5f71e-b6fa-48e0-b53f-aedfe0bf8224",
-              "x": 1079,
-              "y": 3217
-            },
-            {
-              "id": "aee1a99a-f93e-471c-b9f7-29de8e390a63",
-              "x": 1078,
-              "y": 2261
+              "id": "fd5fb60b-8a0f-4344-b2f5-56744c2ce19b",
+              "x": 1071,
+              "y": 2241
             }
           ]
         },
         {
-          "id": "d71b4cfe-0be7-47c6-a8cf-85ef207525f9",
+          "id": "a2e4fff2-f8c2-4b32-8b02-8755d656516d",
+          "name": "Area JF/3",
+          "pdfWidth": 1351,
+          "pdfHeight": 3432,
+          "points": [
+            {
+              "id": "da7e8dc4-76fc-4adf-9dfc-c7f4935d61dd",
+              "x": 1068,
+              "y": 1141
+            },
+            {
+              "id": "84f47996-d675-4ab3-a756-a82e80202f47",
+              "x": 1307,
+              "y": 1140
+            },
+            {
+              "id": "01182c7f-1d71-4ea7-8654-af3a94319101",
+              "x": 1308,
+              "y": 2235
+            },
+            {
+              "id": "366bdeb5-d407-45e5-8540-f4cff9af65fe",
+              "x": 1068,
+              "y": 2237
+            },
+            {
+              "id": "400e823f-2575-4a69-bcb0-54b7c4a4d089",
+              "x": 1068,
+              "y": 1142
+            }
+          ]
+        },
+        {
+          "id": "4f6a2d40-e17d-4988-bb51-656e4df6f9b8",
           "name": "Area JF/5",
           "pdfWidth": 1351,
-          "pdfHeight": 3261,
+          "pdfHeight": 3432,
           "points": [
             {
-              "id": "24f7c68b-d2a7-41c2-87e7-8b5a04aada4f",
-              "x": 556,
-              "y": 2871
+              "id": "8377f863-eaac-4131-9764-0934da65868d",
+              "x": 48,
+              "y": 2926
             },
             {
-              "id": "c46a6d9e-990b-42cc-921b-2589905c4785",
-              "x": 1073,
-              "y": 2869
+              "id": "3aef6f35-b3f1-4505-91c0-71826db5b62e",
+              "x": 1306,
+              "y": 2929
             },
             {
-              "id": "a27166ff-4748-4d8f-8679-e5e9ad0cc5a5",
-              "x": 1075,
-              "y": 3219
+              "id": "e3e032cb-3962-448a-9545-251bd57a5d7a",
+              "x": 1307,
+              "y": 2971
             },
             {
-              "id": "2a77a521-4312-4b67-ac47-b9683a8cf817",
-              "x": 553,
-              "y": 3218
+              "id": "4e799e36-4d5e-40c3-b2ca-535226565289",
+              "x": 48,
+              "y": 2969
             },
             {
-              "id": "93d005b2-221e-4a61-baf9-0ffb4bea41ea",
-              "x": 556,
-              "y": 2871
+              "id": "7e74c0c5-0e66-4fd2-835b-117b7b106d54",
+              "x": 47,
+              "y": 2927
             }
           ]
         },
         {
-          "id": "c7d0124c-72ff-4328-82db-e77bf555f4b8",
+          "id": "36e8ed78-6470-4c00-aaf8-7e7e3a8edc1c",
           "name": "Area JF/6",
           "pdfWidth": 1351,
-          "pdfHeight": 3261,
+          "pdfHeight": 3432,
           "points": [
             {
-              "id": "7e5dbda4-6d91-49a0-a9a6-5fc9914d0336",
-              "x": 96,
-              "y": 2282
+              "id": "102b6a97-3760-40ad-9aba-bf3f10b00402",
+              "x": 47,
+              "y": 2259
             },
             {
-              "id": "ff961947-d3c4-40d7-a5c9-4d4749d46a45",
-              "x": 551,
-              "y": 2281
+              "id": "9361cfaa-47c8-4ac0-b06b-b9de095d8908",
+              "x": 424,
+              "y": 2259
             },
             {
-              "id": "49fd5362-798d-4309-9963-de903481d096",
-              "x": 551,
-              "y": 3222
+              "id": "0e3a4861-1d77-427a-8a16-cca0978ac3cd",
+              "x": 424,
+              "y": 2923
             },
             {
-              "id": "1f958d6c-1491-4b4e-88cd-94b52a5c32de",
-              "x": 121,
-              "y": 3220
+              "id": "b45237ac-8587-4a4a-b73e-9bb01a972281",
+              "x": 48,
+              "y": 2925
             },
             {
-              "id": "4247799e-d94f-4809-8b04-b4a7eceb3451",
-              "x": 105,
-              "y": 3205
-            },
-            {
-              "id": "04796615-66ee-4c21-be71-fc6e2e17198b",
-              "x": 96,
-              "y": 3178
-            },
-            {
-              "id": "209a2d66-6126-4a62-a2bc-bb56e23f80db",
-              "x": 96,
-              "y": 2282
+              "id": "1d10648b-d31d-4af8-9a95-e83a3a25d249",
+              "x": 47,
+              "y": 2258
             }
           ]
         },
         {
-          "id": "ab7f961f-65ed-4c6c-94b6-f36b24a1a1eb",
+          "id": "02b55aaf-0a37-4c39-a462-ecb886b08aea",
           "name": "Area JF/7",
           "pdfWidth": 1351,
-          "pdfHeight": 3261,
+          "pdfHeight": 3432,
           "points": [
             {
-              "id": "73d307cf-a34a-4035-9a90-56cca79f910f",
-              "x": 94,
-              "y": 1358
+              "id": "402bbc21-8323-40ef-b98f-394543313287",
+              "x": 48,
+              "y": 1140
             },
             {
-              "id": "8166ef0e-8825-4cb4-a10c-5c399c9b3e48",
-              "x": 551,
-              "y": 1356
+              "id": "c5de0627-438e-4da1-9b94-823ed19661ff",
+              "x": 424,
+              "y": 1140
             },
             {
-              "id": "daf4865b-1c6a-4f8d-9547-77da73f90d65",
-              "x": 551,
-              "y": 2278
+              "id": "5ef80e2f-d0e7-4731-8d87-fafa67ee46cc",
+              "x": 423,
+              "y": 2256
             },
             {
-              "id": "ec0fb47a-3eed-43dd-89fe-967c93b0f4dc",
-              "x": 95,
-              "y": 2277
+              "id": "7d315284-8d6b-4329-8549-7bd9ab0c51ea",
+              "x": 47,
+              "y": 2256
             },
             {
-              "id": "e8006230-1ca7-4dba-b652-0616273513e0",
-              "x": 94,
-              "y": 1359
+              "id": "5c4e0c53-884f-41e0-bfcf-d244e590e585",
+              "x": 48,
+              "y": 1140
             }
           ]
         },
         {
-          "id": "696e3579-ba77-44ff-a66f-6d9c77c22a55",
+          "id": "0aa12265-40ad-48c7-b1b8-9dd25d39f7d8",
           "name": "Area JF/8",
           "pdfWidth": 1351,
-          "pdfHeight": 3261,
+          "pdfHeight": 3432,
           "points": [
             {
-              "id": "a7b7e267-920e-47d5-aaa0-6298a12a4087",
-              "x": 89,
-              "y": 459
+              "id": "f9a74cb4-605b-442e-955f-fbd53565c399",
+              "x": 46,
+              "y": 49
             },
             {
-              "id": "18541ff4-5640-4770-b647-7529ec2b6bc4",
-              "x": 547,
-              "y": 459
+              "id": "a11f44ba-35c3-4e3b-8e57-5c2fba274110",
+              "x": 423,
+              "y": 48
             },
             {
-              "id": "1c3513f2-0049-45f7-b7e3-b1bc67c3f7f3",
-              "x": 547,
-              "y": 1353
+              "id": "1dc0e54f-ceb1-42ee-9f01-83d79e2f605a",
+              "x": 423,
+              "y": 1135
             },
             {
-              "id": "ca39f537-3d78-484e-9f3d-34ae256c3174",
-              "x": 88,
-              "y": 1356
+              "id": "cf273acf-e584-44cc-80c9-af2dfe7458aa",
+              "x": 47,
+              "y": 1135
             },
             {
-              "id": "06ae47d8-dee5-4f88-a688-3688f6d979ee",
-              "x": 88,
-              "y": 459
+              "id": "a4dfa0a1-7b2b-424b-a163-60c5bafe809c",
+              "x": 45,
+              "y": 47
+            }
+          ]
+        },
+        {
+          "id": "dbb340aa-161b-484e-99d4-1a3abdf69bfa",
+          "name": "Area JF2/1",
+          "pdfWidth": 1351,
+          "pdfHeight": 3432,
+          "points": [
+            {
+              "id": "7d534034-58d3-48df-ba45-59728fda7c2f",
+              "x": 1186,
+              "y": 2974
+            },
+            {
+              "id": "d09537f3-9c47-4a50-aac1-f27beb9f2aa1",
+              "x": 1310,
+              "y": 2973
+            },
+            {
+              "id": "c57548ba-7c45-48e2-b994-b38c278e3c2a",
+              "x": 1312,
+              "y": 3353
+            },
+            {
+              "id": "8d6bc2c3-791f-4264-a79e-e012ddbf1487",
+              "x": 1306,
+              "y": 3371
+            },
+            {
+              "id": "9fd1019c-82a3-41f9-8781-c01886deeca7",
+              "x": 1296,
+              "y": 3387
+            },
+            {
+              "id": "d975f825-c133-4a04-a56b-a9853c4f366e",
+              "x": 1276,
+              "y": 3396
+            },
+            {
+              "id": "0912ac0c-72f9-49e5-9115-d1fba3219cbc",
+              "x": 1186,
+              "y": 3395
+            },
+            {
+              "id": "206f7999-dd47-47d9-84c6-db918b5b3455",
+              "x": 1186,
+              "y": 2974
+            }
+          ]
+        },
+        {
+          "id": "6a096ac2-7eef-47d4-865b-1827d8f6df86",
+          "name": "Area JF2/2",
+          "pdfWidth": 1351,
+          "pdfHeight": 3432,
+          "points": [
+            {
+              "id": "69fc8778-4ab9-4c30-9115-203d09b812ae",
+              "x": 116,
+              "y": 3288
+            },
+            {
+              "id": "b7989865-c7fc-48bf-9cb1-7bc4765cbe61",
+              "x": 1184,
+              "y": 3289
+            },
+            {
+              "id": "0ea6f57d-3a47-40a3-9348-8a059b391239",
+              "x": 1183,
+              "y": 3394
+            },
+            {
+              "id": "35e6804d-4224-4b2d-b322-411ae42bd061",
+              "x": 116,
+              "y": 3395
+            },
+            {
+              "id": "9a83c708-c1a5-40d1-85cd-e31215566765",
+              "x": 116,
+              "y": 3288
+            }
+          ]
+        },
+        {
+          "id": "6f763813-24aa-4a01-893d-ce5b8f83b55c",
+          "name": "Area JF2/3",
+          "pdfWidth": 1351,
+          "pdfHeight": 3432,
+          "points": [
+            {
+              "id": "b68166ca-0db1-45c6-bee3-d0ea87d2fd78",
+              "x": 49,
+              "y": 2972
+            },
+            {
+              "id": "47fa2683-1736-45f9-8742-83886e680167",
+              "x": 113,
+              "y": 2973
+            },
+            {
+              "id": "ffd798ed-f60c-4a4d-b5cc-39c8dcc1d2a1",
+              "x": 115,
+              "y": 3025
+            },
+            {
+              "id": "395cd740-7499-4c90-b5b4-84a9dcde8b63",
+              "x": 139,
+              "y": 3024
+            },
+            {
+              "id": "15cd3f16-0c39-4afe-8858-6d1db7c7cf3f",
+              "x": 139,
+              "y": 3284
+            },
+            {
+              "id": "bb57987f-f72c-4b64-8450-7c3c861d6858",
+              "x": 116,
+              "y": 3287
+            },
+            {
+              "id": "afbd355f-daab-49d3-aadc-a8542942dcf7",
+              "x": 115,
+              "y": 3398
+            },
+            {
+              "id": "be325799-6ddd-48dc-88c0-018ef96e3e5f",
+              "x": 45,
+              "y": 3400
+            },
+            {
+              "id": "53b72a4f-7023-404b-abaa-1a0116fed247",
+              "x": 49,
+              "y": 2974
             }
           ]
         }
@@ -14436,286 +14319,362 @@ export const ZONE_MAPPING = {
       ],
       rooms: [
         {
-          "id": "0922d586-17c0-41aa-bb99-754fd5b58483",
+          "id": "359b7e5b-38ac-4026-9176-68be63b4a28b",
+          "name": "Area JG/1",
+          "pdfWidth": 1351,
+          "pdfHeight": 2354,
+          "points": [
+            {
+              "id": "63d12bd3-b44c-476c-9095-6a653fe0f26a",
+              "x": 1214,
+              "y": 4
+            },
+            {
+              "id": "0039c237-f188-4970-8fc9-e2e2988452f7",
+              "x": 1333,
+              "y": 4
+            },
+            {
+              "id": "b33a44f7-d1a5-4387-be53-b08f6f28728c",
+              "x": 1334,
+              "y": 497
+            },
+            {
+              "id": "5875e9de-8d8c-42aa-8469-c01c625a38bf",
+              "x": 1216,
+              "y": 497
+            },
+            {
+              "id": "2d54d9ae-cc90-4c56-880c-000c8f1eb21c",
+              "x": 1213,
+              "y": 1
+            }
+          ]
+        },
+        {
+          "id": "9bd04e65-7474-480c-9400-e0836b13d71c",
+          "name": "Area JG/2",
+          "pdfWidth": 1351,
+          "pdfHeight": 2354,
+          "points": [
+            {
+              "id": "479f7b64-a228-4c45-abc6-4ab0db28dba9",
+              "x": 1216,
+              "y": 498
+            },
+            {
+              "id": "2eb59148-16d8-48e2-9d74-7961b7a7116f",
+              "x": 1336,
+              "y": 497
+            },
+            {
+              "id": "b9c56a64-5e70-4290-a81f-77f6623cb0f7",
+              "x": 1340,
+              "y": 1228
+            },
+            {
+              "id": "168bade9-17ac-445f-9414-9b806b5e454b",
+              "x": 1222,
+              "y": 1230
+            },
+            {
+              "id": "73f14d45-b0bc-4f67-bcb9-0ede1aa9bacc",
+              "x": 1217,
+              "y": 499
+            }
+          ]
+        },
+        {
+          "id": "0f4aeba9-4d65-4a89-a8d7-04f5416c269a",
           "name": "Area JG/3",
           "pdfWidth": 1351,
-          "pdfHeight": 2862,
+          "pdfHeight": 2354,
           "points": [
             {
-              "id": "7b7671a6-3ff9-456d-a981-61e842f68f5e",
-              "x": 1081,
-              "y": 280
+              "id": "c9d19fce-da53-405b-9ef2-467cffb80704",
+              "x": 962,
+              "y": 4
             },
             {
-              "id": "0a009e57-101d-4466-a33d-bfff27f959f6",
-              "x": 1274,
-              "y": 279
+              "id": "5a4f7b27-9b4e-466a-a227-6e2a80aee1db",
+              "x": 1141,
+              "y": 6
             },
             {
-              "id": "77cc157b-e039-40b8-aca9-31c111f843e9",
-              "x": 1275,
-              "y": 1195
+              "id": "ac139b34-e4fb-4ba5-9be7-429753643e5c",
+              "x": 1141,
+              "y": 860
             },
             {
-              "id": "24187472-7cd6-42ce-b5a4-309eba629d6e",
-              "x": 1085,
-              "y": 1197
+              "id": "05e81bab-8859-48c6-850a-8df58afcb849",
+              "x": 961,
+              "y": 860
             },
             {
-              "id": "2d56d0bc-79d3-4dfb-b67b-58d0f574c4a6",
-              "x": 1082,
-              "y": 278
+              "id": "e92075f0-dd15-487b-ac7f-1d464e3c78fb",
+              "x": 962,
+              "y": 3
             }
           ]
         },
         {
-          "id": "9afe923b-de7b-4e94-bb5e-356a7dacae72",
+          "id": "5fac571c-d2b4-47fb-8587-4a7c8e8a01ec",
           "name": "Area JG/4",
           "pdfWidth": 1351,
-          "pdfHeight": 2862,
+          "pdfHeight": 2354,
           "points": [
             {
-              "id": "b6049cf8-fa4b-4b4d-8657-d2064aab7316",
-              "x": 1083,
-              "y": 1199
+              "id": "7e5cd4bc-2ac8-4ba2-836c-d26388c66cdb",
+              "x": 963,
+              "y": 862
             },
             {
-              "id": "13b46e38-b78c-4be9-b37d-88a0fa506800",
-              "x": 1270,
-              "y": 1200
+              "id": "9910cc37-b4b4-4678-a928-a52f7308e422",
+              "x": 1138,
+              "y": 862
             },
             {
-              "id": "444210d1-20f9-4f6a-a84d-04c45896109c",
-              "x": 1270,
-              "y": 1977
+              "id": "41af8468-9710-42fa-bc31-5017cce30fb4",
+              "x": 1136,
+              "y": 1588
             },
             {
-              "id": "4c3265a9-dfb6-4876-a6de-45f7c3927cdb",
-              "x": 1083,
-              "y": 1979
+              "id": "3afe9d16-c78f-437d-bb51-ef19a031239f",
+              "x": 965,
+              "y": 1588
             },
             {
-              "id": "dc001645-87d8-4544-9c2b-6b180198c8d7",
-              "x": 1083,
-              "y": 1199
+              "id": "b8ca9003-e2f5-4cd9-b89f-662fac89b4f7",
+              "x": 962,
+              "y": 863
             }
           ]
         },
         {
-          "id": "61eec843-2b36-41ec-8ae6-2158e5442158",
+          "id": "8348ae80-d63e-4e07-bba7-f0377d400a8a",
           "name": "Area JG/5",
           "pdfWidth": 1351,
-          "pdfHeight": 2862,
+          "pdfHeight": 2354,
           "points": [
             {
-              "id": "44650678-1a46-4a39-9567-aa6ddbb4af88",
-              "x": 1085,
-              "y": 1980
+              "id": "9e19b616-91cc-4bcd-b007-454022278e64",
+              "x": 964,
+              "y": 1591
             },
             {
-              "id": "adf1889a-d789-406b-b266-965413bd728f",
-              "x": 1271,
-              "y": 1980
+              "id": "c59a5554-6c15-43cf-be39-6d3b328ea2cf",
+              "x": 1137,
+              "y": 1591
             },
             {
-              "id": "d1088864-739f-44cb-b589-b2396fceff63",
-              "x": 1277,
-              "y": 2744
+              "id": "32527806-0ac4-497b-a1bf-db3703171485",
+              "x": 1144,
+              "y": 2305
             },
             {
-              "id": "4e8d91df-57e3-458a-9680-2ea789633369",
-              "x": 1264,
-              "y": 2766
+              "id": "401efcf7-85f9-4b45-a713-de5d71df4f25",
+              "x": 1128,
+              "y": 2327
             },
             {
-              "id": "f5673313-613c-44db-8862-f0ae5389fd5c",
-              "x": 1230,
-              "y": 2787
+              "id": "7022e04c-2883-4b1b-95eb-ab151143a27d",
+              "x": 1102,
+              "y": 2341
             },
             {
-              "id": "5b2e8c08-a2af-4149-8e1a-9727393366e1",
-              "x": 1088,
-              "y": 2788
+              "id": "9b5c096e-2ecc-4235-bb29-8f0e946b9369",
+              "x": 1063,
+              "y": 2342
             },
             {
-              "id": "270f4dac-6dc0-4b23-94fe-680b3fba824a",
-              "x": 1085,
-              "y": 1979
+              "id": "c5ead119-2b91-49b3-8f7e-ee78f428b583",
+              "x": 965,
+              "y": 2340
+            },
+            {
+              "id": "218fb715-7315-4049-ae79-da2da753edb2",
+              "x": 965,
+              "y": 1591
             }
           ]
         },
         {
-          "id": "eca8bd78-0145-427e-a2ce-8f140101fb1b",
+          "id": "5749ce31-2662-4f7a-9cf2-692be342af90",
           "name": "Area JG/6",
           "pdfWidth": 1351,
-          "pdfHeight": 2862,
+          "pdfHeight": 2354,
           "points": [
             {
-              "id": "ba65af07-aa82-4f7c-9bf5-55f5653e3111",
-              "x": 655,
-              "y": 2694
+              "id": "840e688c-9b43-4945-9c06-428141b60807",
+              "x": 562,
+              "y": 2257
             },
             {
-              "id": "f4db2f54-4f58-46ee-a458-a4f59442cef1",
-              "x": 1083,
-              "y": 2694
+              "id": "b05045dd-4c9a-444d-b21f-635a1fc0aa7e",
+              "x": 963,
+              "y": 2256
             },
             {
-              "id": "960ab92d-15aa-49e6-b94f-5b208ba1129c",
-              "x": 1082,
-              "y": 2786
+              "id": "2f17b4de-34a7-4eaf-a25f-a7e136a76b99",
+              "x": 965,
+              "y": 2340
             },
             {
-              "id": "f7f6ce34-38f3-4bc7-8c29-a64395e78073",
-              "x": 653,
-              "y": 2786
+              "id": "fce9abb0-6360-433c-9f37-3f3e60ec5021",
+              "x": 563,
+              "y": 2341
             },
             {
-              "id": "62cc9f4a-35d7-47b5-807b-92fb77a28565",
-              "x": 656,
-              "y": 2694
+              "id": "2e644574-e9ff-4403-9975-5b62b42d070b",
+              "x": 563,
+              "y": 2258
             }
           ]
         },
         {
-          "id": "dd946106-5119-4e47-9137-6b9f88c83f86",
+          "id": "e9d48f51-77de-4695-8099-2914379d0ac3",
           "name": "Area JG/7",
           "pdfWidth": 1351,
-          "pdfHeight": 2862,
+          "pdfHeight": 2354,
           "points": [
             {
-              "id": "aad5212c-601e-4cc6-b6dc-1b568beb1ec3",
-              "x": 245,
-              "y": 2694
+              "id": "1e4bf0ab-30c7-43fd-9c78-f302ee9beb52",
+              "x": 181,
+              "y": 2257
             },
             {
-              "id": "b0628908-6360-4c99-961b-07c69b7b62a9",
-              "x": 652,
-              "y": 2696
+              "id": "6797c27b-cf6b-4a1d-a3cf-4dfd2b6c4d3e",
+              "x": 561,
+              "y": 2255
             },
             {
-              "id": "4d89a9b0-a66b-40db-aac6-0d2dd88792bd",
-              "x": 651,
-              "y": 2786
+              "id": "8383fb7c-9a46-417c-9f14-43a85b00b395",
+              "x": 561,
+              "y": 2342
             },
             {
-              "id": "76aab142-3f44-4b84-af55-667d4edb7b2c",
-              "x": 244,
-              "y": 2787
+              "id": "61039365-26d4-4d5d-81d4-960bf0fa37a3",
+              "x": 181,
+              "y": 2341
             },
             {
-              "id": "0ea83d31-18bd-47bf-a72a-c4c6b46f4b7d",
-              "x": 243,
-              "y": 2694
+              "id": "e5fa32a1-7c92-46ea-b81a-3d0fcec13e37",
+              "x": 182,
+              "y": 2258
             }
           ]
         },
         {
-          "id": "0c9b9bab-80df-48ec-bd3d-f10a7476fd47",
+          "id": "64ab33b5-3bb5-483b-a517-607517127d61",
           "name": "Area JG/8",
           "pdfWidth": 1351,
-          "pdfHeight": 2862,
+          "pdfHeight": 2354,
           "points": [
             {
-              "id": "6ab14726-9704-49f0-bbd1-df6a4e8bf051",
-              "x": 57,
-              "y": 1967
+              "id": "502ed4a1-102a-4611-9ee4-2c4cf5aae284",
+              "x": 6,
+              "y": 1577
             },
             {
-              "id": "9a91a3e7-958d-4e90-82bb-84edbe84c5e6",
-              "x": 243,
-              "y": 1965
+              "id": "c954d099-a02e-4560-a155-9a1a54fb20cf",
+              "x": 179,
+              "y": 1577
             },
             {
-              "id": "aefaf9c1-3def-4ff4-995b-af7aa297dade",
-              "x": 245,
-              "y": 2786
+              "id": "00cc20ae-24b3-496a-8389-1c24a5bc8a33",
+              "x": 179,
+              "y": 2341
             },
             {
-              "id": "ffcfa82b-1c8c-4453-93f3-551032046b33",
-              "x": 84,
-              "y": 2784
+              "id": "6ef36eb7-3461-491f-b6cb-afeb7255d909",
+              "x": 70,
+              "y": 2342
             },
             {
-              "id": "ec4ea6f1-e37e-4433-96c7-4ebcea7b7eea",
-              "x": 69,
-              "y": 2776
+              "id": "63008ede-daf0-4f21-b797-14ec135054cb",
+              "x": 25,
+              "y": 2340
             },
             {
-              "id": "2ef1d688-a7a4-41d5-b7d5-ff05b7103c20",
-              "x": 61,
-              "y": 2759
+              "id": "8b02ecd2-4aa5-45cb-af18-ffa989400297",
+              "x": 12,
+              "y": 2329
             },
             {
-              "id": "3a5d42c4-f46d-4038-8707-8b7051016eec",
-              "x": 58,
-              "y": 1965
+              "id": "7e1e62f7-f89d-4f2f-9220-086cb9695a2f",
+              "x": 9,
+              "y": 2270
+            },
+            {
+              "id": "3b7eca9d-8cd7-481f-b18b-ac80d89ec725",
+              "x": 7,
+              "y": 1578
             }
           ]
         },
         {
-          "id": "40d8649a-17d7-4b77-b42b-cefa1d34eda0",
+          "id": "436acd64-ba60-42d7-8bc6-16d8d3103ae0",
           "name": "Area JG/9",
           "pdfWidth": 1351,
-          "pdfHeight": 2862,
+          "pdfHeight": 2354,
           "points": [
             {
-              "id": "2feb6ff0-1891-4bcc-b0fe-c408eb5cdcad",
-              "x": 59,
-              "y": 1198
+              "id": "2287da2f-7569-4e38-a609-192367753d86",
+              "x": 6,
+              "y": 862
             },
             {
-              "id": "0f0f58cb-0e8a-490a-b542-669f779092e7",
-              "x": 241,
-              "y": 1199
+              "id": "98a9a986-1611-401d-bfc0-95fc15ff90d8",
+              "x": 179,
+              "y": 860
             },
             {
-              "id": "f2ba78e8-183e-400e-bb3f-fb03ec1fb346",
-              "x": 244,
-              "y": 1963
+              "id": "3c6eab62-41c4-4209-94e0-ed3bcf392724",
+              "x": 179,
+              "y": 1574
             },
             {
-              "id": "7880b6e5-f245-4ddf-8d61-4c9b0702b32f",
-              "x": 59,
-              "y": 1965
+              "id": "72953ccb-15b2-44d8-bcb5-b8ea1fddcc1c",
+              "x": 7,
+              "y": 1575
             },
             {
-              "id": "5a61b421-ea0b-4949-bb83-8f34bb8bdca3",
-              "x": 57,
-              "y": 1197
+              "id": "1bf517df-7388-4c74-ab87-0c07ceda9394",
+              "x": 7,
+              "y": 862
             }
           ]
         },
         {
-          "id": "6cafe8a3-151e-4257-a7f1-a11b1249c8b1",
+          "id": "93bd1361-edba-4dfa-b070-6792ab0d23c7",
           "name": "Area JG/10",
           "pdfWidth": 1351,
-          "pdfHeight": 2862,
+          "pdfHeight": 2354,
           "points": [
             {
-              "id": "d911582e-4c59-4000-9c0a-040459fbb23e",
-              "x": 57,
-              "y": 281
+              "id": "3bb74e68-fb53-4b6b-81d2-c8cc43e0bfd9",
+              "x": 1,
+              "y": 4
             },
             {
-              "id": "5905cd85-edbc-4ef6-8a90-cc3d40faea42",
-              "x": 241,
-              "y": 281
+              "id": "61c40c3c-2a47-4205-845b-125108553902",
+              "x": 177,
+              "y": 1
             },
             {
-              "id": "87f62772-75b4-42c9-b2c9-3f1542b15a9c",
-              "x": 241,
-              "y": 1194
+              "id": "c01185b3-14da-4677-9160-b924940d8c5d",
+              "x": 178,
+              "y": 858
             },
             {
-              "id": "b1dd9ee2-a24b-435a-bcec-18a907d41dd1",
-              "x": 56,
-              "y": 1195
+              "id": "1bd689ae-c3d0-4253-92b7-0c5243258660",
+              "x": 5,
+              "y": 858
             },
             {
-              "id": "b5b6c464-c894-44a2-a2ac-875cd780339d",
-              "x": 57,
-              "y": 279
+              "id": "5af074bd-5061-4dc4-85c5-956fcbe02be1",
+              "x": 2,
+              "y": 4
             }
           ]
         }
@@ -14792,351 +14751,331 @@ export const ZONE_MAPPING = {
       ],
       rooms: [
         {
-          "id": "c2ff8795-e6e1-4178-9d93-b0efd82af103",
+          "id": "d1546702-749f-4c97-92a6-56915d48290c",
           "name": "Area MR/1",
           "pdfWidth": 1351,
           "pdfHeight": 3316,
           "points": [
             {
-              "id": "e80425c9-d3a1-4355-aba8-fbc57d30ef6a",
-              "x": 193,
-              "y": 47
-            },
-            {
-              "id": "1d0f0139-88c0-4250-baf9-c5c9f8fdccf9",
-              "x": 1169,
+              "id": "19788b33-5ce1-459e-ad3b-103e94970eb8",
+              "x": 196,
               "y": 45
             },
             {
-              "id": "2c121c07-4102-4bc8-b9af-d66ccc3aca14",
-              "x": 1168,
-              "y": 217
+              "id": "c94389c8-86f5-4095-8c76-a4a2c95fff26",
+              "x": 1170,
+              "y": 44
             },
             {
-              "id": "5b691fcd-00ac-4c82-8a0a-ac64afa08ade",
+              "id": "ce815b48-a718-4f5f-bba9-42571d97e07a",
+              "x": 1169,
+              "y": 218
+            },
+            {
+              "id": "774ae1df-e6ed-47ba-a579-53c880357612",
               "x": 195,
               "y": 218
             },
             {
-              "id": "6f14522a-872c-46ba-a03b-99c74316e806",
-              "x": 195,
-              "y": 47
+              "id": "0c3f111c-98f4-439a-80b3-438a556eb337",
+              "x": 196,
+              "y": 44
             }
           ]
         },
         {
-          "id": "b00764cf-978a-4da2-a022-6c3aaa17fbec",
+          "id": "b13cb7db-652a-4ffb-983a-81f9545e16eb",
           "name": "Area MR/2",
           "pdfWidth": 1351,
           "pdfHeight": 3316,
           "points": [
             {
-              "id": "bc4b9682-d56f-4306-9712-813c200a7bbf",
-              "x": 1173,
+              "id": "4f16f744-3fe7-4759-9d53-ec0d45d1ccc5",
+              "x": 1174,
+              "y": 45
+            },
+            {
+              "id": "1ca6681f-dbd5-4572-982e-34377ed4b746",
+              "x": 1317,
               "y": 44
             },
             {
-              "id": "d9a60fd4-b0a7-4680-81c7-92053d9f9b2f",
-              "x": 1317,
-              "y": 43
+              "id": "5f8107a6-da71-4ea5-a3ba-7a52cb5311f6",
+              "x": 1316,
+              "y": 1628
             },
             {
-              "id": "c7512bf5-6430-44e8-9da5-027f45f50936",
-              "x": 1319,
-              "y": 1627
-            },
-            {
-              "id": "a5cb1644-b9dc-4cb0-86a3-c5991267fb52",
+              "id": "90bd9262-407a-41f9-9858-e92b30fd54e0",
               "x": 1175,
-              "y": 1627
+              "y": 1628
             },
             {
-              "id": "0d6862d2-9016-4001-8627-312a199377b8",
-              "x": 1173,
-              "y": 43
+              "id": "ac1be0df-2e15-44b1-94a2-093fd3fe2e87",
+              "x": 1175,
+              "y": 44
             }
           ]
         },
         {
-          "id": "30239c35-609e-409a-a656-6baa8d98eb1d",
+          "id": "bc7afa89-b406-4e41-ac42-d7caa95450f6",
           "name": "Area MR/3",
           "pdfWidth": 1351,
           "pdfHeight": 3316,
           "points": [
             {
-              "id": "9bd258ef-6520-49d5-bff0-b18876155372",
+              "id": "3ce6a1bd-bbe9-43c7-bab9-a6a38dbd811e",
               "x": 1176,
-              "y": 1629
+              "y": 1633
             },
             {
-              "id": "386dca52-ab54-4f6a-8e3b-ed52fed578b8",
+              "id": "e817c00e-d7a8-4f05-9650-55250191a999",
               "x": 1322,
-              "y": 1631
+              "y": 1630
             },
             {
-              "id": "f637ada4-fa17-4018-a0a9-6864134b154a",
+              "id": "27b2bd2b-a5c1-4ac5-a0bf-3612378360f3",
+              "x": 1325,
+              "y": 2910
+            },
+            {
+              "id": "20accf75-dfa1-4f12-abd7-f063ccdb031c",
               "x": 1323,
-              "y": 2981
+              "y": 2973
             },
             {
-              "id": "fc638e18-5997-4b66-a0ba-198a93c4c9b6",
-              "x": 1319,
-              "y": 3025
+              "id": "64bbc321-1fa4-419a-884a-97901d465999",
+              "x": 1318,
+              "y": 3036
             },
             {
-              "id": "4b07ea41-e81e-4388-a66b-da13555db2b5",
-              "x": 1309,
-              "y": 3064
+              "id": "6f3e0f73-ee7a-4e6e-b2bf-1f99448c7a78",
+              "x": 1302,
+              "y": 3084
             },
             {
-              "id": "fa931bf5-ce10-4bec-ae0e-b8b93364e083",
-              "x": 1298,
-              "y": 3097
+              "id": "9d6b7275-9817-4846-9d4a-eebab5cace7b",
+              "x": 1270,
+              "y": 3147
             },
             {
-              "id": "cad5139d-87a9-46bd-8f12-b2a4ca461ea4",
-              "x": 1278,
-              "y": 3131
+              "id": "eef9e3ef-22f7-4ac4-94c2-d329a8dcc658",
+              "x": 1224,
+              "y": 3202
             },
             {
-              "id": "e41a94e3-5ce9-4094-b1de-2f0b832c6884",
-              "x": 1262,
-              "y": 3160
-            },
-            {
-              "id": "d1033a83-78b9-4364-aab4-5538ea5016c2",
-              "x": 1228,
-              "y": 3197
-            },
-            {
-              "id": "6f31343d-5f4c-420e-be50-a6a38783a083",
-              "x": 1205,
-              "y": 3218
-            },
-            {
-              "id": "bdffcaab-7eff-45bb-88b6-a04e34fdc559",
+              "id": "0844cb64-bf70-448f-be43-976c0686c5dd",
               "x": 1175,
-              "y": 3235
+              "y": 3234
             },
             {
-              "id": "04928913-3b35-4cdf-ac26-a97ba8e7551d",
-              "x": 1177,
-              "y": 1631
+              "id": "849a22c3-1110-43a2-ba27-2937cccefbd0",
+              "x": 1176,
+              "y": 1634
             }
           ]
         },
         {
-          "id": "d80d9bd8-f0e6-4f18-b8c9-3ce418ab9fd9",
+          "id": "0d654bc9-a2c5-4025-b417-2a634d404f5c",
           "name": "Area MR/4",
           "pdfWidth": 1351,
           "pdfHeight": 3316,
           "points": [
             {
-              "id": "27f7a15f-7654-4f91-9368-32a356e38ed1",
+              "id": "21824a32-223f-44bd-af5d-61a6a33c5a62",
               "x": 200,
-              "y": 3011
+              "y": 3009
             },
             {
-              "id": "7783c5d6-4a88-47d5-bc8b-36fc7dd0e9ab",
+              "id": "5f43ec1d-c45e-4774-a493-567babb317a3",
               "x": 1173,
-              "y": 3008
+              "y": 3004
             },
             {
-              "id": "2efc0ac0-2223-476b-9db4-684ee3515149",
+              "id": "4b250b50-7b38-4201-9246-508b258126a7",
               "x": 1174,
-              "y": 3235
+              "y": 3232
             },
             {
-              "id": "c0808949-b065-4b5a-8e2d-c0c8d6e1428c",
-              "x": 1136,
-              "y": 3258
+              "id": "5f464882-e804-46fc-ba0d-8480e38b62b8",
+              "x": 1135,
+              "y": 3259
             },
             {
-              "id": "e540f6bb-3d18-4d95-b4e2-f7c07b033f15",
-              "x": 1094,
-              "y": 3272
+              "id": "1a105ea1-73ee-4fbe-9624-7a28b5933ed1",
+              "x": 1086,
+              "y": 3275
             },
             {
-              "id": "8782caa9-fe55-4890-a0bb-918449025dcd",
-              "x": 1052,
-              "y": 3278
-            },
-            {
-              "id": "521ac5e3-b4bf-4e56-9fc1-27cf5c4a40a4",
-              "x": 1016,
+              "id": "7a291985-7847-49a6-9af2-c18abc81bced",
+              "x": 1019,
               "y": 3284
             },
             {
-              "id": "1d270a83-eca0-42a1-8846-4d4d94769664",
+              "id": "4dc7f6e5-b20c-4dec-b06a-a1e160c40efc",
               "x": 229,
               "y": 3284
             },
             {
-              "id": "03661c8f-e567-45b2-905e-7e7732e44178",
-              "x": 203,
-              "y": 3281
+              "id": "9bedbd85-8ed7-4d48-be8b-ec9c0675f439",
+              "x": 198,
+              "y": 3280
             },
             {
-              "id": "87deead5-f5a6-4bd8-863e-9207999ce329",
-              "x": 200,
+              "id": "c3ab822b-5970-4774-b311-3084ce0e3d6c",
+              "x": 199,
               "y": 3009
             }
           ]
         },
         {
-          "id": "8a2368b0-c4cd-41dd-8107-3e1f3e217d57",
+          "id": "0071ea4d-0af8-4c72-81fb-dc21b2ff5a15",
           "name": "Area MR/5",
           "pdfWidth": 1351,
           "pdfHeight": 3316,
           "points": [
             {
-              "id": "087c671e-6f85-479a-abc7-fcbaa345fea4",
-              "x": 33,
-              "y": 2446
-            },
-            {
-              "id": "aec9aaf5-eda8-45c7-9d60-5b476ee1ee7a",
-              "x": 197,
-              "y": 2445
-            },
-            {
-              "id": "59636a40-8dc3-4121-9636-b6ef201eaaad",
-              "x": 195,
-              "y": 3277
-            },
-            {
-              "id": "711a743e-c521-461d-bbcd-572d23e748b9",
-              "x": 152,
-              "y": 3265
-            },
-            {
-              "id": "38ee04a1-98d1-4396-b769-9f318da0a528",
-              "x": 112,
-              "y": 3240
-            },
-            {
-              "id": "fce57b7e-e0a6-4d66-a3ce-af41ada681cc",
-              "x": 87,
-              "y": 3214
-            },
-            {
-              "id": "a7ad1552-afb0-4f17-9852-b1f1a9dfbbd5",
-              "x": 60,
-              "y": 3177
-            },
-            {
-              "id": "9fdd67d4-cef0-4671-9b48-3ca51c78b5ff",
-              "x": 41,
-              "y": 3128
-            },
-            {
-              "id": "c7fe5cbb-c887-4cd9-8b50-df7110a2c26d",
-              "x": 36,
-              "y": 3096
-            },
-            {
-              "id": "482fe073-f6b7-4134-8676-9f02f74f765c",
+              "id": "0ab9d138-6aa4-4941-8c49-7b97bb3c7dc0",
               "x": 32,
-              "y": 2446
+              "y": 2443
+            },
+            {
+              "id": "95ac02e0-85cd-491e-9456-6d5997b670ae",
+              "x": 197,
+              "y": 2444
+            },
+            {
+              "id": "dfe92cc1-6c2e-4a3b-acae-affb591f3901",
+              "x": 196,
+              "y": 3280
+            },
+            {
+              "id": "c8f01a67-0c5e-40e3-9d76-44d83e058c85",
+              "x": 154,
+              "y": 3264
+            },
+            {
+              "id": "1955dd28-6c14-47fe-80bf-73935223d7ab",
+              "x": 108,
+              "y": 3234
+            },
+            {
+              "id": "53f98335-b1d3-40c1-b39f-623c75c82947",
+              "x": 76,
+              "y": 3199
+            },
+            {
+              "id": "fc8d2606-c0ec-410a-8b7d-532a71916722",
+              "x": 55,
+              "y": 3167
+            },
+            {
+              "id": "c432d2fb-58b3-4591-b8d7-d747989752b7",
+              "x": 41,
+              "y": 3129
+            },
+            {
+              "id": "4babc353-7d09-4315-ab9b-8aa962b9e632",
+              "x": 31,
+              "y": 2441
             }
           ]
         },
         {
-          "id": "2e3a33a8-2d51-42fa-a801-162ad818a4f0",
+          "id": "3d621484-facb-4439-a875-14c98c2b9d6c",
           "name": "Area MR/6",
           "pdfWidth": 1351,
           "pdfHeight": 3316,
           "points": [
             {
-              "id": "6e31ab04-db14-420f-b784-150cf16ae784",
-              "x": 34,
-              "y": 1635
-            },
-            {
-              "id": "5336494b-8acd-4601-8d56-8504377ae95c",
-              "x": 195,
-              "y": 1638
-            },
-            {
-              "id": "0e85901d-616a-4319-85fd-ac29441a0aed",
-              "x": 195,
-              "y": 2441
-            },
-            {
-              "id": "0b4d8328-2dd2-4bde-b805-a5b1416b8fe0",
+              "id": "f0a0f368-2c33-434a-bf6c-d715e779b75d",
               "x": 32,
+              "y": 1636
+            },
+            {
+              "id": "4096b9cb-f758-4339-8c12-62d72d21bd67",
+              "x": 196,
+              "y": 1637
+            },
+            {
+              "id": "7d9ef32a-fde7-41b7-a9d3-d9b7b162a48d",
+              "x": 196,
               "y": 2441
             },
             {
-              "id": "3bdc81fb-0827-44a9-8053-6fa1d4558c6f",
+              "id": "c2d89980-9e6d-422f-b15e-010c00e49c61",
+              "x": 32,
+              "y": 2439
+            },
+            {
+              "id": "d0e3579c-4692-4766-9d05-7581c62a3e72",
               "x": 33,
-              "y": 1637
+              "y": 1636
             }
           ]
         },
         {
-          "id": "2eb86ce0-27c0-42b4-b60e-3174f7d427cd",
+          "id": "6d307512-690f-4119-aac3-91951e203cc9",
           "name": "Area MR/7",
           "pdfWidth": 1351,
           "pdfHeight": 3316,
           "points": [
             {
-              "id": "82ec27fd-1d50-4660-a316-5094c94a6bac",
+              "id": "7cc714fd-2ce5-4e9e-99d4-e2ad1517e617",
               "x": 34,
+              "y": 679
+            },
+            {
+              "id": "f1cb27a6-9805-4d6d-9369-7ac179f55142",
+              "x": 193,
               "y": 680
             },
             {
-              "id": "750a642a-7bd5-4975-b6ee-334012bcbfde",
-              "x": 196,
-              "y": 681
-            },
-            {
-              "id": "09cb2d71-2b17-4f3d-8586-f625051596ed",
-              "x": 196,
-              "y": 1631
-            },
-            {
-              "id": "88023c8b-de83-43a0-9acd-10581c39d4f8",
-              "x": 35,
+              "id": "ed136e39-71c0-4022-b28d-0d458bf6c10a",
+              "x": 195,
               "y": 1632
             },
             {
-              "id": "f23ead87-09e2-41b8-8a9e-f1882312dca7",
+              "id": "a7133b56-72c3-45ca-9691-99ff294e372f",
               "x": 34,
-              "y": 681
+              "y": 1633
+            },
+            {
+              "id": "36cb64fc-9ab8-4f81-b227-be9b3581721e",
+              "x": 34,
+              "y": 679
             }
           ]
         },
         {
-          "id": "75b8af14-5e43-40ce-b39f-dc6d54c4f8a2",
+          "id": "efed5010-3188-4d88-b28c-c7d6603cc4bc",
           "name": "Area MR/8",
           "pdfWidth": 1351,
           "pdfHeight": 3316,
           "points": [
             {
-              "id": "35ed67c9-faf6-4765-8e07-125a9e515a0c",
-              "x": 31,
-              "y": 42
+              "id": "a1e36e2f-9a04-4460-8bf2-88b82da69eb8",
+              "x": 32,
+              "y": 43
             },
             {
-              "id": "31c08b62-7fb9-43ed-a4af-6ec3bd91c4de",
-              "x": 194,
-              "y": 41
+              "id": "f8727ea7-d166-4934-b399-514fd50b3e4a",
+              "x": 193,
+              "y": 45
             },
             {
-              "id": "a365d832-0baf-4a64-a0b1-9995a5d6e863",
-              "x": 192,
+              "id": "254b5f26-8b20-477a-a55f-3791fd02b764",
+              "x": 193,
+              "y": 673
+            },
+            {
+              "id": "61ddd60c-7a34-4d41-866d-991cc915f561",
+              "x": 33,
               "y": 675
             },
             {
-              "id": "d2ae2718-0e0c-46bf-8967-d5df27e79056",
+              "id": "2d37c8e1-70e7-4a9d-97a6-ab421ea4e257",
               "x": 32,
-              "y": 676
-            },
-            {
-              "id": "574d561a-03ae-4483-a685-a4298cf8348b",
-              "x": 31,
-              "y": 42
+              "y": 41
             }
           ]
         }
@@ -15144,7 +15083,7 @@ export const ZONE_MAPPING = {
     },
     {
       id: 5,
-      name: "JH-JX-JS",
+      name: "JH-JX-JS-N2",
       className: "external-areas-jh-jx-js",
       pdf: ExternalAreasJHJXJSPDF,
       "pdfWidth": 1228,
@@ -15248,503 +15187,574 @@ export const ZONE_MAPPING = {
       ],
       rooms: [
         {
-          "id": "e4cab01a-fcd2-49a5-944c-4a7b1fbd809b",
+          "id": "55984b53-ed54-4643-bac5-dc0f28efd58e",
           "name": "Area N2/1",
           "pdfWidth": 1351,
-          "pdfHeight": 503,
+          "pdfHeight": 488,
           "points": [
             {
-              "id": "b0c334b6-e37b-4426-9809-f9fe980088a5",
-              "x": 32,
-              "y": 44
+              "id": "31083741-86f7-45a6-912c-602960cbd0f2",
+              "x": 5,
+              "y": 24
             },
             {
-              "id": "e2558c95-77f7-4a0b-af16-1a5ef1be9ea3",
-              "x": 38,
-              "y": 34
+              "id": "e2129dac-0f9e-42dc-8c93-39e8bac0bdb0",
+              "x": 12,
+              "y": 15
             },
             {
-              "id": "2c53c82c-3bf9-4b86-b72d-8e61f1d143b5",
-              "x": 48,
-              "y": 28
+              "id": "c64385a1-320c-4dd1-af68-18eda780c79e",
+              "x": 22,
+              "y": 9
             },
             {
-              "id": "28256864-98dd-4932-b4a8-201560c3d46c",
-              "x": 328,
-              "y": 29
+              "id": "d6e6d2b4-e588-477f-9988-e921d7d8ffa4",
+              "x": 88,
+              "y": 9
             },
             {
-              "id": "6e7d2c42-ed16-497e-9ca7-619605010fb4",
-              "x": 327,
-              "y": 277
+              "id": "193b9305-2310-4379-9e9d-8ad8318775ae",
+              "x": 231,
+              "y": 7
             },
             {
-              "id": "08602434-44c5-496a-8982-7f355f698d1e",
-              "x": 33,
-              "y": 279
-            },
-            {
-              "id": "6436f697-b412-49ad-97e7-5f2fd9c8d545",
-              "x": 32,
-              "y": 41
-            }
-          ]
-        },
-        {
-          "id": "5717789a-ec10-49c1-8f2f-f700a08578b0",
-          "name": "Area N2/2",
-          "pdfWidth": 1351,
-          "pdfHeight": 503,
-          "points": [
-            {
-              "id": "75db9063-837c-4df4-b982-594a00386444",
-              "x": 34,
-              "y": 279
-            },
-            {
-              "id": "d3f96b9d-c607-4dd5-ac33-5e4d571d3f5b",
-              "x": 329,
-              "y": 277
-            },
-            {
-              "id": "c312d039-46fe-417e-96d5-73d9522a1514",
-              "x": 327,
-              "y": 473
-            },
-            {
-              "id": "9102b7db-5abb-4cd1-8821-131654a446b8",
-              "x": 99,
-              "y": 495
-            },
-            {
-              "id": "f9ff915e-8d38-47c6-befd-5525f2d28acd",
-              "x": 77,
-              "y": 492
-            },
-            {
-              "id": "3b2f84e8-c587-4861-b20e-ba6944075ca7",
-              "x": 57,
-              "y": 478
-            },
-            {
-              "id": "0646cb4c-9190-4a5c-9f1d-793c7ac252f3",
-              "x": 39,
-              "y": 456
-            },
-            {
-              "id": "04659d41-ffa6-4935-af91-ea84c13576d8",
-              "x": 33,
-              "y": 427
-            },
-            {
-              "id": "01ac8a4f-af92-49de-a72e-f7787eedd9cc",
-              "x": 34,
-              "y": 279
-            }
-          ]
-        },
-        {
-          "id": "3c9f3dcb-862a-40da-886c-1190bbe3afa5",
-          "name": "Area JH/1",
-          "pdfWidth": 1351,
-          "pdfHeight": 503,
-          "points": [
-            {
-              "id": "c88ea277-3b4e-4eee-a878-2fd68eea1a77",
-              "x": 329,
-              "y": 28
-            },
-            {
-              "id": "21129514-c1e9-4d1c-9ef5-8c400611c500",
-              "x": 667,
-              "y": 27
-            },
-            {
-              "id": "e06fae8f-fddb-477b-b468-2d824d67ce48",
-              "x": 665,
-              "y": 90
-            },
-            {
-              "id": "249c41ea-23d6-47e5-8ad9-3383506d8e65",
-              "x": 328,
-              "y": 90
-            },
-            {
-              "id": "7f7ece11-0ad6-43fa-9034-ecc02079fd45",
-              "x": 329,
-              "y": 27
-            }
-          ]
-        },
-        {
-          "id": "d9d98843-58a6-4ef6-a8ea-83011afdcdba",
-          "name": "Area JH/2",
-          "pdfWidth": 1351,
-          "pdfHeight": 503,
-          "points": [
-            {
-              "id": "d3a44d3c-3570-4d9b-9a44-52fab1c9d8ad",
-              "x": 668,
-              "y": 28
-            },
-            {
-              "id": "593c9664-73c7-4c5a-a5ce-05889181b000",
-              "x": 919,
-              "y": 28
-            },
-            {
-              "id": "97530782-8e4e-45c3-8792-1880b3e4c4ef",
-              "x": 919,
-              "y": 277
-            },
-            {
-              "id": "afff0e1b-eaf7-42c6-84b3-c4c7eefcecd6",
-              "x": 668,
-              "y": 278
-            },
-            {
-              "id": "9e72efa3-4aeb-4262-8cf5-7ec64a6b3c5a",
-              "x": 666,
-              "y": 248
-            },
-            {
-              "id": "9644d484-8257-4af6-a6fb-fd481101f11e",
-              "x": 828,
-              "y": 246
-            },
-            {
-              "id": "3b7d1626-5b69-4672-a146-19bb8656bb77",
-              "x": 826,
-              "y": 89
-            },
-            {
-              "id": "7c3c126e-948b-4a6e-8677-1fc3ddb5d8ce",
-              "x": 666,
-              "y": 91
-            },
-            {
-              "id": "e3e34956-6a6e-48ab-8738-2aed1e16de5a",
-              "x": 668,
-              "y": 29
-            }
-          ]
-        },
-        {
-          "id": "97e54fb8-3df8-49e2-8f80-23c7372d4d84",
-          "name": "Area JH/3",
-          "pdfWidth": 1351,
-          "pdfHeight": 503,
-          "points": [
-            {
-              "id": "3f276f4c-cf31-4e81-9c2a-355b6e344e12",
-              "x": 329,
-              "y": 248
-            },
-            {
-              "id": "283e0231-fe43-4e8f-b05d-2978f7119a99",
-              "x": 666,
-              "y": 250
-            },
-            {
-              "id": "a35b4dee-e4b9-42a3-8819-55f1b8d3c6f8",
-              "x": 666,
-              "y": 279
-            },
-            {
-              "id": "587dbd17-1d0f-4bff-b7c5-98d40581ba6a",
-              "x": 329,
-              "y": 276
-            },
-            {
-              "id": "fbd47709-537f-4b0d-b174-7eb744e2b356",
-              "x": 328,
-              "y": 248
-            }
-          ]
-        },
-        {
-          "id": "802ad525-b37e-443f-8cb1-90615e4bc517",
-          "name": "Area JH/4",
-          "pdfWidth": 1351,
-          "pdfHeight": 503,
-          "points": [
-            {
-              "id": "633c4b0c-b0e6-4f85-ad15-3dc3634e3016",
-              "x": 331,
-              "y": 278
-            },
-            {
-              "id": "2f24e8c3-113a-40ef-8299-5e9288eb323f",
-              "x": 666,
-              "y": 279
-            },
-            {
-              "id": "e6c8ce97-c8d6-4c4e-8c26-9b5921f91ebe",
-              "x": 666,
-              "y": 410
-            },
-            {
-              "id": "82627f50-0be1-47c8-b2f7-5b4b4e6b97ca",
-              "x": 486,
-              "y": 445
-            },
-            {
-              "id": "2c50f314-1641-4d61-be75-98c40c9110c6",
-              "x": 328,
-              "y": 474
-            },
-            {
-              "id": "39086313-0eb1-416d-acaa-5092fa901dbf",
-              "x": 330,
-              "y": 277
-            }
-          ]
-        },
-        {
-          "id": "fbaa73c4-40ca-484f-9544-52577960f1fe",
-          "name": "Area JH/5",
-          "pdfWidth": 1351,
-          "pdfHeight": 503,
-          "points": [
-            {
-              "id": "747b55d9-16df-4c7f-ab47-31177813cad9",
-              "x": 667,
-              "y": 280
-            },
-            {
-              "id": "7a2fb26c-7145-4352-a79d-3cb5e970a667",
-              "x": 919,
-              "y": 277
-            },
-            {
-              "id": "7982036f-0caa-4171-ac36-a201ca39a53a",
-              "x": 919,
-              "y": 346
-            },
-            {
-              "id": "343af4ed-2087-48b3-8b12-8002eef21f5a",
-              "x": 668,
-              "y": 409
-            },
-            {
-              "id": "a106a6fb-e892-4fd6-b3fe-118229d0c88b",
-              "x": 668,
-              "y": 281
-            }
-          ]
-        },
-        {
-          "id": "34945437-551e-4cee-ac06-a97883611b63",
-          "name": "Area JX/1",
-          "pdfWidth": 1351,
-          "pdfHeight": 503,
-          "points": [
-            {
-              "id": "c120aa44-dddb-4b6e-97f6-d4af53a8f6d8",
-              "x": 920,
-              "y": 26
-            },
-            {
-              "id": "328c77fd-d357-40d7-9e8f-0ec58d242681",
-              "x": 1099,
-              "y": 28
-            },
-            {
-              "id": "fbcb90a4-3d51-4747-a92f-0a054dfc2108",
-              "x": 1097,
-              "y": 127
-            },
-            {
-              "id": "da591ada-ed45-4cde-b25a-b9c47e3b7c14",
-              "x": 920,
-              "y": 127
-            },
-            {
-              "id": "c5fd53f7-6e42-4d52-824a-cd647d172e82",
-              "x": 919,
-              "y": 26
-            }
-          ]
-        },
-        {
-          "id": "1196ad25-133f-4ef4-955a-0e3869f7e1b6",
-          "name": "Area JX/2",
-          "pdfWidth": 1351,
-          "pdfHeight": 503,
-          "points": [
-            {
-              "id": "c1f8751b-b5f8-403d-bbcd-646ea6f9cec4",
-              "x": 1099,
-              "y": 26
-            },
-            {
-              "id": "a56c9ef9-7552-4075-9659-540790443ab5",
-              "x": 1162,
-              "y": 27
-            },
-            {
-              "id": "7b389c84-cecd-4e13-8180-57fda9fcea2c",
-              "x": 1193,
-              "y": 29
-            },
-            {
-              "id": "38cf62d8-ecc5-4016-9f2a-935d187a8301",
-              "x": 1219,
-              "y": 34
-            },
-            {
-              "id": "fc99b776-b3fe-4385-a753-fd7776198086",
-              "x": 1251,
-              "y": 42
-            },
-            {
-              "id": "a08f2317-1cc0-4238-a960-b7590bd13c4c",
-              "x": 1275,
-              "y": 48
-            },
-            {
-              "id": "6d0f8d0c-3cd5-4dfb-b861-122e6f1ad3dd",
-              "x": 1306,
-              "y": 65
-            },
-            {
-              "id": "3050dfae-e38e-448a-92be-b7c00807788c",
-              "x": 1328,
-              "y": 85
-            },
-            {
-              "id": "a6e35872-a97f-47cb-b046-965e039ccb2f",
-              "x": 1339,
+              "id": "ae03cfaa-af2c-458c-8875-8f2c44fe9e2f",
+              "x": 231,
               "y": 110
             },
             {
-              "id": "fbdee032-dbb5-4677-b958-7a953035ac96",
-              "x": 1344,
-              "y": 137
+              "id": "9a9c610f-f552-44e4-a48d-1101d4a7a202",
+              "x": 7,
+              "y": 109
             },
             {
-              "id": "3aa4eebd-19d4-4f24-8d9f-b7cd0301a907",
-              "x": 1336,
-              "y": 165
-            },
-            {
-              "id": "f99145c1-fb0f-40f1-aaf2-10cf50d82501",
-              "x": 1322,
-              "y": 189
-            },
-            {
-              "id": "21922b55-fad5-4489-8907-1034c05222b9",
-              "x": 1300,
-              "y": 204
-            },
-            {
-              "id": "b99218b0-fbee-4a52-a7f4-cefa214cc572",
-              "x": 1097,
-              "y": 286
-            },
-            {
-              "id": "647b70d7-596a-4d07-b541-4e37b2a28b1b",
-              "x": 1098,
-              "y": 26
+              "id": "44c022c9-03c8-4025-a6c9-f3554bc08838",
+              "x": 5,
+              "y": 23
             }
           ]
         },
         {
-          "id": "bc6eb54e-b22a-4ab7-859b-ffdb923a89ba",
+          "id": "60b24622-6a65-4b99-850d-507611442785",
+          "name": "Area N2/2",
+          "pdfWidth": 1351,
+          "pdfHeight": 488,
+          "points": [
+            {
+              "id": "8b0713bc-0ecf-47c6-a6b7-6e08a2bd176f",
+              "x": 9,
+              "y": 112
+            },
+            {
+              "id": "d9727a44-30f6-448f-a845-2daab7c62014",
+              "x": 231,
+              "y": 112
+            },
+            {
+              "id": "199ef2e0-c4a1-435c-8bb2-13d2da6534ea",
+              "x": 230,
+              "y": 261
+            },
+            {
+              "id": "048cbb4a-3d29-4695-b9d7-e6911ea287db",
+              "x": 9,
+              "y": 263
+            },
+            {
+              "id": "896cfef2-35f7-4d98-8275-74ce73793bed",
+              "x": 9,
+              "y": 113
+            }
+          ]
+        },
+        {
+          "id": "25811993-1367-46a5-a915-64f7499d0677",
+          "name": "Area JS/1",
+          "pdfWidth": 1351,
+          "pdfHeight": 488,
+          "points": [
+            {
+              "id": "24dbfb6a-4897-41ae-b646-556f766538f3",
+              "x": 7,
+              "y": 264
+            },
+            {
+              "id": "3c89b8b6-7c32-4f5e-a3c3-39a7eeb4c1b8",
+              "x": 403,
+              "y": 266
+            },
+            {
+              "id": "ec98707c-c160-4647-b5f9-6b659603ae3f",
+              "x": 403,
+              "y": 370
+            },
+            {
+              "id": "8400bf4b-800b-4586-a8ee-62823dceda1c",
+              "x": 9,
+              "y": 371
+            },
+            {
+              "id": "741cc281-9123-40d5-8f16-130115801954",
+              "x": 8,
+              "y": 265
+            }
+          ]
+        },
+        {
+          "id": "4feb8901-750f-4cd9-845e-8d33608e941c",
+          "name": "Area JS/2",
+          "pdfWidth": 1351,
+          "pdfHeight": 488,
+          "points": [
+            {
+              "id": "4aeb088b-e050-4ce1-9927-50d81260f68a",
+              "x": 8,
+              "y": 370
+            },
+            {
+              "id": "516d4d90-b5ff-43fe-8296-a8cbcddb3f5b",
+              "x": 402,
+              "y": 372
+            },
+            {
+              "id": "e9efeb73-29e1-4e9a-a659-616f084cd4c0",
+              "x": 403,
+              "y": 447
+            },
+            {
+              "id": "f4f72eea-cf8a-458b-9dbc-75c6b4f1f3ed",
+              "x": 208,
+              "y": 475
+            },
+            {
+              "id": "f5affeac-7536-4e30-9285-fd1c0fbada75",
+              "x": 72,
+              "y": 483
+            },
+            {
+              "id": "2e489f67-d907-48c4-814d-dc4dab747fb7",
+              "x": 47,
+              "y": 480
+            },
+            {
+              "id": "f7918475-fdec-474e-90d0-7a47827a6eb8",
+              "x": 30,
+              "y": 466
+            },
+            {
+              "id": "f1560c5c-80c3-4902-af4d-96181a04bb77",
+              "x": 16,
+              "y": 450
+            },
+            {
+              "id": "59aa4a79-cc1d-4e8c-82b1-11142958b4e7",
+              "x": 7,
+              "y": 418
+            },
+            {
+              "id": "f027f612-4cfd-4322-8267-275746d7edd7",
+              "x": 8,
+              "y": 369
+            }
+          ]
+        },
+        {
+          "id": "8919ba02-f8a9-4b78-98e5-17f95260e4ba",
+          "name": "Area JH/4",
+          "pdfWidth": 1351,
+          "pdfHeight": 488,
+          "points": [
+            {
+              "id": "e42257e6-6fdd-45d2-902b-997250085809",
+              "x": 231,
+              "y": 8
+            },
+            {
+              "id": "833977a5-5652-4a00-8dee-bd81ded6a6e2",
+              "x": 230,
+              "y": 263
+            },
+            {
+              "id": "57e13f51-3a6f-4002-94fc-94d26f778ce0",
+              "x": 404,
+              "y": 264
+            },
+            {
+              "id": "3b8799cd-4ed1-444d-8c70-64444d985741",
+              "x": 403,
+              "y": 445
+            },
+            {
+              "id": "97c02fba-72f3-49fc-a7cd-8aac82950bab",
+              "x": 544,
+              "y": 422
+            },
+            {
+              "id": "af072535-a466-42c2-b581-e1772174f36c",
+              "x": 655,
+              "y": 399
+            },
+            {
+              "id": "1aca1029-dc82-4ee7-896c-4930f70a3efb",
+              "x": 653,
+              "y": 265
+            },
+            {
+              "id": "c977c70a-9aa9-4803-8ea2-17e458ef7843",
+              "x": 404,
+              "y": 264
+            },
+            {
+              "id": "3ed8546c-f6be-4c2a-8f1a-7470934c480e",
+              "x": 309,
+              "y": 264
+            },
+            {
+              "id": "ab366a9f-6894-4a29-abb1-5022b4d86913",
+              "x": 309,
+              "y": 7
+            },
+            {
+              "id": "15d90a2d-809f-4cad-8842-029b4cd2b536",
+              "x": 230,
+              "y": 9
+            }
+          ]
+        },
+        {
+          "id": "0c1dfacb-88b8-4d13-a1c6-d2013f0a6cb4",
+          "name": "Area JH/1",
+          "pdfWidth": 1351,
+          "pdfHeight": 488,
+          "points": [
+            {
+              "id": "d071f82d-b603-4987-a4c6-2c611fba11cf",
+              "x": 308,
+              "y": 7
+            },
+            {
+              "id": "c3a30374-2a97-41fd-b521-680202f247ee",
+              "x": 818,
+              "y": 7
+            },
+            {
+              "id": "94344c98-3620-423a-b022-c4e78c971294",
+              "x": 818,
+              "y": 71
+            },
+            {
+              "id": "851f2773-73d2-47f1-a8d0-b7fa25a95077",
+              "x": 308,
+              "y": 72
+            },
+            {
+              "id": "dad5789f-da9d-4869-8c7b-bd0c0d41809b",
+              "x": 308,
+              "y": 6
+            }
+          ]
+        },
+        {
+          "id": "0a15d114-29f2-4a3b-8f64-a2945607190e",
+          "name": "Area JH/2",
+          "pdfWidth": 1351,
+          "pdfHeight": 488,
+          "points": [
+            {
+              "id": "47581492-57e7-4303-851e-2f82dc3ddcf4",
+              "x": 818,
+              "y": 7
+            },
+            {
+              "id": "9e6c6881-70de-4704-aba7-8670a65e7266",
+              "x": 913,
+              "y": 7
+            },
+            {
+              "id": "574d40f1-7195-4b9c-b269-ca5f3c1794d3",
+              "x": 909,
+              "y": 261
+            },
+            {
+              "id": "a10894be-f529-415e-8713-23c2946eba89",
+              "x": 817,
+              "y": 262
+            },
+            {
+              "id": "1a2aa7e1-0e42-4d14-8218-0ec11484fcb6",
+              "x": 817,
+              "y": 7
+            }
+          ]
+        },
+        {
+          "id": "1400dbf8-af4e-4199-95b3-12e26456471a",
+          "name": "Area JH/3",
+          "pdfWidth": 1351,
+          "pdfHeight": 488,
+          "points": [
+            {
+              "id": "ab9a05a1-d31a-45ca-ad39-81da4dba27b8",
+              "x": 309,
+              "y": 233
+            },
+            {
+              "id": "ad6e47c6-67fc-440c-8870-580b4ec323da",
+              "x": 816,
+              "y": 230
+            },
+            {
+              "id": "0ac73345-8d71-467c-8697-c5740b23e2c4",
+              "x": 817,
+              "y": 263
+            },
+            {
+              "id": "c30dea31-47a2-4dec-993e-00843918462d",
+              "x": 309,
+              "y": 263
+            },
+            {
+              "id": "68f2f4ae-76b0-4c60-92b5-f369f4e84059",
+              "x": 309,
+              "y": 234
+            }
+          ]
+        },
+        {
+          "id": "01ca6a07-4551-44a5-b0b9-ca2414d52ac6",
+          "name": "Area JH/5",
+          "pdfWidth": 1351,
+          "pdfHeight": 488,
+          "points": [
+            {
+              "id": "72dcdf16-2d64-4908-838c-2bd86a377cd4",
+              "x": 652,
+              "y": 264
+            },
+            {
+              "id": "89d80fb7-9a5b-4786-bf83-0e31bfbbd0b0",
+              "x": 909,
+              "y": 262
+            },
+            {
+              "id": "7ad2f331-dff0-49a0-b939-5042f89aa90e",
+              "x": 911,
+              "y": 330
+            },
+            {
+              "id": "8dc6a803-fd5b-4182-9c62-8892e22783c9",
+              "x": 767,
+              "y": 372
+            },
+            {
+              "id": "6a083b67-a65a-4e83-8ae4-d034099f5ead",
+              "x": 655,
+              "y": 400
+            },
+            {
+              "id": "9443d32a-be86-48d9-933f-9aa00fec2ffb",
+              "x": 652,
+              "y": 262
+            }
+          ]
+        },
+        {
+          "id": "667d7cdd-c010-49a3-8d12-8a316a19878d",
+          "name": "Area JX/1",
+          "pdfWidth": 1351,
+          "pdfHeight": 488,
+          "points": [
+            {
+              "id": "7d6cc413-0926-465d-b981-1abdd462b567",
+              "x": 914,
+              "y": 8
+            },
+            {
+              "id": "ba9c2fe1-3bae-42a1-93b3-842cd6a628a7",
+              "x": 1092,
+              "y": 8
+            },
+            {
+              "id": "62e7f5bc-f0d9-411a-b7bf-47700dfd868a",
+              "x": 1093,
+              "y": 108
+            },
+            {
+              "id": "0d8b1ac1-f374-4a92-baa2-3da226acf8fc",
+              "x": 911,
+              "y": 110
+            },
+            {
+              "id": "161d97eb-b129-488b-82a1-02fcd740e552",
+              "x": 913,
+              "y": 8
+            }
+          ]
+        },
+        {
+          "id": "9b288bfb-10c6-4c69-aa52-cdd928c18ad0",
+          "name": "Area JX/2",
+          "pdfWidth": 1351,
+          "pdfHeight": 488,
+          "points": [
+            {
+              "id": "d0fc3162-ffd5-4b32-9569-ac95e316103e",
+              "x": 1092,
+              "y": 8
+            },
+            {
+              "id": "2e71068c-74ba-4d9a-8e6d-ffe9ef9573b2",
+              "x": 1160,
+              "y": 7
+            },
+            {
+              "id": "8de9fcec-c3c3-4a2b-acd4-67450c3bcce7",
+              "x": 1160,
+              "y": 244
+            },
+            {
+              "id": "24e5ebce-6296-4137-97d1-6a337a5d5da6",
+              "x": 1092,
+              "y": 270
+            },
+            {
+              "id": "75bf7fb5-419b-4f57-a5e3-f25805f91986",
+              "x": 1091,
+              "y": 7
+            }
+          ]
+        },
+        {
+          "id": "06f3d3a8-e274-48f7-add9-d910dc3fe8da",
           "name": "Area JX/3",
           "pdfWidth": 1351,
-          "pdfHeight": 503,
+          "pdfHeight": 488,
           "points": [
             {
-              "id": "b2eff8d6-3ecc-4cfd-a456-84d1b82731d7",
-              "x": 920,
-              "y": 209
+              "id": "aaca0714-9e69-473c-b3cb-6ca0968a1a3a",
+              "x": 911,
+              "y": 193
             },
             {
-              "id": "c45728c0-2ce9-43d2-891b-264c5d521a32",
-              "x": 1097,
-              "y": 208
+              "id": "f34f4179-2291-4dbc-afaf-e87dfbc3013a",
+              "x": 1091,
+              "y": 194
             },
             {
-              "id": "2645b896-0a36-40a7-9345-e08875a3e273",
-              "x": 1095,
-              "y": 285
+              "id": "3f0470fd-852c-4697-9448-9e48deb341ee",
+              "x": 1092,
+              "y": 269
             },
             {
-              "id": "cee4d27a-7068-4c41-a774-80068ded1f6c",
-              "x": 920,
-              "y": 344
+              "id": "c34c960f-8a3d-4c31-84b1-727f3402a0c7",
+              "x": 910,
+              "y": 329
             },
             {
-              "id": "0585780a-6ed9-4e31-b18a-175678ba9858",
-              "x": 921,
-              "y": 210
+              "id": "5c5f0490-9cb0-4c8a-8088-bcf077fc5556",
+              "x": 910,
+              "y": 192
             }
           ]
         },
         {
-          "id": "b85a0139-7d8b-42d4-879b-9078238a9068",
-          "name": "JH-Zone1",
+          "id": "66eb7e88-23f4-4c22-8d44-ee177af8bae4",
+          "name": "Area JY/1",
           "pdfWidth": 1351,
-          "pdfHeight": 503,
+          "pdfHeight": 488,
           "points": [
             {
-              "id": "2e22b6c0-22a1-44c8-a4b1-5b193d82a7ca",
-              "x": 329,
-              "y": 95
+              "id": "21bdb29c-1e60-4b0d-b2ca-704e84d1aec2",
+              "x": 1159,
+              "y": 8
             },
             {
-              "id": "36887ebf-d9ab-40bc-8b2a-0a84c075ea43",
-              "x": 577,
+              "id": "563093a1-1aa1-4e65-9c89-90413fba0d88",
+              "x": 1197,
+              "y": 10
+            },
+            {
+              "id": "444f4dc0-b1bc-4da0-92bb-8f470e3f0cd0",
+              "x": 1238,
+              "y": 20
+            },
+            {
+              "id": "c5563662-dd58-4781-bd28-458912ec8b3b",
+              "x": 1281,
+              "y": 33
+            },
+            {
+              "id": "d9e77409-88df-49a4-b6c6-1b6849aada3d",
+              "x": 1306,
+              "y": 44
+            },
+            {
+              "id": "feab57a9-95c4-412d-b81f-5aca2b9a5041",
+              "x": 1333,
+              "y": 70
+            },
+            {
+              "id": "c9e750ce-c82e-46c7-9d0a-313e09632d4d",
+              "x": 1341,
               "y": 92
             },
             {
-              "id": "e0af3924-e748-48ed-83d0-54157492311d",
-              "x": 575,
-              "y": 244
+              "id": "1db60a61-e8e6-4538-ac59-75ad244af75f",
+              "x": 1161,
+              "y": 95
             },
             {
-              "id": "1a89716c-b166-4b19-a4b0-a698613626bb",
-              "x": 329,
-              "y": 246
-            },
-            {
-              "id": "2ab6d2f1-28cb-431c-b94d-91f85b38a9b2",
-              "x": 328,
-              "y": 94
+              "id": "ab7e344b-dfc9-4879-9c51-527ddf783350",
+              "x": 1159,
+              "y": 7
             }
           ]
         },
         {
-          "id": "a00a8c36-f5cb-4bae-8748-7399f8591a9b",
-          "name": "JH-Zone2",
+          "id": "20dd2539-470a-4bde-9555-b8c0d4812d3a",
+          "name": "Area JY/2",
           "pdfWidth": 1351,
-          "pdfHeight": 503,
+          "pdfHeight": 488,
           "points": [
             {
-              "id": "d807da32-6a07-4986-b833-bfd291855dcc",
-              "x": 577,
-              "y": 91
+              "id": "7816f849-ef33-4f3e-87de-46b93a50a538",
+              "x": 1161,
+              "y": 95
             },
             {
-              "id": "d09033f5-1ddf-4488-9a6c-bfd3c3a76c57",
-              "x": 824,
+              "id": "e67bac75-77fe-4ecf-966b-998536b61ef2",
+              "x": 1343,
               "y": 94
             },
             {
-              "id": "4fd39a76-eb64-4832-b66b-6a37b76e33f6",
-              "x": 824,
-              "y": 244
+              "id": "3482ed44-9994-4e55-a077-a908b91dae04",
+              "x": 1343,
+              "y": 131
             },
             {
-              "id": "994a7b8a-401b-4fe2-8628-e1731b9d5b01",
-              "x": 577,
-              "y": 245
+              "id": "24de4ddd-3eac-40f2-a0c4-94c80df0b870",
+              "x": 1335,
+              "y": 153
             },
             {
-              "id": "2f6534a3-b98d-439c-973c-80da86066de7",
-              "x": 578,
-              "y": 91
+              "id": "8555360e-828c-483b-b427-666638408480",
+              "x": 1316,
+              "y": 176
+            },
+            {
+              "id": "429b790c-80de-483d-b772-04cbeea3caeb",
+              "x": 1293,
+              "y": 189
+            },
+            {
+              "id": "d84664fc-f29a-47ca-a917-179cc10105e9",
+              "x": 1160,
+              "y": 243
+            },
+            {
+              "id": "80128526-07c0-4a97-b019-51d80976353a",
+              "x": 1161,
+              "y": 95
             }
           ]
         }
@@ -15786,167 +15796,131 @@ export const ZONE_MAPPING = {
       ],
       rooms: [
         {
-          "id": "0a3f630c-74fd-4ef0-8008-389264e82d96",
+          "id": "5fa354fb-7d56-4d37-aec8-24100bc5bb99",
           "name": "Area JJ/1",
           "pdfWidth": 1351,
-          "pdfHeight": 4067,
+          "pdfHeight": 2530,
           "points": [
             {
-              "id": "a7146010-50ae-40a6-a2bf-7247b32fd26d",
-              "x": 107,
-              "y": 231
+              "id": "1262607b-5013-461f-8d36-a0476cb27e85",
+              "x": 405,
+              "y": 369
             },
             {
-              "id": "fc90b83e-54dc-4c53-bc5b-a30c57f8e4c9",
-              "x": 923,
-              "y": 241
+              "id": "3887bbe9-d1f2-4cea-aa4d-9d27a58abc1c",
+              "x": 1047,
+              "y": 364
             },
             {
-              "id": "137caee2-493f-4ff1-bfea-97ff6c61e655",
-              "x": 924,
-              "y": 1275
+              "id": "61608608-c431-4c0a-878a-c580f7813250",
+              "x": 1053,
+              "y": 659
             },
             {
-              "id": "e02ac118-349e-4558-912a-ab07acaa4f53",
-              "x": 110,
-              "y": 1273
+              "id": "cb194d1d-b0d5-4c09-b514-6a8e1c1a95e9",
+              "x": 405,
+              "y": 660
             },
             {
-              "id": "1ba73efa-2cea-4deb-b29d-ec5bfda49eee",
-              "x": 105,
-              "y": 231
+              "id": "76fd9b9d-58b4-4bff-9ec2-1e950e0ecab9",
+              "x": 405,
+              "y": 370
             }
           ]
         },
         {
-          "id": "3a2cc573-0058-414a-a556-5a904f22bfee",
+          "id": "2f02fce6-b666-42fd-a6bf-40dcbac5b4be",
           "name": "Area JJ/2",
           "pdfWidth": 1351,
-          "pdfHeight": 4067,
+          "pdfHeight": 2530,
           "points": [
             {
-              "id": "8486dc90-7c4d-46be-92f6-8253e3234f98",
-              "x": 933,
-              "y": 241
+              "id": "03e8b504-cf29-46fd-a893-80cc4a5d4d6c",
+              "x": 978,
+              "y": 665
             },
             {
-              "id": "fdd18db7-d75a-4308-a4d5-e8c2c5924c50",
-              "x": 1201,
-              "y": 240
+              "id": "790f398e-b59e-4767-a3cb-e2ea6929065e",
+              "x": 1053,
+              "y": 665
             },
             {
-              "id": "2396f85f-5fd2-4b4c-888f-cb2b51d9d3ab",
-              "x": 1202,
-              "y": 3890
+              "id": "1bdef923-8efd-4ca0-9d45-40d240852f69",
+              "x": 1053,
+              "y": 1078
             },
             {
-              "id": "05b95783-d328-49c2-be2f-8d629c4b89da",
-              "x": 929,
-              "y": 3894
+              "id": "e6fcdec4-02a3-4df3-8470-868bab2bf145",
+              "x": 1099,
+              "y": 1079
             },
             {
-              "id": "9cc679fc-711d-4ae9-9726-fd6c799048c1",
-              "x": 933,
-              "y": 239
+              "id": "edab228d-586b-4846-bac6-0e8c59b03814",
+              "x": 1098,
+              "y": 1428
+            },
+            {
+              "id": "8cae72f4-62fb-4e07-9262-17fd510d17ea",
+              "x": 1052,
+              "y": 1431
+            },
+            {
+              "id": "47b9552b-8bc7-40d2-841a-2882367ac70e",
+              "x": 1054,
+              "y": 2482
+            },
+            {
+              "id": "7a60c557-ea3c-43e8-abe2-5ab0c2639003",
+              "x": 977,
+              "y": 2484
+            },
+            {
+              "id": "8a884dd2-76d6-4c72-bba2-c6a6a7c9b128",
+              "x": 977,
+              "y": 664
             }
           ]
         },
         {
-          "id": "a63f9243-42c0-4611-bec1-40ee183e675a",
+          "id": "7c21b912-11b1-4d55-aa56-e7bae709be07",
           "name": "Area JJ/3",
           "pdfWidth": 1351,
-          "pdfHeight": 4067,
+          "pdfHeight": 2530,
           "points": [
             {
-              "id": "b6e2f647-a932-48e0-91ef-7eacadef9e32",
-              "x": 111,
-              "y": 3648
+              "id": "ea7b31ec-145e-42bf-b3fb-50cb4c4f88f5",
+              "x": 363,
+              "y": 665
             },
             {
-              "id": "654d6315-be52-4e34-8407-268ab58a9d4b",
-              "x": 913,
-              "y": 3648
+              "id": "4bc83531-4d61-4f64-8d1d-cc24fcbe4a90",
+              "x": 422,
+              "y": 663
             },
             {
-              "id": "d1731e99-c106-446b-8d97-083b05e20809",
-              "x": 913,
-              "y": 3893
+              "id": "42240c8f-ab19-46ba-9ebb-1c8db3e46f92",
+              "x": 427,
+              "y": 2312
             },
             {
-              "id": "4a252333-55f3-4182-9424-825ed68993d5",
-              "x": 111,
-              "y": 3892
+              "id": "7c31d17d-c71d-40a1-83c7-4f887543cd43",
+              "x": 974,
+              "y": 2311
             },
             {
-              "id": "f6e44a78-bdb2-4190-a578-88778bf7d475",
-              "x": 112,
-              "y": 3649
-            }
-          ]
-        },
-        {
-          "id": "b006c59e-215d-4b20-bb90-b1f83d2e176a",
-          "name": "JJ-Zone 1",
-          "pdfWidth": 1351,
-          "pdfHeight": 4067,
-          "points": [
-            {
-              "id": "ecf3708a-af27-4129-bbeb-a540d000ab9d",
-              "x": 142,
-              "y": 1281
+              "id": "7066f488-b770-453f-a0ec-750ad413a0dc",
+              "x": 975,
+              "y": 2484
             },
             {
-              "id": "37716f57-ff5e-4af9-aa90-8219983de363",
-              "x": 921,
-              "y": 1286
+              "id": "60f7f2e5-3d50-4038-b4ca-40833e34422e",
+              "x": 368,
+              "y": 2486
             },
             {
-              "id": "7b5c0c47-0379-4dc3-b7e8-95f3264e6317",
-              "x": 917,
-              "y": 2452
-            },
-            {
-              "id": "ec9f19b0-6d85-48e6-8cc7-167b036b2b21",
-              "x": 141,
-              "y": 2453
-            },
-            {
-              "id": "088c7966-3af0-4bbf-94b7-1b3edb90874e",
-              "x": 142,
-              "y": 1281
-            }
-          ]
-        },
-        {
-          "id": "3dc5076f-ebe0-4bf5-a21b-d2e1e7b15b51",
-          "name": "JJ-Zone 2",
-          "pdfWidth": 1351,
-          "pdfHeight": 4067,
-          "points": [
-            {
-              "id": "0d46541a-9adb-4e01-b214-a50a60f5abd9",
-              "x": 141,
-              "y": 2458
-            },
-            {
-              "id": "b7610abd-5a59-45f7-985e-71df3be282d0",
-              "x": 916,
-              "y": 2458
-            },
-            {
-              "id": "3c88fd46-6fb1-4609-8053-77e38e3ca8c0",
-              "x": 916,
-              "y": 3627
-            },
-            {
-              "id": "88fb444c-7a91-43f4-98f1-fab6c42a0d0b",
-              "x": 140,
-              "y": 3626
-            },
-            {
-              "id": "0d180322-399d-4b5d-b34c-00419567a9ee",
-              "x": 141,
-              "y": 2460
+              "id": "2bf1009f-4fa5-4755-8362-ecb0e876746e",
+              "x": 363,
+              "y": 665
             }
           ]
         }
