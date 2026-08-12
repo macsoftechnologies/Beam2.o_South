@@ -1050,7 +1050,7 @@ const getInitialPage = () => {
     return [String(roleVal).trim().toLowerCase()];
   }, [currentUser]);
 
-  const isAdmin = userRoles.includes("admin");
+  const isAdmin = userRoles.some(r => ["admin", "superadmin"].includes(r));
   const isDept = userRoles.includes("department");
   const isDept1 = userRoles.includes("department1");
   const isSubcontractor = userRoles.includes("subcontractor");
@@ -1689,12 +1689,55 @@ const getInitialPage = () => {
     }
   };
 
+  const promptApprovedAction = async (row) => {
+    const result = await Swal.fire({
+      title: "Approved Permit Action",
+      text: `Select an action to perform on Permit ${row.PermitNo ? '#' + row.PermitNo : '#' + row.id}`,
+      icon: "question",
+      showCancelButton: true,
+      showDenyButton: true,
+      confirmButtonText: "Open Permit",
+      confirmButtonColor: "#10b981",
+      denyButtonText: "Reject Permit",
+      denyButtonColor: "#ef4444",
+      cancelButtonText: "Cancel",
+      cancelButtonColor: "#6b7280"
+    });
+
+    if (result.isConfirmed) {
+      handleStatusTransition(row, "Opened");
+    } else if (result.isDenied) {
+      const permitType = row.permit_type || "";
+      const permitUnder = row.permit_under || "";
+      const isBothConstruction = (permitUnder === "Construction" && permitType === "Construction");
+      const isBothCommissioning = (permitUnder === "Commissioning" && permitType === "Commissioning");
+      const isUnderConstTypeComm = (permitUnder === "Construction" && permitType === "Commissioning");
+      const isUnderCommTypeConst = (permitUnder === "Commissioning" && permitType === "Construction");
+
+      if (!isAdmin) {
+        if (isBothConstruction && !isDept) {
+          return showError("Only CONM role can reject Construction-only permits.");
+        }
+        if (isBothCommissioning && !isDept1) {
+          return showError("Only COMM role can reject Commissioning-only permits.");
+        }
+        if (isUnderConstTypeComm && !isDept) {
+          return showError("Only CONM role can reject Construction permits under Commissioning.");
+        }
+        if (isUnderCommTypeConst && !isDept1) {
+          return showError("Only COMM role can reject Commissioning permits under Construction.");
+        }
+      }
+      handleStatusTransition(row, "Rejected");
+    }
+  };
+
   const handleStatusSubmit = async (e) => {
     e.preventDefault();
     if (!modalTarget) return;
 
     let nextStatus = submitStatusOverride || modalStatus;
-    if ((modalStatus === "Pre-Approved" || modalStatus === "Approved") && approveActionType === "Reject") {
+    if (modalStatus === "Pre-Approved" && approveActionType === "Reject") {
       nextStatus = "Rejected";
     }
     if (modalStatus === "Opened" && openActionType === "Cancel") {
@@ -1707,11 +1750,34 @@ const getInitialPage = () => {
       createdTime: getDenmarkTimeISOString()
     };
 
-
-
     if (nextStatus === "Rejected") {
       if (!rejectReason.trim()) return showError("Please specify rejection reason.");
       payload.reject_reason = rejectReason.trim();
+
+      if (!isAdmin) {
+        const permitType = modalTarget.permit_type || "";
+        const permitUnder = modalTarget.permit_under || "";
+        const isBothConstruction = (permitUnder === "Construction" && permitType === "Construction");
+        const isBothCommissioning = (permitUnder === "Commissioning" && permitType === "Commissioning");
+        const isUnderConstTypeComm = (permitUnder === "Construction" && permitType === "Commissioning");
+        const isUnderCommTypeConst = (permitUnder === "Commissioning" && permitType === "Construction");
+
+        const curStatus = modalTarget?.Request_status || modalTarget?.request_status || "";
+        if (curStatus === "Approved" || curStatus === "Pre-Approved") {
+          if (isBothConstruction && !isDept) {
+            return showError("Only CONM role can reject Construction-only permits.");
+          }
+          if (isBothCommissioning && !isDept1) {
+            return showError("Only COMM role can reject Commissioning-only permits.");
+          }
+          if (isUnderConstTypeComm && !isDept) {
+            return showError("Only CONM role can reject Construction permits under Commissioning.");
+          }
+          if (isUnderCommTypeConst && !isDept1) {
+            return showError("Only COMM role can reject Commissioning permits under Construction.");
+          }
+        }
+      }
     } else if (nextStatus === "Cancelled") {
       if (!cancelReason.trim()) return showError("Please specify cancel reason.");
       payload.cancel_reason = cancelReason.trim();
@@ -1835,13 +1901,42 @@ const getInitialPage = () => {
     if (!validateBulkAction()) return;
     const targetRequests = requests.filter(r => selectedIds.includes(r.id));
 
-    const invalidApproved = targetRequests.find(
-      r => (r.Request_status === "Approved" || r.request_status === "Approved") &&
-        !isTodayDate(r.Working_Date || r.workingDate || r.working_date)
-    );
+    if (status === "Opened") {
+      const invalidApproved = targetRequests.find(
+        r => (r.Request_status === "Approved" || r.request_status === "Approved") &&
+          !isTodayDate(r.Working_Date || r.workingDate || r.working_date)
+      );
 
-    if (invalidApproved) {
-      return showError("Status change is restricted for Approved permits when working date is not today.");
+      if (invalidApproved) {
+        return showError("Status change to Opened is restricted for Approved permits when working date is not today.");
+      }
+    }
+
+    if (status === "Rejected" && !isAdmin) {
+      for (const r of targetRequests) {
+        const curStatus = (r.Request_status || r.request_status || "");
+        if (curStatus === "Approved" || curStatus === "Pre-Approved") {
+          const pType = r.permit_type || "";
+          const pUnder = r.permit_under || "";
+          const isBothConst = (pUnder === "Construction" && pType === "Construction");
+          const isBothComm = (pUnder === "Commissioning" && pType === "Commissioning");
+          const isConstUnderComm = (pUnder === "Construction" && pType === "Commissioning");
+          const isCommUnderConst = (pUnder === "Commissioning" && pType === "Construction");
+
+          if (isBothConst && !isDept) {
+            return showError(`Permit #${r.PermitNo || r.id}: Only CONM role can reject Construction-only permits.`);
+          }
+          if (isBothComm && !isDept1) {
+            return showError(`Permit #${r.PermitNo || r.id}: Only COMM role can reject Commissioning-only permits.`);
+          }
+          if (isConstUnderComm && !isDept) {
+            return showError(`Permit #${r.PermitNo || r.id}: Only CONM role can reject Construction permits under Commissioning.`);
+          }
+          if (isCommUnderConst && !isDept1) {
+            return showError(`Permit #${r.PermitNo || r.id}: Only COMM role can reject Commissioning permits under Construction.`);
+          }
+        }
+      }
     }
 
     setModalTarget(targetRequests);
@@ -2316,7 +2411,7 @@ const getInitialPage = () => {
           } else if (row.Request_status === "Pre-Approved") {
             handleStatusTransition(row, "Approved");
           } else if (row.Request_status === "Approved") {
-            handleStatusTransition(row, "Opened");
+            promptApprovedAction(row);
           } else if (row.Request_status === "Opened") {
             handleStatusTransition(row, "Closed");
           }
@@ -3074,8 +3169,8 @@ const getInitialPage = () => {
                 </div>
               )}
 
-              {/* Action choice if status is Pre-Approved or Approved */}
-              {(modalStatus === "Pre-Approved" || modalStatus === "Approved") && (
+              {/* Action choice if status is Pre-Approved */}
+              {modalStatus === "Pre-Approved" && (
                 <div className="df-field" style={{ marginBottom: "16px" }}>
                   <label className="df-label">Action to Take</label>
                   <select
@@ -3083,9 +3178,7 @@ const getInitialPage = () => {
                     value={approveActionType}
                     onChange={(e) => setApproveActionType(e.target.value)}
                   >
-                    <option value="Approve">
-                      {modalStatus === "Pre-Approved" ? "Pre-Approve Permit" : "Approve Permit"}
-                    </option>
+                    <option value="Approve">Pre-Approve Permit</option>
                     <option value="Reject">Reject Permit</option>
                   </select>
                 </div>
