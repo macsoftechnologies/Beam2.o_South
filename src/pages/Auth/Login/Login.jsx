@@ -8,18 +8,18 @@ import "./Login.css";
 
 export default function Login() {
   if (isTokenValid()) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/modules" replace />;
   }
 
   useEffect(() => {
     const handleCheck = () => {
       if (isTokenValid()) {
-        navigateTo("/dashboard", true);
+        navigateTo("/modules", true);
       }
     };
 
     if (isTokenValid()) {
-      navigateTo("/dashboard", true);
+      navigateTo("/modules", true);
     }
 
     window.addEventListener("pageshow", handleCheck);
@@ -61,6 +61,7 @@ export default function Login() {
           userType: response.userType,
           phonenumber: response.phonenumber,
           maskedPhone: response.maskedPhone || "",
+          moduleAccess: response.moduleAccess || "",
           auth_token: response.auth_token
         };
         localStorage.setItem("tempUser", JSON.stringify(tempUser));
