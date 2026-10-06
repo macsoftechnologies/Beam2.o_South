@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import ReactDOM from "react-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import { LOGO_MAP } from "../../../config/logos";
-import { FaEdit, FaEye, FaCopy, FaTrash, FaPlus, FaFilter, FaHistory, FaCheck, FaTimes, FaEllipsisV, FaSearch } from "react-icons/fa";
+import { FaEdit, FaEye, FaCopy, FaTrash, FaPlus, FaFilter, FaHistory, FaCheck, FaTimes, FaEllipsisV, FaSearch, FaColumns, FaUndo } from "react-icons/fa";
 import Swal from "sweetalert2";
 
 const AnalogTimePicker = ({ initialTime, onSave, onCancel }) => {
@@ -186,9 +186,7 @@ import {
   getZones,
   getRooms,
   getUser,
-  getPrecautions,
-  getElectricalWorks,
-  getMechanicalWorks
+  getPrecautions
 } from "../../../services/authService";
 import {
   searchRequests,
@@ -238,68 +236,9 @@ const trimLongValue = (value) => {
   return String(value);
 };
 
-const normalizeFloorName = (name) => {
-  if (!name) return "";
-  let s = String(name).toLowerCase().trim();
-  s = s.replace(/\bground\b|\bgf\b/g, "0");
-  s = s.replace(/\bfirst\b|\b1st\b/g, "1");
-  s = s.replace(/\bsecond\b|\b2nd\b/g, "2");
-  s = s.replace(/\bthird\b|\b3rd\b/g, "3");
-  s = s.replace(/\bfourth\b|\b4th\b/g, "4");
-  s = s.replace(/\bfifth\b|\b5th\b/g, "5");
-  s = s.replace(/\broof\b|\brf\b/g, "roof");
-  return s.replace(/[^0-9roof]/g, "");
-};
-
 // Helper to resolve zone name from building, floor/level, and rooms data
 const resolveZoneNameFromRooms = (row) => {
-  if (!row) return "—";
-
-  const bName = String(row.building_name || row.Building_Name || row.building || "").trim();
-  const lName = String(row.Room_Type || row.level || "").trim();
-  const lLower = lName.toLowerCase();
-  const bLower = bName.toLowerCase();
-
-  let zonesToSearch = [];
-
-  if (lName && ZONE_MAPPING[lName]) {
-    zonesToSearch = ZONE_MAPPING[lName];
-  } else if (bName && lName && ZONE_MAPPING[`${bName} ${lName}`]) {
-    zonesToSearch = ZONE_MAPPING[`${bName} ${lName}`];
-  } else if (bName) {
-    const bKeys = Object.keys(ZONE_MAPPING).filter(k => k.toLowerCase().includes(bLower));
-    if (bKeys.length > 0) {
-      const match = bKeys.find(k => {
-        const rest = k.toLowerCase().replace(bLower, "").trim();
-        return rest === lLower || rest.includes(lLower) || lLower.includes(rest);
-      });
-      if (match) {
-        zonesToSearch = ZONE_MAPPING[match] || [];
-      } else {
-        const targetNorm = normalizeFloorName(lLower);
-        if (targetNorm) {
-          const numMatch = bKeys.find(k => {
-            const rest = k.toLowerCase().replace(bLower, "").trim();
-            return normalizeFloorName(rest) === targetNorm;
-          });
-          if (numMatch) zonesToSearch = ZONE_MAPPING[numMatch] || [];
-        }
-      }
-    }
-  }
-
-  if (zonesToSearch.length === 0 && lName) {
-    const foundKey = Object.keys(ZONE_MAPPING).find(k => {
-      const kNorm = normalizeFloorName(k);
-      const lNorm = normalizeFloorName(lName);
-      return (kNorm && lNorm && kNorm === lNorm) || k.toLowerCase().trim().includes(lLower);
-    });
-    if (foundKey) {
-      zonesToSearch = ZONE_MAPPING[foundKey] || [];
-    }
-  }
-
-  // Extract raw db zone name
+  // 1. If the request already has a valid zone name from the database, use it
   let dbZoneName = "";
   if (typeof row.zone_name === "string" && row.zone_name.trim().length > 0 && row.zone_name !== "—") {
     dbZoneName = row.zone_name.trim();
@@ -308,42 +247,47 @@ const resolveZoneNameFromRooms = (row) => {
   } else if (row.zone && typeof row.zone === "object" && typeof row.zone.zone === "string") {
     dbZoneName = row.zone.zone;
   }
+  if (dbZoneName && dbZoneName !== "—") {
+    return dbZoneName;
+  }
 
-  // If dbZoneName matches any zone in zonesToSearch for this level, use it!
-  if (dbZoneName && dbZoneName !== "—" && zonesToSearch.length > 0) {
-    const dbZoneTokens = dbZoneName.split(",").map(s => s.trim().toLowerCase());
-    const isValidForLevel = zonesToSearch.some(zg => {
-      const zgName = (zg.name || "").toLowerCase().trim();
-      return dbZoneTokens.some(t => t === zgName || zgName.includes(t) || t.includes(zgName));
-    });
-    if (isValidForLevel) {
-      return dbZoneName;
+  // 2. Otherwise, look up from ZONE_MAPPING by matching room names or room IDs
+  const roomStr = row.room_names || row.Room_Nos;
+  if (!roomStr) return "—";
+
+  const roomsToMatch = String(roomStr).split(",").map(r => r.trim().toLowerCase());
+
+  const levelKey = row.Room_Type || "";
+  let zonesToSearch = [];
+
+  if (levelKey) {
+    const levelLower = levelKey.toLowerCase().trim();
+    const foundKey = Object.keys(ZONE_MAPPING).find(k =>
+      k.toLowerCase().trim().includes(levelLower) || levelLower.includes(k.toLowerCase().trim())
+    );
+    if (foundKey) {
+      zonesToSearch = ZONE_MAPPING[foundKey] || [];
     }
   }
 
-  // If dbZoneName was empty or corrupted (belonged to a different floor), try matching rooms
-  const roomStr = row.room_names || row.Room_Nos;
-  if (roomStr && zonesToSearch.length > 0) {
-    const roomsToMatch = String(roomStr).split(",").map(r => r.trim().toLowerCase());
-    for (const zoneGroup of zonesToSearch) {
-      if (zoneGroup.rooms) {
-        for (const room of zoneGroup.rooms) {
-          const roomName = (typeof room === "object" ? room.name : room) || "";
-          const roomId = (typeof room === "object" ? room.id : "") || "";
-          if (
-            roomsToMatch.includes(roomName.toLowerCase().trim()) ||
-            (roomId && roomsToMatch.includes(String(roomId).toLowerCase().trim()))
-          ) {
-            return zoneGroup.name || "—";
-          }
+  if (zonesToSearch.length === 0) {
+    zonesToSearch = Object.values(ZONE_MAPPING).flat();
+  }
+
+  // Find a zoneGroup that contains a room with matching name or ID
+  for (const zoneGroup of zonesToSearch) {
+    if (zoneGroup.rooms) {
+      for (const room of zoneGroup.rooms) {
+        const roomName = (typeof room === "object" ? room.name : room) || "";
+        const roomId = (typeof room === "object" ? room.id : "") || "";
+        if (
+          roomsToMatch.includes(roomName.toLowerCase().trim()) ||
+          (roomId && roomsToMatch.includes(String(roomId).toLowerCase().trim()))
+        ) {
+          return zoneGroup.name || "—";
         }
       }
     }
-  }
-
-  // If dbZoneName exists and no level conflict detected, return dbZoneName as fallback
-  if (dbZoneName && dbZoneName !== "—") {
-    return dbZoneName;
   }
 
   return "—";
@@ -585,20 +529,9 @@ const HRA_LIST = [
   { key: "pressurization", label: "Mechanical Works", icon: "mechanical1.png", image: LOGO_MAP["mechanical1.png"] }
 ];
 
-const MultiSelectDropdown = ({
-  options,
-  selectedValues,
-  onChange,
-  placeholder,
-  disabled,
-  hasNone = false,
-  searchPlaceholder = "",
-  hasCategoryFilter = false,
-  categories = []
-}) => {
+const MultiSelectDropdown = ({ options, selectedValues, onChange, placeholder, disabled, hasNone = false, searchPlaceholder = "Search contractor..." }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -632,42 +565,10 @@ const MultiSelectDropdown = ({
     onChange(newSelected);
   };
 
-  const resolvedCategories = useMemo(() => {
-    if (categories && categories.length > 0) return categories;
-    const set = new Set();
-    (options || []).forEach(opt => {
-      const mod = opt.module || opt.category;
-      if (mod && typeof mod === "string" && mod.trim()) {
-        set.add(mod.trim());
-      }
-    });
-    return Array.from(set);
-  }, [categories, options]);
-
-  const categoryCounts = useMemo(() => {
-    const counts = {};
-    (options || []).forEach(opt => {
-      const mod = opt.module || opt.category;
-      if (mod) {
-        counts[mod] = (counts[mod] || 0) + 1;
-      }
-    });
-    return counts;
-  }, [options]);
-
   const filteredOptions = useMemo(() => {
-    let result = options;
-
-    if (selectedCategory) {
-      result = result.filter(opt => {
-        const mod = opt.module || opt.category || "";
-        return String(mod).toLowerCase() === String(selectedCategory).toLowerCase();
-      });
-    }
-
-    if (!searchQuery.trim()) return result;
+    if (!searchQuery.trim()) return options;
     const q = searchQuery.toLowerCase();
-    return result.filter(opt => {
+    return options.filter(opt => {
       if (opt.zones) {
         return opt.zones.some(z => {
           const l = typeof z === "object" ? (z.name ?? z.label ?? z) : z;
@@ -677,7 +578,7 @@ const MultiSelectDropdown = ({
       const label = opt.subContractorName || opt.building_name || opt.floor_name || opt.zone || opt.label || opt.name || opt;
       return String(label).toLowerCase().includes(q);
     });
-  }, [options, searchQuery, selectedCategory]);
+  }, [options, searchQuery]);
 
   let displayText = placeholder;
   if (selectedValues.length > 0) {
@@ -769,14 +670,13 @@ const MultiSelectDropdown = ({
           height="16"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="currentColor"
+          stroke="#9CA3AF"
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{
             transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-            transition: "transform 0.2s ease",
-            opacity: 0.7
+            transition: "transform 0.2s ease"
           }}
         >
           <polyline points="6 9 12 15 18 9" />
@@ -784,160 +684,199 @@ const MultiSelectDropdown = ({
       </div>
 
       {isOpen && (
-        <div className="custom-multiselect-dropdown">
+        <div
+          className="custom-multiselect-dropdown"
+          style={{
+            position: "absolute",
+            top: "calc(100% + 6px)",
+            left: 0,
+            width: "100%",
+            maxHeight: "260px",
+            overflowY: "auto",
+            backgroundColor: "var(--bg-card, #111827)",
+            border: "1.5px solid var(--border-color, #374151)",
+            borderRadius: "12px",
+            zIndex: 9999,
+            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5)",
+            padding: "6px 0"
+          }}
+        >
           {/* Search bar inside dropdown */}
-          <div className="custom-multiselect-header">
+          <div style={{ padding: "8px 12px", borderBottom: "1px solid var(--border-color, #374151)", position: "sticky", top: 0, backgroundColor: "var(--bg-card, #111827)", zIndex: 10, display: "flex", gap: "6px" }}>
             <input
               type="text"
-              className="custom-multiselect-search-input"
-              placeholder={searchPlaceholder || (placeholder ? `Search ${placeholder.replace(/^Select\s*/i, "").toLowerCase()}...` : "Search...")}
+              placeholder={searchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onClick={(e) => e.stopPropagation()}
+              style={{
+                flex: 1,
+                padding: "6px 10px",
+                fontSize: "13px",
+                borderRadius: "6px",
+                border: "1px solid var(--border-color, #374151)",
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                color: "var(--text-main, #f9fafb)",
+                outline: "none"
+              }}
             />
-            {hasCategoryFilter && resolvedCategories.length > 0 && (
-              <select
-                className="custom-multiselect-cat-select"
-                value={selectedCategory}
-                onChange={(e) => {
-                  e.stopPropagation();
-                  setSelectedCategory(e.target.value);
-                }}
-                onClick={(e) => e.stopPropagation()}
-                title="Filter by Category"
-              >
-                <option value="">
-                  All ({options.length})
-                </option>
-                {resolvedCategories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat} ({categoryCounts[cat] || 0})
-                  </option>
-                ))}
-              </select>
-            )}
             <button
               type="button"
-              className="custom-multiselect-search-btn"
               onClick={(e) => e.stopPropagation()}
-              title="Search"
+              style={{
+                padding: "6px 10px",
+                backgroundColor: "var(--primary-color, #3b82f6)",
+                border: "none",
+                borderRadius: "6px",
+                color: "#fff",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
             >
               <FaSearch size={12} />
             </button>
           </div>
           {hasNone && (
             <label
-              className={`custom-multiselect-option ${selectedValues.includes("none") ? "is-checked" : ""}`}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                padding: "10px 16px",
+                cursor: "pointer",
+                transition: "background-color 0.2s",
+                color: "var(--text-main, #f9fafb)",
+                backgroundColor: selectedValues.includes("none") ? "rgba(255, 255, 255, 0.05)" : "transparent",
+                fontSize: "14px",
+                userSelect: "none"
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)"}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = selectedValues.includes("none") ? "rgba(255, 255, 255, 0.05)" : "transparent"}
             >
               <input
                 type="checkbox"
                 checked={selectedValues.includes("none")}
                 onChange={(e) => handleCheckboxChange("none", e.target.checked)}
-                style={{ width: "16px", height: "16px", cursor: "pointer", accentColor: "var(--accent-primary, #3b82f6)" }}
+                style={{ width: "16px", height: "16px", cursor: "pointer", accentColor: "var(--accent, #00e5a0)" }}
               />
               <span>None</span>
             </label>
           )}
 
-          {filteredOptions.length === 0 ? (
-            <div style={{ padding: "16px", textAlign: "center", color: "var(--text-muted, #9ca3af)", fontSize: "13px" }}>
-              No options found
-            </div>
-          ) : (
-            filteredOptions.map((opt, idx) => {
-              // Support grouped zones/rooms
-              if (opt.zones) {
-                return (
-                  <div key={idx}>
-                    <div
-                      className="custom-multiselect-group-header"
-                      style={{ borderTop: idx > 0 ? "1px solid var(--border-color, #374151)" : "none" }}
-                    >
-                      {opt.floorName}
-                    </div>
-                    {opt.zones.map((z, zIdx) => {
-                      const zVal = String(typeof z === "object" ? (z.id ?? z.value ?? z) : z);
-                      const zLabel = typeof z === "object" ? (z.name ?? z.label ?? z) : z;
-                      const isChecked = selectedValues.includes(zVal);
-
-                      return (
-                        <label
-                          key={zIdx}
-                          className={`custom-multiselect-option ${isChecked ? "is-checked" : ""}`}
-                          style={{ paddingLeft: "24px" }}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={(e) => handleCheckboxChange(zVal, e.target.checked)}
-                            style={{
-                              width: "16px",
-                              height: "16px",
-                              cursor: "pointer",
-                              accentColor: "var(--accent-primary, #3b82f6)",
-                              borderRadius: "4px"
-                            }}
-                          />
-                          <span>{zLabel}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                );
-              }
-
-              const val = String(opt.value ?? opt.key ?? opt.id ?? opt.build_id ?? opt);
-              const displayLabel = opt.label || opt.building_name || opt.floor_name || opt.subContractorName || opt;
-              const isChecked = selectedValues.includes(val);
-              const imgUrl = opt.image || (opt.icon ? LOGO_MAP[opt.icon] : null);
-              const itemModule = opt.module || opt.category;
-
+          {filteredOptions.map((opt, idx) => {
+            // Support grouped zones/rooms
+            if (opt.zones) {
               return (
-                <label
-                  key={idx}
-                  className={`custom-multiselect-option ${isChecked ? "is-checked" : ""}`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={(e) => handleCheckboxChange(val, e.target.checked)}
+                <div key={idx}>
+                  <div style={{
+                    padding: "8px 16px 4px 16px",
+                    color: "var(--text-muted, #9ca3af)",
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    backgroundColor: "rgba(255, 255, 255, 0.02)",
+                    borderTop: idx > 0 ? "1px solid var(--border-color, #374151)" : "none"
+                  }}>
+                    {opt.floorName}
+                  </div>
+                  {opt.zones.map((z, zIdx) => {
+                    const zVal = String(typeof z === "object" ? (z.id ?? z.value ?? z) : z);
+                    const zLabel = typeof z === "object" ? (z.name ?? z.label ?? z) : z;
+                    const isChecked = selectedValues.includes(zVal);
+
+                    return (
+                      <label
+                        key={zIdx}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "12px",
+                          padding: "10px 24px",
+                          cursor: "pointer",
+                          transition: "background-color 0.2s",
+                          color: "var(--text-main, #f9fafb)",
+                          backgroundColor: isChecked ? "rgba(255, 255, 255, 0.05)" : "transparent",
+                          fontSize: "14px",
+                          userSelect: "none"
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)"}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = isChecked ? "rgba(255, 255, 255, 0.05)" : "transparent"}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => handleCheckboxChange(zVal, e.target.checked)}
+                          style={{
+                            width: "16px",
+                            height: "16px",
+                            cursor: "pointer",
+                            accentColor: "var(--accent, #00e5a0)",
+                            borderRadius: "4px"
+                          }}
+                        />
+                        <span>{zLabel}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              );
+            }
+
+            const val = String(opt.value ?? opt.key ?? opt.id ?? opt.build_id ?? opt);
+            const displayLabel = opt.label || opt.building_name || opt.floor_name || opt.subContractorName || opt;
+            const isChecked = selectedValues.includes(val);
+            const imgUrl = opt.image || (opt.icon ? LOGO_MAP[opt.icon] : null);
+
+            return (
+              <label
+                key={idx}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  padding: "10px 16px",
+                  cursor: "pointer",
+                  transition: "background-color 0.2s",
+                  color: "var(--text-main, #f9fafb)",
+                  backgroundColor: isChecked ? "rgba(255, 255, 255, 0.05)" : "transparent",
+                  fontSize: "14px",
+                  userSelect: "none"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)"}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = isChecked ? "rgba(255, 255, 255, 0.05)" : "transparent"}
+              >
+                <input
+                  type="checkbox"
+                  checked={isChecked}
+                  onChange={(e) => handleCheckboxChange(val, e.target.checked)}
+                  style={{
+                    width: "16px",
+                    height: "16px",
+                    cursor: "pointer",
+                    accentColor: "var(--accent, #00e5a0)",
+                    borderRadius: "4px"
+                  }}
+                />
+                {imgUrl && (
+                  <img
+                    src={imgUrl}
+                    alt={displayLabel}
                     style={{
-                      width: "16px",
-                      height: "16px",
-                      cursor: "pointer",
-                      accentColor: "var(--accent-primary, #3b82f6)",
-                      borderRadius: "4px"
+                      width: "22px",
+                      height: "22px",
+                      objectFit: "contain",
+                      borderRadius: "4px",
+                      flexShrink: 0
                     }}
                   />
-                  {imgUrl && (
-                    <img
-                      src={imgUrl}
-                      alt={displayLabel}
-                      style={{
-                        width: "22px",
-                        height: "22px",
-                        objectFit: "contain",
-                        borderRadius: "4px",
-                        flexShrink: 0
-                      }}
-                    />
-                  )}
-                  <span style={{ flex: 1 }}>{displayLabel}</span>
-                  {itemModule && (
-                    <span
-                      className={`multiselect-badge ${
-                        itemModule === "Panel Numbers"
-                          ? "multiselect-badge--panel"
-                          : "multiselect-badge--system"
-                      }`}
-                    >
-                      {itemModule}
-                    </span>
-                  )}
-                </label>
-              );
-            })
-          )}
+                )}
+                <span>{displayLabel}</span>
+              </label>
+            );
+          })}
         </div>
       )}
     </div>
@@ -1001,11 +940,113 @@ const isTodayDate = (dateVal) => {
   );
 };
 
+const ALL_COLUMNS_CONFIG = [
+  { id: "PermitNo", label: "Permit Number" },
+  { id: "hraCell", label: "HRA'S" },
+  { id: "permit_under", label: "Permit Under" },
+  { id: "Request_Date", label: "Request Date" },
+  { id: "permit_type", label: "Permit Type" },
+  { id: "Activity", label: "Activity" },
+  { id: "contractorName", label: "Contractor" },
+  { id: "buildingName", label: "Building" },
+  { id: "Room_Type", label: "Level" },
+  { id: "zone", label: "Zone" },
+  { id: "rooms", label: "Rooms" },
+  { id: "Working_Date", label: "Working Date" },
+  { id: "timeCell", label: "Time" },
+  { id: "nightShiftCell", label: "Working After Midnight" },
+  { id: "newEndTimeCell", label: "New End Time" },
+  { id: "statusCell", label: "Status" },
+  { id: "operationsCell", label: "Operations" }
+];
+
+const STORAGE_KEY_VISIBLE_COLUMNS = "beam_list_request_visible_columns";
+
 const ListRequest = () => {
   const navigate = useNavigate();
   const currentUser = useMemo(() => getUser(), []);
   const userContractorId = currentUser?.typeId || currentUser?.subContId || currentUser?.subContractorId;
   const location = useLocation();
+
+  // Column Visibility States
+  const [visibleColumns, setVisibleColumns] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_VISIBLE_COLUMNS);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load saved column preferences", e);
+    }
+    return ALL_COLUMNS_CONFIG.map(col => col.id);
+  });
+
+  const [colDropdownOpen, setColDropdownOpen] = useState(false);
+  const [columnSearch, setColumnSearch] = useState("");
+  const colDropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (colDropdownRef.current && !colDropdownRef.current.contains(e.target)) {
+        setColDropdownOpen(false);
+      }
+    };
+    if (colDropdownOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [colDropdownOpen]);
+
+  const handleToggleColumn = (colId) => {
+    setVisibleColumns((prev) => {
+      let next;
+      if (prev.includes(colId)) {
+        if (prev.length <= 1) {
+          showError("At least one column must remain visible in the table.");
+          return prev;
+        }
+        next = prev.filter(id => id !== colId);
+        const colDef = ALL_COLUMNS_CONFIG.find(c => c.id === colId);
+        showSuccess(`Column "${colDef?.label || colId}" removed from table.`);
+      } else {
+        const allIds = ALL_COLUMNS_CONFIG.map(c => c.id);
+        next = allIds.filter(id => prev.includes(id) || id === colId);
+        const colDef = ALL_COLUMNS_CONFIG.find(c => c.id === colId);
+        showSuccess(`Column "${colDef?.label || colId}" displayed in table.`);
+      }
+      try {
+        localStorage.setItem(STORAGE_KEY_VISIBLE_COLUMNS, JSON.stringify(next));
+      } catch (e) {}
+      return next;
+    });
+  };
+
+  const handleRemoveColumn = (colId) => {
+    handleToggleColumn(colId);
+  };
+
+  const handleShowAllColumns = () => {
+    const allIds = ALL_COLUMNS_CONFIG.map(c => c.id);
+    setVisibleColumns(allIds);
+    try {
+      localStorage.setItem(STORAGE_KEY_VISIBLE_COLUMNS, JSON.stringify(allIds));
+    } catch (e) {}
+    showSuccess("All columns restored.");
+  };
+
+  const handleResetColumns = () => {
+    const allIds = ALL_COLUMNS_CONFIG.map(c => c.id);
+    setVisibleColumns(allIds);
+    try {
+      localStorage.removeItem(STORAGE_KEY_VISIBLE_COLUMNS);
+    } catch (e) {}
+    showSuccess("Reset columns to default.");
+  };
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -1056,8 +1097,6 @@ const getInitialSearchFilters = () => {
           areas: [],
           zones: [],
           hras: [],
-          electrical_works: [],
-          mechanical_works: [],
           permitType: "",
           permitUnder: "",
           fromDate: "",
@@ -1085,8 +1124,6 @@ const getInitialSearchFilters = () => {
     areas: [],
     zones: [],
     hras: [],
-    electrical_works: [],
-    mechanical_works: [],
     permitType: "",
     permitUnder: "",
     fromDate: "",
@@ -1125,8 +1162,6 @@ const getInitialPage = () => {
   const [floorsList, setFloorsList] = useState([]);
   const [zonesList, setZonesList] = useState([]);
   const [roomsList, setRoomsList] = useState([]);
-  const [electricalWorksList, setElectricalWorksList] = useState([]);
-  const [mechanicalWorksList, setMechanicalWorksList] = useState([]);
 
   // Collapsible filters card
   const [filtersOpen, setFiltersOpen] = useState(true);
@@ -1226,16 +1261,14 @@ const getInitialPage = () => {
   useEffect(() => {
     const fetchSelectors = async () => {
       try {
-        const [subRes, actRes, buildRes, floorRes, zoneRes, roomRes, precautionsRes, elecRes, mechRes] = await Promise.all([
+        const [subRes, actRes, buildRes, floorRes, zoneRes, roomRes, precautionsRes] = await Promise.all([
           getContractors(1, 1000),
           getActivities(1, 1000),
           getBuildings(1, 1000),
           getFloors(1, 1000),
           getZones(1, 10000),
           getRooms(1, 10000),
-          getPrecautions(1, 1000),
-          getElectricalWorks(1, 1000),
-          getMechanicalWorks(1, 1000)
+          getPrecautions(1, 1000)
         ]);
         const rawContractors = subRes?.data?.rows ?? subRes?.data ?? subRes ?? [];
         const loadedContractors = rawContractors
@@ -1257,8 +1290,6 @@ const getInitialPage = () => {
         setZonesList(zoneRes?.data ?? []);
         setRoomsList(roomRes?.data?.rows ?? roomRes?.data ?? roomRes ?? []);
         setPrecautionsList(precautionsRes?.data?.rows ?? precautionsRes?.data ?? precautionsRes ?? []);
-        setElectricalWorksList(elecRes?.data?.rows ?? elecRes?.data ?? elecRes ?? []);
-        setMechanicalWorksList(mechRes?.data?.rows ?? mechRes?.data ?? mechRes ?? []);
       } catch (err) {
         console.error("Failed to load selectors lists", err);
       }
@@ -1428,35 +1459,6 @@ const getInitialPage = () => {
     }));
   }, [roomsList, zonesList, floorsList, searchFilters.buildings, searchFilters.levels, searchFilters.zones]);
 
-  const electricalCategories = useMemo(() => {
-    const set = new Set();
-    (electricalWorksList || []).forEach(item => {
-      const mod = item.module || item.category;
-      if (mod && typeof mod === "string" && mod.trim()) {
-        set.add(mod.trim());
-      }
-    });
-    if (set.size === 0) {
-      return ["Panel Numbers", "System Numbers"];
-    }
-    return Array.from(set);
-  }, [electricalWorksList]);
-
-  const electricalWorksOptions = useMemo(() => {
-    return (electricalWorksList || []).map((item) => ({
-      value: String(item.id ?? item.electrical_works),
-      label: item.electrical_works || item.name || String(item.id),
-      module: item.module || item.category || ""
-    }));
-  }, [electricalWorksList]);
-
-  const mechanicalWorksOptions = useMemo(() => {
-    return (mechanicalWorksList || []).map((item) => ({
-      value: String(item.id ?? item.mechanical_works),
-      label: item.mechanical_works || item.name || String(item.id)
-    }));
-  }, [mechanicalWorksList]);
-
   // ─── Fetch List Data ──────────────────────────────────────────────────────
   const fetchRequests = useCallback(async (page = 1) => {
     if (searchFilters.fromDate && searchFilters.toDate) {
@@ -1488,8 +1490,6 @@ const getInitialPage = () => {
           ? zonesList.filter(z => searchFilters.zones && searchFilters.zones.includes(z.zone)).map(z => z.id)
           : null,
         zone: searchFilters.zones && searchFilters.zones.length > 0 ? searchFilters.zones.join(",") : null,
-        electrical_works: searchFilters.electrical_works?.length > 0 ? searchFilters.electrical_works.join(",") : null,
-        mechanical_works: searchFilters.mechanical_works?.length > 0 ? searchFilters.mechanical_works.join(",") : null,
         permit_type: searchFilters.permitType || "",
         permit_under: searchFilters.permitUnder || "",
         night_shift: searchFilters.nightShift || "",
@@ -1586,8 +1586,6 @@ const getInitialPage = () => {
       areas: [],
       zones: [],
       hras: [],
-      electrical_works: [],
-      mechanical_works: [],
       permitType: "",
       permitUnder: "",
       fromDate: "",
@@ -1710,34 +1708,34 @@ const getInitialPage = () => {
     return currentUser?.role || "";
   };
 
-  const canUserApprove = (row, targetStatus) => {
+  const canUserApprove = (row, status) => {
     if (isAdmin || isMultiDept) return true;
     if (!row) return false;
     const permitType = row.permit_type || "";
     const permitUnder = row.permit_under || "";
 
-    if (targetStatus === "Pre-Approved") {
+    if (status === "Pre-Approved") {
       if (permitType === "Construction" && permitUnder === "Commissioning") {
-        return isDept; // CONM pre-approves
+        return isDept;
       }
       if (permitType === "Commissioning" && permitUnder === "Construction") {
-        return isDept1; // COMM pre-approves
+        return isDept1;
       }
       return false;
     }
 
-    if (targetStatus === "Approved") {
+    if (status === "Approved") {
       if (permitType === "Commissioning" && permitUnder === "Commissioning") {
-        return isDept1; // COMM approves
+        return isDept1;
       }
       if (permitType === "Construction" && permitUnder === "Construction") {
-        return isDept; // CONM approves
+        return isDept;
       }
       if (permitType === "Construction" && permitUnder === "Commissioning") {
-        return isDept1; // COMM final approves
+        return isDept1;
       }
       if (permitType === "Commissioning" && permitUnder === "Construction") {
-        return isDept; // CONM final approves
+        return isDept;
       }
       return false;
     }
@@ -1928,8 +1926,11 @@ const getInitialPage = () => {
         if (isBothCommissioning && !isDept1) {
           return showError("Only COMM role can reject Commissioning-only permits.");
         }
-        if ((isUnderConstTypeComm || isUnderCommTypeConst) && (!isDept && !isDept1)) {
-          return showError("Only CONM or COMM role can reject this permit.");
+        if (isUnderConstTypeComm && !isDept) {
+          return showError("Only CONM role can reject Construction permits under Commissioning.");
+        }
+        if (isUnderCommTypeConst && !isDept1) {
+          return showError("Only COMM role can reject Commissioning permits under Construction.");
         }
       }
       handleStatusTransition(row, "Rejected");
@@ -1941,7 +1942,7 @@ const getInitialPage = () => {
     if (!modalTarget) return;
 
     let nextStatus = submitStatusOverride || modalStatus;
-    if ((modalStatus === "Pre-Approved" || modalStatus === "Approved") && approveActionType === "Reject") {
+    if (modalStatus === "Pre-Approved" && approveActionType === "Reject") {
       nextStatus = "Rejected";
     }
     if (modalStatus === "Opened" && openActionType === "Cancel") {
@@ -1967,15 +1968,18 @@ const getInitialPage = () => {
         const isUnderCommTypeConst = (permitUnder === "Commissioning" && permitType === "Construction");
 
         const curStatus = modalTarget?.Request_status || modalTarget?.request_status || "";
-        if (curStatus === "Approved" || curStatus === "Pre-Approved" || curStatus === "Hold" || curStatus === "Draft") {
+        if (curStatus === "Approved" || curStatus === "Pre-Approved") {
           if (isBothConstruction && !isDept) {
             return showError("Only CONM role can reject Construction-only permits.");
           }
           if (isBothCommissioning && !isDept1) {
             return showError("Only COMM role can reject Commissioning-only permits.");
           }
-          if ((isUnderConstTypeComm || isUnderCommTypeConst) && (!isDept && !isDept1)) {
-            return showError("Only CONM or COMM role can reject this permit.");
+          if (isUnderConstTypeComm && !isDept) {
+            return showError("Only CONM role can reject Construction permits under Commissioning.");
+          }
+          if (isUnderCommTypeConst && !isDept1) {
+            return showError("Only COMM role can reject Commissioning permits under Construction.");
           }
         }
       }
@@ -2116,7 +2120,7 @@ const getInitialPage = () => {
     if (status === "Rejected" && !isAdmin) {
       for (const r of targetRequests) {
         const curStatus = (r.Request_status || r.request_status || "");
-        if (curStatus === "Approved" || curStatus === "Pre-Approved" || curStatus === "Hold" || curStatus === "Draft") {
+        if (curStatus === "Approved" || curStatus === "Pre-Approved") {
           const pType = r.permit_type || "";
           const pUnder = r.permit_under || "";
           const isBothConst = (pUnder === "Construction" && pType === "Construction");
@@ -2130,8 +2134,11 @@ const getInitialPage = () => {
           if (isBothComm && !isDept1) {
             return showError(`Permit #${r.PermitNo || r.id}: Only COMM role can reject Commissioning-only permits.`);
           }
-          if ((isConstUnderComm || isCommUnderConst) && (!isDept && !isDept1)) {
-            return showError(`Permit #${r.PermitNo || r.id}: Only CONM or COMM role can reject this permit.`);
+          if (isConstUnderComm && !isDept) {
+            return showError(`Permit #${r.PermitNo || r.id}: Only CONM role can reject Construction permits under Commissioning.`);
+          }
+          if (isCommUnderConst && !isDept1) {
+            return showError(`Permit #${r.PermitNo || r.id}: Only COMM role can reject Commissioning permits under Construction.`);
           }
         }
       }
@@ -2429,7 +2436,9 @@ const getInitialPage = () => {
   }, [requests, checkIfHideCheckbox]);
 
   // ─── Table Configuration ──────────────────────────────────────────────────
-  const columns = [
+  const isOpsVisible = visibleColumns.includes("operationsCell");
+
+  const rawColumns = [
     {
       header: !isObserver && !isSubcontractor && (
         <input
@@ -2457,14 +2466,29 @@ const getInitialPage = () => {
     { header: "Time", accessor: "timeCell" },
     { header: "Working After Midnight", accessor: "nightShiftCell" },
     { header: "New End Time", accessor: "newEndTimeCell" },
-    { header: "Status", accessor: "statusCell", className: "sticky-col-status" },
-    { header: "Operations", accessor: "operationsCell", className: "sticky-col-operations", style: { width: "180px", minWidth: "180px", maxWidth: "180px" } }
-  ].filter(col => {
-    if (col.accessor === "checkboxCell" && (isObserver || isSubcontractor)) {
-      return false;
+    {
+      header: "Status",
+      accessor: "statusCell",
+      className: isOpsVisible ? "sticky-col-status" : "sticky-col-status sticky-col-status--at-edge",
+      style: !isOpsVisible ? { right: 0 } : undefined
+    },
+    {
+      header: "Operations",
+      accessor: "operationsCell",
+      className: "sticky-col-operations",
+      style: { width: "180px", minWidth: "180px", maxWidth: "180px" }
     }
-    return true;
-  });
+  ];
+
+  const columns = useMemo(() => {
+    return rawColumns.filter(col => {
+      if (col.accessor === "checkboxCell") {
+        if (isObserver || isSubcontractor) return false;
+        return true;
+      }
+      return visibleColumns.includes(col.accessor);
+    });
+  }, [rawColumns, isObserver, isSubcontractor, visibleColumns]);
 
   const tableData = useMemo(() => {
     return requests.map((row) => {
@@ -3127,33 +3151,6 @@ const getInitialPage = () => {
                   isHra={true}
                 />
               </div>
-
-              {(isDept1 || isAdmin || isMultiDept) && (
-                <>
-                  <div className="df-field">
-                    <label className="df-label">Electrical Works</label>
-                    <MultiSelectDropdown
-                      placeholder="Select Electrical Works"
-                      searchPlaceholder="Search electrical works..."
-                      options={electricalWorksOptions}
-                      selectedValues={searchFilters.electrical_works || []}
-                      onChange={(vals) => setSearchFilters(prev => ({ ...prev, electrical_works: vals }))}
-                      hasCategoryFilter={true}
-                      categories={electricalCategories}
-                    />
-                  </div>
-
-                  <div className="df-field">
-                    <label className="df-label">Mechanical Works</label>
-                    <MultiSelectDropdown
-                      placeholder="Select Mechanical Works"
-                      options={mechanicalWorksOptions}
-                      selectedValues={searchFilters.mechanical_works || []}
-                      onChange={(vals) => setSearchFilters(prev => ({ ...prev, mechanical_works: vals }))}
-                    />
-                  </div>
-                </>
-              )}
             </div>
 
             {/* Action Buttons */}
@@ -3281,6 +3278,115 @@ const getInitialPage = () => {
 
       {/* Data Table */}
       <div className="dept-table-card" style={{ marginTop: "16px" }}>
+        <div className="table-toolbar-header">
+          <div className="table-toolbar-header__left">
+            <span className="table-toolbar-count">
+              Total Permits: <strong>{totalCount}</strong>
+            </span>
+          </div>
+          <div className="table-toolbar-header__right">
+            {/* Columns Visibility Dropdown */}
+            <div className="col-visibility-dropdown-container" ref={colDropdownRef}>
+              <button
+                type="button"
+                className={`col-visibility-toggle-btn ${visibleColumns.length < ALL_COLUMNS_CONFIG.length ? "col-visibility-btn--active" : ""}`}
+                onClick={() => setColDropdownOpen(p => !p)}
+                title="Customize table columns"
+              >
+                <FaColumns />
+                <span>Columns</span>
+                <span className="col-visibility-count-badge">
+                  {visibleColumns.length}/{ALL_COLUMNS_CONFIG.length}
+                </span>
+              </button>
+
+              {colDropdownOpen && (
+                <div className="col-visibility-menu">
+                  <div className="col-visibility-header">
+                    <div>
+                      <div className="col-visibility-title">Customize Columns</div>
+                      <div className="col-visibility-subtitle">
+                        {visibleColumns.length} of {ALL_COLUMNS_CONFIG.length} columns displayed
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      className="col-visibility-close-btn"
+                      onClick={() => setColDropdownOpen(false)}
+                      title="Close"
+                    >
+                      <FaTimes />
+                    </button>
+                  </div>
+
+                  <div className="col-visibility-actions">
+                    <button
+                      type="button"
+                      className="col-vis-action-link"
+                      onClick={handleShowAllColumns}
+                    >
+                      Show All
+                    </button>
+                    <button
+                      type="button"
+                      className="col-vis-action-link col-vis-action-link--reset"
+                      onClick={handleResetColumns}
+                    >
+                      <FaUndo style={{ fontSize: "11px", marginRight: "4px" }} />
+                      Reset
+                    </button>
+                  </div>
+
+                  <div className="col-visibility-search">
+                    <FaSearch className="col-vis-search-icon" />
+                    <input
+                      type="text"
+                      className="col-vis-search-input"
+                      placeholder="Search columns..."
+                      value={columnSearch}
+                      onChange={(e) => setColumnSearch(e.target.value)}
+                    />
+                    {columnSearch && (
+                      <button
+                        type="button"
+                        className="col-vis-search-clear"
+                        onClick={() => setColumnSearch("")}
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="col-visibility-list">
+                    {ALL_COLUMNS_CONFIG
+                      .filter(c => c.label.toLowerCase().includes(columnSearch.toLowerCase().trim()))
+                      .map((col) => {
+                        const isChecked = visibleColumns.includes(col.id);
+                        return (
+                          <label
+                            key={col.id}
+                            className={`col-vis-item ${isChecked ? "col-vis-item--checked" : ""}`}
+                          >
+                            <input
+                              type="checkbox"
+                              className="col-vis-checkbox"
+                              checked={isChecked}
+                              onChange={() => handleToggleColumn(col.id)}
+                            />
+                            <span className="col-vis-item-label">{col.label}</span>
+                            <span className={`col-vis-status-tag ${isChecked ? "col-vis-status-tag--visible" : "col-vis-status-tag--hidden"}`}>
+                              {isChecked ? "Visible" : "Hidden"}
+                            </span>
+                          </label>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
         <Table
           columns={columns}
           data={tableData}
