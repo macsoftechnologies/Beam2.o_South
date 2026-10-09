@@ -17,6 +17,8 @@ import { formatToDenmarkDateTime, getDenmarkTimeISOString } from "../../../utils
 import {
   hasUserModuleAccess,
   getEffectiveRoleForModule,
+  detectModuleFromPath,
+  getNavbarDisplayRole,
   USER_TYPE_LABELS,
 } from "../../../utils/modulePermissions";
 
@@ -541,21 +543,36 @@ function Navbar({ toggleSidebar, theme, onThemeChange }) {
     return () => clearInterval(interval);
   }, [activeModuleKey, location.pathname]);
 
+  const activeModuleId = detectModuleFromPath(location.pathname);
+
+  // Compute active module role dynamically based on route and user
+  const activeRole = React.useMemo(() => {
+    try {
+      const uStr = localStorage.getItem("user");
+      const u = uStr ? JSON.parse(uStr) : null;
+      const eff = getEffectiveRoleForModule(activeModuleId, u);
+      return getNavbarDisplayRole(eff) || getNavbarDisplayRole(localStorage.getItem("activeModuleRole")) || getNavbarDisplayRole(currentUser.role) || "User";
+    } catch {
+      return getNavbarDisplayRole(currentUser.role) || "User";
+    }
+  }, [activeModuleId, location.pathname, currentUser.role]);
+
   useEffect(() => {
     try {
       const u = localStorage.getItem("user");
       if (u) {
         const parsed = JSON.parse(u);
+        const eff = getEffectiveRoleForModule(activeModuleId, parsed);
         setCurrentUser({
           username: parsed.username || "Alex Mercer",
-          role: parsed.role || parsed.userType || "Site Manager",
+          role: getNavbarDisplayRole(eff) || parsed.role || parsed.userType || "Site Manager",
           name: parsed.username || "Alex Mercer"
         });
       }
     } catch (e) {
       console.error(e);
     }
-  }, []);
+  }, [activeModuleId, location.pathname]);
 
   useEffect(() => {
     const handler = (e) => {
@@ -975,7 +992,7 @@ function Navbar({ toggleSidebar, theme, onThemeChange }) {
             <div className="navbar-avatar-img">{getInitials(currentUser.name)}</div>
             <div className="navbar-user-info">
               <span className="navbar-user-name">{currentUser.name}</span>
-              <span className="navbar-user-role">{currentUser.role}</span>
+              <span className="navbar-user-role">{activeRole}</span>
             </div>
           </button>
 
@@ -987,7 +1004,7 @@ function Navbar({ toggleSidebar, theme, onThemeChange }) {
                 <div className="pd-avatar">{getInitials(currentUser.name)}</div>
                 <div>
                   <div className="pd-name">{currentUser.name}</div>
-                  <div className="pd-role">{currentUser.role} · M3 South</div>
+                  <div className="pd-role">{activeRole}</div>
                 </div>
               </div>
 
@@ -1092,7 +1109,7 @@ function Navbar({ toggleSidebar, theme, onThemeChange }) {
               {/* Error */}
               {cpError && (
                 <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: '#fca5a5', marginBottom: 14, display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 15, height: 15, flexShrink: 0, marginTop: 1 }}><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="12" /></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 15, height: 15, flexShrink: 0, marginTop: 1 }}><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="16" /></svg>
                   {cpError}
                 </div>
               )}
